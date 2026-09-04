@@ -1,0 +1,13 @@
+module m "compose unscoped" {
+  resource User "u" { lifecycle mutable }
+  question uq of User "u" {
+    unscoped audit
+    show identity
+    live bounded 10
+  }
+  question q of User "q" {
+    where identity within uq
+    show identity
+    live bounded 10
+  }
+}

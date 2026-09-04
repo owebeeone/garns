@@ -1,0 +1,9 @@
+module bad "an unenforced link has no end action" {
+  intent key : Id "key"
+  resource Parent "parent" { use key { key } }
+  resource Child "child" {
+    use key { key }
+    link parent -> Parent { unenforced end cascade }
+  }
+}
+

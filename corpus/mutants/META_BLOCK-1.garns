@@ -1,0 +1,7 @@
+module m "m" {
+  resource User "u" {
+    Meta {
+      db_table users
+    }
+  }
+}

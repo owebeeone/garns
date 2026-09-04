@@ -1,0 +1,8 @@
+module bad "a dynamic question requires a bound" {
+  intent key : Id "key"
+  resource Item "item" { use key { key } }
+  question items of Item "missing live bound" {
+    show identity
+  }
+}
+

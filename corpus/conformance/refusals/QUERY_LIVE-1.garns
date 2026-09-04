@@ -1,0 +1,9 @@
+module bad "a static query cannot be live" {
+  intent key : Id "key"
+  resource Item "item" { use key { key } }
+  query items of Item "invalid live query" {
+    show identity
+    live bounded 10
+  }
+}
+

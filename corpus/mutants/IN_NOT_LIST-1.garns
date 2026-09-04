@@ -1,0 +1,5 @@
+module m "in with a scalar given" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  question q of A "q" { given k : Integer where n in k show n live bounded 10 }
+}

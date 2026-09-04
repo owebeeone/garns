@@ -1,0 +1,8 @@
+module a "owner" {
+  resource A "a" { lifecycle mutable }
+}
+module b "imports a name a does not declare" {
+  import a (Nope)
+  resource B "b" { lifecycle mutable }
+}
+world W "w" { modules a, b durability durable writers governed generated python scope deployment quarantine_retention 3 }

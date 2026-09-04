@@ -1,0 +1,10 @@
+module m "stamp input" {
+  intent created_at : Instant "minted"
+  resource User "u" {
+    use created_at { stamp on_mint }
+    lifecycle mutable
+  }
+  restricted set_created "caller writes stamp" {
+    User.change accepts created_at
+  }
+}

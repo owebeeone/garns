@@ -1,0 +1,13 @@
+module m "root not scoped" {
+  resource User "u" { lifecycle mutable }
+  trait Owned "o" { link owner -> User { end restrict } }
+}
+world W "w" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+  requires m.Owned exempt m.User
+  scope m.Owned.owner
+  quarantine_retention 3
+}

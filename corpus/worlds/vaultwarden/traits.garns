@@ -1,0 +1,12 @@
+# Vaultwarden stamps. Same Timestamped denotation as the base practice world.
+
+module traits "Stamps every minted individual carries; engine-written, never caller-written." {
+  intent created_at : Instant "when this individual was minted"
+  intent updated_at : Instant "when this individual last changed"
+  intent atype : Integer "bitwarden type discriminant for this individual"
+
+  trait Timestamped "carries mint and change instants written by the engine, never by the caller" {
+    use created_at { order filter stamp on_mint default ship_clock }
+    use updated_at { optional stamp on_change }
+  }
+}

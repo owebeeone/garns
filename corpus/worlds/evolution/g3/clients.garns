@@ -1,0 +1,23 @@
+module clients "Generation 3: user_name renamed preferred_name with continuity; Contact.email tightened." {
+  import people (Owned, Timestamped, email, nickname)
+
+  intent preferred_name : DisplayName "the name this person wants in the waiting room" {
+    renamed_from user_name
+    alias user_name
+  }
+
+  resource Client "a person the practice documents" {
+    use preferred_name { filter order }
+    use nickname { optional }
+    lifecycle mutable
+    carry Owned, Timestamped
+  }
+
+  resource Contact "someone related to a client" {
+    use preferred_name
+    use email
+    link client -> Client { end cascade inverse contacts }
+    lifecycle mutable
+    tighten email repair quarantine
+  }
+}

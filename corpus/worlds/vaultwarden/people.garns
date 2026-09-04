@@ -1,0 +1,88 @@
+# Two tenancies under C-07: User is the world's one scope root; Organization is a
+# second tenancy expressed as a resource that exempts Owned, not as a second language.
+# Org-owned kinds carry OrgOwned (not scopes) and exempt Owned. Evidence: L2-1, L2-A.
+
+module people "Users and organisations: the two tenancies, one C-07 root." {
+  import traits (Timestamped)
+
+  intent email : Email "an address that can receive mail"
+  intent display_name : DisplayName "the name shown on the account or organisation"
+  intent password_hash : Opaque "kdf output; the server never interprets the bytes"
+  intent password_salt : Opaque "kdf salt; byte-identity equality only"
+  intent password_iterations : Integer "kdf iteration count"
+  intent password_hint : Text "optional hint the user stored for themselves"
+  intent akey : Opaque "the user's encrypted symmetric key"
+  intent private_key : Opaque "the user's encrypted private key"
+  intent public_key : Opaque "the user's public key material"
+  intent totp_secret : Opaque "legacy totp secret left in place after the twofactor split"
+  intent totp_recover : Text "recovery material for totp"
+  intent security_stamp : Text "invalidates outstanding sessions when it changes"
+  intent equivalent_domains : Opaque "encrypted equivalent-domain list"
+  intent excluded_globals : Opaque "encrypted excluded-global list"
+  intent client_kdf_type : Integer "kdf algorithm discriminator"
+  intent client_kdf_iter : Integer "client kdf iterations"
+  intent client_kdf_memory : Integer "argon2 memory parameter"
+  intent client_kdf_parallelism : Integer "argon2 parallelism parameter"
+  intent verified_at : Instant "when the email address was verified"
+  intent last_verifying_at : Instant "when verification was last attempted"
+  intent login_verify_count : Integer "verification attempts in the current window"
+  intent email_new : Email "pending replacement email"
+  intent email_new_token : Text "token that confirms the pending email"
+  intent enabled : Boolean "whether the account may sign in"
+  intent stamp_exception : Opaque "temporary stamp-exception payload"
+  intent api_key : Opaque "the user's personal api key"
+  intent avatar_color : Text "hex colour for the generated avatar"
+  intent external_id : Text "directory-connector identifier shared by user and membership during compatibility"
+  intent billing_email : Email "where organisation billing mail is sent"
+  intent org_private_key : Opaque "organisation encrypted private key"
+  intent org_public_key : Opaque "organisation public key"
+
+  resource User "a vault owner; the world's one C-07 scope root" {
+    use email { key filter }
+    use display_name { filter order }
+    use password_hash
+    use password_salt
+    use password_iterations
+    use password_hint { optional }
+    use akey
+    use private_key { optional }
+    use public_key { optional }
+    use totp_secret { optional }
+    use totp_recover { optional }
+    use security_stamp
+    use equivalent_domains
+    use excluded_globals
+    use client_kdf_type { default 0 }
+    use client_kdf_iter { default 100000 }
+    use client_kdf_memory { optional }
+    use client_kdf_parallelism { optional }
+    use verified_at { optional }
+    use last_verifying_at { optional }
+    use login_verify_count { default 0 }
+    use email_new { optional }
+    use email_new_token { optional }
+    use enabled { default true filter }
+    use stamp_exception { optional }
+    use api_key { optional }
+    use avatar_color { optional }
+    use external_id { optional }
+    lifecycle mutable
+    carry Timestamped
+  }
+
+  trait Owned "belongs to one user; the world's only scoping link (C-07.1)" {
+    link owner -> User { end restrict scopes }
+  }
+
+  resource Organization "an organisation tenancy; not a second language, not a scope root" {
+    use display_name { filter order }
+    use billing_email
+    use org_private_key { optional }
+    use org_public_key { optional }
+    lifecycle mutable
+  }
+
+  trait OrgOwned "belongs to one organisation; not marked scopes, so C-07 does not weave it" {
+    link org -> Organization { end restrict }
+  }
+}

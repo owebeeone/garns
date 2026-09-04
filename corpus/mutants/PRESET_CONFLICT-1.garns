@@ -1,0 +1,7 @@
+module m "history twice" {
+  resource User "u" {
+    history kept
+    history kept
+    lifecycle mutable
+  }
+}

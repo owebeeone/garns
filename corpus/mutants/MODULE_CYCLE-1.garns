@@ -1,0 +1,10 @@
+module a "a imports b" {
+  import b (B)
+
+  resource A "a" { lifecycle mutable link to_b -> B { end restrict } }
+}
+module b "b imports a: a cycle" {
+  import a (A)
+
+  resource B "b" { lifecycle mutable link to_a -> A { end restrict } }
+}

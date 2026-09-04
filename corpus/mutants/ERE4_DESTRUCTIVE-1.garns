@@ -1,0 +1,4 @@
+module m "rename not delete" {
+  intent n : Text "n" { renamed_from }
+  resource User "u" { lifecycle mutable }
+}

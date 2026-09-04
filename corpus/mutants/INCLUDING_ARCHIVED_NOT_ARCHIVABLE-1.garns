@@ -1,0 +1,5 @@
+module m "including_archived on a mutable carrier" {
+  intent n : Text "n"
+  resource A "a" { use n lifecycle mutable }
+  query q of A "q" { show n including_archived }
+}

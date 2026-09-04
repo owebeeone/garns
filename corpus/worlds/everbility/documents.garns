@@ -1,0 +1,28 @@
+module documents "Reference documents with a closed scope set and an XOR owner invariant." {
+  import people (Organisation, User)
+  import refs (display_name)
+  import traits (Timestamped)
+
+  intent doc_scope : Text "personal or organisation ownership of a reference document" {
+    values @personal, @org
+  }
+  intent original_filename : Text "the filename as uploaded"
+  intent s3_key : Text "object key in the document store"
+  intent file_size_bytes : Integer "size of the stored file in bytes"
+  intent sha256 : Text "hex digest of the file bytes"
+
+  resource DocxReferenceDoc "a reference document used to fill forms" {
+    use doc_scope
+    use display_name
+    use original_filename
+    use s3_key { key }
+    use file_size_bytes
+    use sha256
+    link owner_user -> User { optional end cascade }
+    link org -> Organisation { optional end cascade }
+    link created_by -> User { end restrict }
+    lifecycle mutable
+    carry Timestamped
+    invariant (doc_scope = @personal and owner_user present and org absent) or (doc_scope = @org and owner_user absent and org present)
+  }
+}

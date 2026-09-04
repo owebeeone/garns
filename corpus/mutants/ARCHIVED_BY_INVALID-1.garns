@@ -1,0 +1,4 @@
+module m "archived_by a required use" {
+  intent at : Instant "at"
+  resource A "a" { use at lifecycle archived_by at }
+}

@@ -1,0 +1,9 @@
+module m "widen" {
+  intent email : Email "an address that can receive mail"
+  trait T "t" { use email { key } }
+  resource User "u" {
+    carry T
+    use email { optional }
+    lifecycle mutable
+  }
+}

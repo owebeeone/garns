@@ -1,0 +1,1469 @@
+{
+ "program": {
+  "$": "Program",
+  "aliases": [],
+  "bulks": [],
+  "carriers": [
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "sales.Order.customer",
+      "many": true,
+      "name": "orders",
+      "source": "sales.Order"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": null,
+    "links": [],
+    "meaning": "customer",
+    "members": [],
+    "module": "sales",
+    "name": "Customer",
+    "ordered_within": null,
+    "qid": "sales.Customer",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "sales.Customer",
+      "default": null,
+      "filter": false,
+      "intent": "sales.customer_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Id",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "sales.Customer",
+      "default": null,
+      "filter": false,
+      "intent": "sales.name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "sales.Order",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": "orders",
+      "key": false,
+      "name": "customer",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "sales.Order.customer",
+      "scopes": false,
+      "target": "sales.Customer"
+     }
+    ],
+    "meaning": "order",
+    "members": [],
+    "module": "sales",
+    "name": "Order",
+    "ordered_within": null,
+    "qid": "sales.Order",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "sales.Order",
+      "default": null,
+      "filter": false,
+      "intent": "sales.order_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Id",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "sales.Order",
+      "default": null,
+      "filter": true,
+      "intent": "sales.status",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@open",
+        "@closed"
+       ],
+       "list_of": false,
+       "nominal": "sales.OrderStatus",
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "sales.Order",
+      "default": null,
+      "filter": false,
+      "intent": "sales.total",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "sales.Order",
+      "default": null,
+      "filter": false,
+      "intent": "sales.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   }
+  ],
+  "compounds": [],
+  "deployments": [
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": null,
+     "kind": "memory",
+     "name": null
+    },
+    "meaning": "in memory",
+    "mode": "readwrite",
+    "name": "SALES_DEV",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "SALES"
+   }
+  ],
+  "intents": [
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "creation time",
+    "module": "sales",
+    "name": "created_at",
+    "pattern": null,
+    "qid": "sales.created_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "customer identity",
+    "module": "sales",
+    "name": "customer_id",
+    "pattern": null,
+    "qid": "sales.customer_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Id",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "customer name",
+    "module": "sales",
+    "name": "name",
+    "pattern": null,
+    "qid": "sales.name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "order identity",
+    "module": "sales",
+    "name": "order_id",
+    "pattern": null,
+    "qid": "sales.order_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Id",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "order status",
+    "module": "sales",
+    "name": "status",
+    "pattern": null,
+    "qid": "sales.status",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [
+      "@open",
+      "@closed"
+     ],
+     "list_of": false,
+     "nominal": "sales.OrderStatus",
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "order total",
+    "module": "sales",
+    "name": "total",
+    "pattern": null,
+    "qid": "sales.total",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Money",
+     "carrier": null,
+     "class": "decimal",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   }
+  ],
+  "modules": [
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "dynamic question conformance",
+    "name": "sales"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "sales.Order",
+      "local": "Order",
+      "owner": "sales",
+      "source": "Order"
+     }
+    ],
+    "meaning": "static twins of the dynamic conformance question",
+    "name": "sales_static"
+   }
+  ],
+  "move_homes": [],
+  "newtypes": [],
+  "reads": [
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": 20,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 20,
+    "meaning": "bounded live open orders",
+    "module": "sales",
+    "name": "open_orders",
+    "noun": "question",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": true,
+      "key": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Order",
+        "intent": "sales.created_at",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Order.created_at"
+       },
+       "text": "created_at"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "sales.Order",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "sales.Order",
+       "intent": "sales.status",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@open",
+         "@closed"
+        ],
+        "list_of": false,
+        "nominal": "sales.OrderStatus",
+        "optional": false
+       },
+       "use": "sales.Order.status"
+      },
+      "text": "status"
+     },
+     "op": "=",
+     "right": {
+      "$": "Literal",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@open",
+        "@closed"
+       ],
+       "list_of": false,
+       "nominal": "sales.OrderStatus",
+       "optional": false
+      },
+      "value": "open"
+     }
+    },
+    "qid": "sales.open_orders",
+    "shape": "windowed",
+    "shows": [
+     {
+      "$": "ShowIdentity",
+      "column": "identity"
+     },
+     {
+      "$": "ShowPath",
+      "column": "customer",
+      "path": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "sales.Order.customer",
+         "many": false,
+         "source": "sales.Order",
+         "target": "sales.Customer",
+         "text": "customer"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Customer",
+        "intent": "sales.name",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Customer.name"
+       },
+       "text": "customer.name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "total",
+      "path": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Order",
+        "intent": "sales.total",
+        "type": {
+         "base": "Money",
+         "carrier": null,
+         "class": "decimal",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Order.total"
+       },
+       "text": "total"
+      }
+     }
+    ],
+    "subject": "sales.Order",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": true,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "distinct customers with open orders",
+    "module": "sales_static",
+    "name": "distinct_open_customers",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "sales.Order.customer",
+         "many": false,
+         "source": "sales.Order",
+         "target": "sales.Customer",
+         "text": "customer"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Customer",
+        "intent": "sales.name",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Customer.name"
+       },
+       "text": "customer.name"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "sales.Order",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "sales.Order",
+       "intent": "sales.status",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@open",
+         "@closed"
+        ],
+        "list_of": false,
+        "nominal": "sales.OrderStatus",
+        "optional": false
+       },
+       "use": "sales.Order.status"
+      },
+      "text": "status"
+     },
+     "op": "=",
+     "right": {
+      "$": "Literal",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@open",
+        "@closed"
+       ],
+       "list_of": false,
+       "nominal": "sales.OrderStatus",
+       "optional": false
+      },
+      "value": "open"
+     }
+    },
+    "qid": "sales_static.distinct_open_customers",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "customer",
+      "path": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "sales.Order.customer",
+         "many": false,
+         "source": "sales.Order",
+         "target": "sales.Customer",
+         "text": "customer"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Customer",
+        "intent": "sales.name",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Customer.name"
+       },
+       "text": "customer.name"
+      }
+     }
+    ],
+    "subject": "sales.Order",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": 20,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "one-shot open orders",
+    "module": "sales_static",
+    "name": "open_orders_once",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": true,
+      "key": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Order",
+        "intent": "sales.created_at",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Order.created_at"
+       },
+       "text": "created_at"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "sales.Order",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "sales.Order",
+       "intent": "sales.status",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@open",
+         "@closed"
+        ],
+        "list_of": false,
+        "nominal": "sales.OrderStatus",
+        "optional": false
+       },
+       "use": "sales.Order.status"
+      },
+      "text": "status"
+     },
+     "op": "=",
+     "right": {
+      "$": "Literal",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@open",
+        "@closed"
+       ],
+       "list_of": false,
+       "nominal": "sales.OrderStatus",
+       "optional": false
+      },
+      "value": "open"
+     }
+    },
+    "qid": "sales_static.open_orders_once",
+    "shape": "windowed",
+    "shows": [
+     {
+      "$": "ShowIdentity",
+      "column": "identity"
+     },
+     {
+      "$": "ShowPath",
+      "column": "customer",
+      "path": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "sales.Order.customer",
+         "many": false,
+         "source": "sales.Order",
+         "target": "sales.Customer",
+         "text": "customer"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Customer",
+        "intent": "sales.name",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Customer.name"
+       },
+       "text": "customer.name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "total",
+      "path": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Order",
+        "intent": "sales.total",
+        "type": {
+         "base": "Money",
+         "carrier": null,
+         "class": "decimal",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Order.total"
+       },
+       "text": "total"
+      }
+     }
+    ],
+    "subject": "sales.Order",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "floor",
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [
+     {
+      "$": "PathRef",
+      "root": "sales.Order",
+      "steps": [
+       {
+        "$": "LinkStep",
+        "inverse": false,
+        "link": "sales.Order.customer",
+        "many": false,
+        "source": "sales.Order",
+        "target": "sales.Customer",
+        "text": "customer"
+       }
+      ],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "sales.Customer",
+       "intent": "sales.name",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "sales.Customer.name"
+      },
+      "text": "customer.name"
+     }
+    ],
+    "having": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "StaticAggregate",
+      "distinct": false,
+      "fn": "sum",
+      "path": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Order",
+        "intent": "sales.total",
+        "type": {
+         "base": "Money",
+         "carrier": null,
+         "class": "decimal",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Order.total"
+       },
+       "text": "total"
+      },
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     "op": ">",
+     "right": {
+      "$": "GivenRef",
+      "name": "floor",
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "richer static report over the same orders",
+    "module": "sales_static",
+    "name": "revenue_open_by_customer",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": true,
+      "key": {
+       "$": "StaticAggregate",
+       "distinct": false,
+       "fn": "sum",
+       "path": {
+        "$": "PathRef",
+        "root": "sales.Order",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "sales.Order",
+         "intent": "sales.total",
+         "type": {
+          "base": "Money",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "sales.Order.total"
+        },
+        "text": "total"
+       },
+       "type": {
+        "base": "Money",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     },
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "Call",
+       "args": [
+        {
+         "$": "PathRef",
+         "root": "sales.Order",
+         "steps": [
+          {
+           "$": "LinkStep",
+           "inverse": false,
+           "link": "sales.Order.customer",
+           "many": false,
+           "source": "sales.Order",
+           "target": "sales.Customer",
+           "text": "customer"
+          }
+         ],
+         "terminal": {
+          "$": "UseTerminal",
+          "carrier": "sales.Customer",
+          "intent": "sales.name",
+          "type": {
+           "base": "Text",
+           "carrier": null,
+           "class": "text",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          },
+          "use": "sales.Customer.name"
+         },
+         "text": "customer.name"
+        }
+       ],
+       "function": "text.length",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "And",
+     "items": [
+      {
+       "$": "Compare",
+       "guard": null,
+       "left": {
+        "$": "PathRef",
+        "root": "sales.Order",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "sales.Order",
+         "intent": "sales.status",
+         "type": {
+          "base": "Text",
+          "carrier": null,
+          "class": "text",
+          "closed": [
+           "@open",
+           "@closed"
+          ],
+          "list_of": false,
+          "nominal": "sales.OrderStatus",
+          "optional": false
+         },
+         "use": "sales.Order.status"
+        },
+        "text": "status"
+       },
+       "op": "=",
+       "right": {
+        "$": "Literal",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [
+          "@open",
+          "@closed"
+         ],
+         "list_of": false,
+         "nominal": "sales.OrderStatus",
+         "optional": false
+        },
+        "value": "open"
+       }
+      },
+      {
+       "$": "Compare",
+       "guard": null,
+       "left": {
+        "$": "PathRef",
+        "root": "sales.Order",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "sales.Order",
+         "intent": "sales.total",
+         "type": {
+          "base": "Money",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "sales.Order.total"
+        },
+        "text": "total"
+       },
+       "op": ">=",
+       "right": {
+        "$": "GivenRef",
+        "name": "floor",
+        "type": {
+         "base": "Money",
+         "carrier": null,
+         "class": "decimal",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        }
+       }
+      }
+     ]
+    },
+    "qid": "sales_static.revenue_open_by_customer",
+    "shape": "grouped",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "customer",
+      "path": {
+       "$": "PathRef",
+       "root": "sales.Order",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "sales.Order.customer",
+         "many": false,
+         "source": "sales.Order",
+         "target": "sales.Customer",
+         "text": "customer"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "sales.Customer",
+        "intent": "sales.name",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "sales.Customer.name"
+       },
+       "text": "customer.name"
+      }
+     },
+     {
+      "$": "ShowScalar",
+      "column": "revenue",
+      "expr": {
+       "$": "StaticAggregate",
+       "distinct": false,
+       "fn": "sum",
+       "path": {
+        "$": "PathRef",
+        "root": "sales.Order",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "sales.Order",
+         "intent": "sales.total",
+         "type": {
+          "base": "Money",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "sales.Order.total"
+        },
+        "text": "total"
+       },
+       "type": {
+        "base": "Money",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     },
+     {
+      "$": "ShowScalar",
+      "column": "orders",
+      "expr": {
+       "$": "StaticAggregate",
+       "distinct": false,
+       "fn": "count",
+       "path": null,
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     },
+     {
+      "$": "ShowScalar",
+      "column": "average_order",
+      "expr": {
+       "$": "Call",
+       "args": [
+        {
+         "$": "Arith",
+         "left": {
+          "$": "StaticAggregate",
+          "distinct": false,
+          "fn": "sum",
+          "path": {
+           "$": "PathRef",
+           "root": "sales.Order",
+           "steps": [],
+           "terminal": {
+            "$": "UseTerminal",
+            "carrier": "sales.Order",
+            "intent": "sales.total",
+            "type": {
+             "base": "Money",
+             "carrier": null,
+             "class": "decimal",
+             "closed": [],
+             "list_of": false,
+             "nominal": null,
+             "optional": false
+            },
+            "use": "sales.Order.total"
+           },
+           "text": "total"
+          },
+          "type": {
+           "base": "Money",
+           "carrier": null,
+           "class": "decimal",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          }
+         },
+         "op": "/",
+         "right": {
+          "$": "StaticAggregate",
+          "distinct": false,
+          "fn": "count",
+          "path": null,
+          "type": {
+           "base": "Integer",
+           "carrier": null,
+           "class": "integer",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          }
+         },
+         "type": {
+          "base": "Money",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         }
+        },
+        {
+         "$": "Literal",
+         "type": {
+          "base": "Integer",
+          "carrier": null,
+          "class": "integer",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "value": 2
+        }
+       ],
+       "function": "money.round",
+       "type": {
+        "base": "Money",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     }
+    ],
+    "subject": "sales.Order",
+    "unscoped": null,
+    "with_total": false
+   }
+  ],
+  "restores": [],
+  "restricteds": [],
+  "retypes": [],
+  "scope_paths": {
+   "SALES": {
+    "sales.Customer": [],
+    "sales.Order": []
+   }
+  },
+  "tightens": [],
+  "tombstones": [],
+  "worlds": [
+   {
+    "$": "World",
+    "capabilities": [],
+    "durability": "durable",
+    "exempt": [],
+    "generated": [
+     "python",
+     "rust"
+    ],
+    "meaning": "the dynamic conformance module and its static twins",
+    "modules": [
+     "sales",
+     "sales_static"
+    ],
+    "name": "SALES",
+    "quarantine_retention": 3,
+    "requires": null,
+    "scope": null,
+    "writer_source": null,
+    "writers": "governed"
+   }
+  ]
+ },
+ "scope_paths": {
+  "sales.Customer": [],
+  "sales.Order": []
+ },
+ "storage": {
+  "$": "StorageMapping",
+  "engine": {
+   "$": "EngineTables",
+   "generations": "en_339a843a1d",
+   "ledger": "en_f8bd8555fd",
+   "revisions": "en_9b3975370b"
+  },
+  "relations": {
+   "sales.Customer": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "sales.Customer",
+    "columns": {
+     "sales.Customer.customer_id": "co_7ed8c48383",
+     "sales.Customer.name": "co_1e32478f5c"
+    },
+    "identity": "id_268d9db70b",
+    "kind": null,
+    "links": {},
+    "table": "ta_6e060cc01b"
+   },
+   "sales.Order": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "sales.Order",
+    "columns": {
+     "sales.Order.created_at": "co_66617ed9a4",
+     "sales.Order.order_id": "co_c2bd8587a7",
+     "sales.Order.status": "co_7cbde43f56",
+     "sales.Order.total": "co_26bff25d88"
+    },
+    "identity": "id_76d3517dac",
+    "kind": null,
+    "links": {
+     "sales.Order.customer": "li_a1a73c58a7"
+    },
+    "table": "ta_8d09f00415"
+   }
+  },
+  "source": "storage-SALES.json",
+  "world": "SALES"
+ },
+ "world": {
+  "$": "World",
+  "capabilities": [],
+  "durability": "durable",
+  "exempt": [],
+  "generated": [
+   "python",
+   "rust"
+  ],
+  "meaning": "the dynamic conformance module and its static twins",
+  "modules": [
+   "sales",
+   "sales_static"
+  ],
+  "name": "SALES",
+  "quarantine_retention": 3,
+  "requires": null,
+  "scope": null,
+  "writer_source": null,
+  "writers": "governed"
+ }
+}

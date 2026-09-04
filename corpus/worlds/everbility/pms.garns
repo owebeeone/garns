@@ -1,0 +1,48 @@
+module pms "Practice-management adapters, API keys with detach, and the user map." {
+  import people (Organisation, Owned, User)
+  import traits (Timestamped)
+
+  intent pms_id : Text "Unique PMS identifier" {
+    pattern "^[A-Za-z0-9_-]+$"
+  }
+  intent adapter_status : Text "Adapter status: available, coming_soon" {
+    values @available, @coming_soon
+  }
+  intent is_development : Boolean "whether this adapter is a development-only build"
+  intent enabled : Boolean "Global feature flag to enable/disable this PMS"
+  intent kid : Text "Asymmetric KEK key identifier (KID) used to unwrap/decrypt"
+  intent api_ek : Text "Encrypted PMS API key ciphertext (AES-GCM, Base64URL-encoded)"
+  intent api_client_id : Text "PMS API client ID (not encrypted, optional)"
+  intent is_org_wide : Boolean "When true, this key is shared across the owner organisation for this PMS"
+  intent pms_user_id : Text "PMS user ID"
+
+  resource PmsAdapter "Registry of available PMS integrations" {
+    use pms_id { key }
+    use adapter_status { filter }
+    use is_development { default false }
+    use enabled { default true }
+    lifecycle mutable
+  }
+
+  resource PmsApiKey "Encrypted PMS API keys (ciphertext + KID; EDEK deprecated)" {
+    use kid
+    use api_ek
+    use api_client_id { optional }
+    use is_org_wide { default false }
+    link adapter -> PmsAdapter { end restrict key }
+    link org -> Organisation { optional end detach }
+    lifecycle mutable
+    carry Owned, Timestamped
+    invariant is_org_wide = false or org present
+  }
+
+  association PmsUserMap "Map of Everbility users to PMS users" {
+    link user -> User { end cascade }
+    link adapter -> PmsAdapter { end restrict }
+    link org -> Organisation { optional end cascade }
+    use pms_user_id
+    carry Timestamped
+    # v9-2: the map is read and removed across users by the PMS integration (census sites 336, 383, 419 are
+    # unscoped), so it declines the required trait explicitly instead of naming a path that ends at the exempt User.
+  }
+}

@@ -1,0 +1,5 @@
+module m "an alias may name only a derived accessor" {
+  resource A "a" { lifecycle mutable }
+  question all_a of A "all" { live bounded 10 }
+  alias list_a = A.all_a
+}

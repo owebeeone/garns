@@ -1,0 +1,18 @@
+# Generated Garns surface for sales_static.open_orders_once (query); the SQL is the lowered plan, unchanged.
+READ = 'sales_static.open_orders_once'
+NOUN = 'query'
+SQL = 'SELECT s0."id_76d3517dac" AS "$k0", s0."id_76d3517dac" AS "identity", j1."co_1e32478f5c" AS "customer", s0."co_26bff25d88" AS "total" FROM "ta_8d09f00415" AS s0 LEFT JOIN "ta_6e060cc01b" AS j1 ON j1."id_268d9db70b" = s0."li_a1a73c58a7" WHERE (s0."co_7cbde43f56" = \'open\') ORDER BY s0."co_66617ed9a4" DESC, s0."id_76d3517dac" ASC LIMIT 20'
+PARAMS = ()
+KEY_COLUMNS = ('$k0',)
+COLUMNS = ('identity', 'customer', 'total')
+SCOPED = False
+USES_CLOCK = False
+CHILDREN = {
+
+}
+
+
+def rows(connection, params):
+    cursor = connection.execute(SQL, params)
+    names = [d[0] for d in cursor.description]
+    return [dict(zip(names, row)) for row in cursor.fetchall()]

@@ -1,0 +1,9 @@
+module m "a member body admits uses, links, invariants, breaks, tightens only" {
+  trait T "t" { }
+  family D "d" {
+    lifecycle mutable
+    member F "f" {
+      carry T
+    }
+  }
+}

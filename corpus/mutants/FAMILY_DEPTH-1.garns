@@ -1,0 +1,8 @@
+module m "fam depth" {
+  family D "d" {
+    lifecycle mutable
+    member F "f" {
+      member Inner "too deep" { }
+    }
+  }
+}

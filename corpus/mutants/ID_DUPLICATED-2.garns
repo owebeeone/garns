@@ -1,0 +1,10 @@
+module m "retype restated" {
+  intent email : Email "an address"
+  trait T "t" { use email }
+  resource User "u" {
+    carry T
+    use email
+    lifecycle mutable
+  }
+  intent email : Text "an address"
+}

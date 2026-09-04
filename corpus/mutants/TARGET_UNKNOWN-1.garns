@@ -1,0 +1,5 @@
+module m "unsupported target" {
+  intent n : Text "n"
+  resource A "a" { use n }
+}
+world W "w" { modules m durability durable writers governed generated python, cobol scope deployment quarantine_retention 3 }

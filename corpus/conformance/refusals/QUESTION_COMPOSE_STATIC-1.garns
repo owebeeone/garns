@@ -1,0 +1,12 @@
+module bad "a question composes questions only" {
+  intent key : Id "key"
+  intent name : Text "name"
+  resource Parent "parent" { use key { key } use name }
+  resource Child "child" { use key { key } link parent -> Parent { end cascade inverse children } }
+  query big_parents of Parent "static inner" { where call text.length(name) > 3 show identity }
+  question children_of_big of Child "composes a static query" {
+    where parent within big_parents
+    show identity
+    live bounded 10
+  }
+}

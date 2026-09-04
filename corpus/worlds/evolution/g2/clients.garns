@@ -1,0 +1,21 @@
+module clients "Generation 2: nickname added; Timestamped applied to Client with a named repair." {
+  import people (Owned, Timestamped, email)
+
+  intent user_name : DisplayName "the name this person is addressed by"
+  intent nickname : DisplayName "informal name; may be absent"
+
+  resource Client "a person the practice documents" {
+    use user_name { filter order }
+    use nickname { optional }
+    lifecycle mutable
+    carry Owned, Timestamped
+    tighten created_at repair ship_clock
+  }
+
+  resource Contact "someone related to a client" {
+    use user_name
+    use email { optional }
+    link client -> Client { end cascade inverse contacts }
+    lifecycle mutable
+  }
+}

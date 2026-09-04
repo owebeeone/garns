@@ -1,0 +1,30 @@
+module sales "dynamic question conformance" {
+  intent customer_id : Id "customer identity"
+  intent order_id : Id "order identity"
+  intent name : Text "customer name"
+  intent status : OrderStatus "order status" { values @open, @closed }
+  intent total : Money "order total"
+  intent created_at : Instant "creation time"
+
+  resource Customer "customer" {
+    use customer_id { key }
+    use name
+  }
+
+  resource Order "order" {
+    use order_id { key }
+    use status { filter }
+    use total
+    use created_at { order }
+    link customer -> Customer { end restrict inverse orders }
+  }
+
+  question open_orders of Order "bounded live open orders" {
+    where status = @open
+    show identity, customer.name as customer, total
+    order created_at descending
+    first 20
+    live bounded 20
+  }
+}
+

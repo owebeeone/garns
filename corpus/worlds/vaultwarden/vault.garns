@@ -1,0 +1,120 @@
+# Vault items: ciphers, folders, attachments, sends, favorites, archives.
+# A cipher belongs to exactly one of user or organisation (C-05.2 XOR). Because
+# owner is optional, Cipher cannot carry Owned (that would widen the trait's
+# required scopes link). It exempts Owned; user-scoped reads are declared.
+
+module vault "Ciphers, folders, attachments, sends, and the user-side associations." {
+  import people (Organization, Owned, User)
+  import traits (Timestamped, atype)
+
+  intent cipher_name : Opaque "encrypted name; the server never reads it"
+  intent notes : Opaque "encrypted notes"
+  intent fields : Opaque "encrypted custom fields"
+  intent cipher_data : Opaque "encrypted vault item body"
+  intent password_history : Opaque "encrypted password-history blob"
+  intent deleted_at : Instant "when the cipher was hidden from default lists"
+  intent reprompt : Integer "reprompt policy stored with the cipher"
+  intent cipher_key : Opaque "per-cipher encrypted key"
+  intent file_name : Opaque "encrypted attachment file name"
+  intent file_size : Integer "byte length of the stored attachment"
+  intent attachment_key : Opaque "encrypted attachment key"
+  intent send_name : Opaque "encrypted send name"
+  intent send_notes : Opaque "encrypted send notes"
+  intent send_data : Opaque "encrypted send payload"
+  intent send_key : Opaque "encrypted send key"
+  intent send_password_hash : Opaque "optional send-password kdf output"
+  intent send_password_salt : Opaque "optional send-password salt"
+  intent send_password_iter : Integer "optional send-password iterations"
+  intent max_access_count : Integer "cap on how many times this send may be opened"
+  intent access_count : Integer "how many times this send has been opened"
+  intent expiration_date : Instant "when this send stops being retrievable"
+  intent deletion_date : Instant "when this send is removed"
+  intent disabled : Boolean "whether this send is turned off"
+  intent hide_email : Boolean "whether the sender email is hidden"
+  intent archived_at : Instant "when the user archived this cipher"
+  intent folder_name : Opaque "encrypted folder name"
+
+  resource Cipher "an encrypted vault item belonging to exactly one of user or organisation" {
+    use atype { filter }
+    use cipher_name
+    use notes { optional }
+    use fields { optional }
+    use cipher_data
+    use password_history { optional }
+    use deleted_at { optional }
+    use reprompt { optional }
+    use cipher_key { optional }
+    link owner -> User { optional end detach inverse ciphers }
+    link org -> Organization { optional end detach inverse ciphers }
+    lifecycle archived_by deleted_at
+    carry Timestamped
+    invariant (owner present and org absent) or (owner absent and org present)
+  }
+
+  resource Folder "a user-owned folder of ciphers" {
+    use folder_name
+    lifecycle mutable
+    carry Owned, Timestamped
+  }
+
+  association FoldersCiphers "this cipher sits in this folder" {
+    link cipher -> Cipher { end cascade inverse folders }
+    link folder -> Folder { end cascade inverse ciphers }
+  }
+
+  resource Attachment "file metadata for a cipher; content bytes live outside the store" {
+    use file_name
+    use file_size { filter }
+    use attachment_key { optional }
+    link cipher -> Cipher { end cascade inverse attachments }
+    lifecycle mutable
+  }
+
+  resource Send "an ephemeral share; user or organisation, never both" {
+    use send_name
+    use send_notes { optional }
+    use atype
+    use send_data
+    use send_key
+    use send_password_hash { optional }
+    use send_password_salt { optional }
+    use send_password_iter { optional }
+    use max_access_count { optional }
+    use access_count { default 0 }
+    use expiration_date { optional filter order }
+    use deletion_date { order }
+    use disabled { default false filter }
+    use hide_email { optional }
+    link owner -> User { optional end detach inverse sends }
+    link org -> Organization { optional end detach inverse sends }
+    lifecycle mutable
+    carry Timestamped
+    invariant (owner present and org absent) or (owner absent and org present)
+  }
+
+  association Favorite "this user marked this cipher as a favorite" {
+    link owner -> User { end cascade inverse favorites }
+    link cipher -> Cipher { end cascade }
+  }
+
+  association Archive "this user archived this cipher without deleting it" {
+    link owner -> User { end cascade inverse archives }
+    link cipher -> Cipher { end cascade }
+    use archived_at { default ship_clock }
+  }
+
+  query unexpired_sends of Send "sends whose expiry has not passed; a derived read, not a job" {
+    where disabled = false
+      and deletion_date > engine_clock
+      and (expiration_date absent or expiration_date > engine_clock)
+    show send_name, expiration_date, deletion_date
+    order deletion_date
+    unscoped vault_admin
+  }
+
+  query opaque_present of Cipher "ciphers whose encrypted body is present" {
+    where cipher_data present
+    show atype
+    unscoped vault_admin
+  }
+}

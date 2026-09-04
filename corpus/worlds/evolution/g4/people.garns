@@ -1,0 +1,25 @@
+# Generation 4: nickname retired; email retyped; Contact.client stops cascading.
+
+module people "Generation 4: nickname retired with its data quarantined; email retyped." {
+  intent email : Text "an address that can receive mail, as typed" {
+    retype Email forward widen backward validate
+  }
+  intent created_at : Instant "when this individual was minted"
+
+  tombstone nickname "informal names belong in notes" {
+    data quarantine
+  }
+
+  resource User "a practitioner" {
+    use email { key }
+    lifecycle retirable
+  }
+
+  trait Owned "belongs to one practitioner" {
+    link owner -> User { end restrict scopes }
+  }
+
+  trait Timestamped "carries the mint instant" {
+    use created_at { order stamp on_mint }
+  }
+}

@@ -1,0 +1,10 @@
+module bad "a dynamic question has one bound" {
+  intent key : Id "key"
+  resource Item "item" { use key { key } }
+  question items of Item "duplicate live bound" {
+    show identity
+    live bounded 10
+    live bounded 20
+  }
+}
+

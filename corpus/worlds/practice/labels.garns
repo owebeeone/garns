@@ -1,0 +1,29 @@
+# Labels are global tags; the association to clients is scoped through its client end.
+
+module labels "Labels are global tags; the association to clients is scoped through its client end." {
+  import clients (Client, Contact)
+
+  intent label_name : DisplayName "a short tag the practice applies to clients"
+
+  resource Label "a tag the practice applies to clients" {
+    use label_name { key }
+    lifecycle retirable
+  }
+
+  association ClientLabel "this label applies to this client" {
+    link client -> Client { end cascade inverse labels }
+    link label -> Label { end restrict inverse clients }
+  }
+
+  question vip_clients of Client "clients carrying the vip label" {
+    where some labels.label.label_name = "vip"
+    show preferred_name
+    live bounded 1000
+  }
+
+  question vip_contacts of Contact "contacts of vip clients" {
+    where client within vip_clients
+    show preferred_name, email
+    live bounded 1000
+  }
+}

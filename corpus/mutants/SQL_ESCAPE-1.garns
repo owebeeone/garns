@@ -1,0 +1,8 @@
+module m "m" {
+  resource User "u" {
+    lifecycle mutable
+  }
+  question q of User "q" {
+    where SELECT 1
+  }
+}

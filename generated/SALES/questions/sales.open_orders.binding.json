@@ -1,0 +1,13 @@
+{
+ "capability": null,
+ "composes": [],
+ "live_bound": 20,
+ "parameters": [],
+ "question": "sales.open_orders",
+ "retention": 3,
+ "scoped": false,
+ "shape": "windowed",
+ "subject": "sales.Order",
+ "writer_source": null,
+ "writers": "governed"
+}

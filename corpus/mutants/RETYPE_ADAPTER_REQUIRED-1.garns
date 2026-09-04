@@ -1,0 +1,6 @@
+module m "no adapter" {
+  intent email : Text "e" {
+    retype Email
+  }
+  resource User "u" { use email lifecycle mutable }
+}

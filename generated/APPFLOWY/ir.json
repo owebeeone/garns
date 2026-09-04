@@ -1,0 +1,5488 @@
+{
+ "program": {
+  "$": "Program",
+  "aliases": [],
+  "bulks": [],
+  "carriers": [
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "an on-device model this user can select",
+    "members": [],
+    "module": "ai",
+    "name": "LocalAiModel",
+    "ordered_within": null,
+    "qid": "ai.LocalAiModel",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "ai.LocalAiModel",
+      "default": null,
+      "filter": false,
+      "intent": "ai.model_name",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "ai.LocalAiModel",
+      "default": null,
+      "filter": false,
+      "intent": "ai.model_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "chat.ChatMessage.chat",
+      "many": true,
+      "name": "messages",
+      "source": "chat.ChatMessage"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "chat.ChatLocalSetting.chat",
+      "many": false,
+      "name": "local_setting",
+      "source": "chat.ChatLocalSetting"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "an AI chat session stored in this file",
+    "members": [],
+    "module": "chat",
+    "name": "Chat",
+    "ordered_within": null,
+    "qid": "chat.Chat",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "chat.Chat",
+      "default": null,
+      "filter": false,
+      "intent": "chat.chat_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.Chat",
+      "default": null,
+      "filter": false,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.Chat",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "chat.chat_metadata",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.Chat",
+      "default": null,
+      "filter": false,
+      "intent": "chat.rag_ids",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.Chat",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": true
+      },
+      "filter": false,
+      "intent": "chat.is_sync",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.Chat",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "chat.summary",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "chat.ChatLocalSetting",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "local_setting",
+      "key": true,
+      "name": "chat",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "chat.ChatLocalSetting.chat",
+      "scopes": false,
+      "target": "chat.Chat"
+     }
+    ],
+    "meaning": "per-chat local model selection for this user",
+    "members": [],
+    "module": "chat",
+    "name": "ChatLocalSetting",
+    "ordered_within": null,
+    "qid": "chat.ChatLocalSetting",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "chat.ChatLocalSetting",
+      "default": null,
+      "filter": false,
+      "intent": "chat.local_model_path",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatLocalSetting",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "chat.local_model_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "event",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "messages",
+      "key": false,
+      "name": "chat",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "chat.ChatMessage.chat",
+      "scopes": false,
+      "target": "chat.Chat"
+     }
+    ],
+    "meaning": "a message in a chat, in the order written",
+    "members": [],
+    "module": "chat",
+    "name": "ChatMessage",
+    "ordered_within": "chat.ChatMessage.chat",
+    "qid": "chat.ChatMessage",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "filter": false,
+      "intent": "chat.message_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "filter": false,
+      "intent": "chat.content",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "filter": false,
+      "intent": "chat.author_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "filter": true,
+      "intent": "chat.author_id",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "filter": false,
+      "intent": "chat.reply_message_id",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": null,
+      "filter": false,
+      "intent": "chat.message_metadata",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "chat.ChatMessage",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": true
+      },
+      "filter": false,
+      "intent": "chat.is_sync",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "sync bookkeeping for one collab object",
+    "members": [],
+    "module": "collab",
+    "name": "CollabMetadata",
+    "ordered_within": null,
+    "qid": "collab.CollabMetadata",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "collab.CollabMetadata",
+      "default": null,
+      "filter": false,
+      "intent": "collab.object_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabMetadata",
+      "default": null,
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabMetadata",
+      "default": null,
+      "filter": false,
+      "intent": "collab.prev_sync_state_vector",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Opaque",
+       "carrier": null,
+       "class": "opaque",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabMetadata",
+      "default": null,
+      "filter": false,
+      "intent": "collab.collab_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "a vestigial local snapshot of a collab object; no non-migration readers",
+    "members": [],
+    "module": "collab",
+    "name": "CollabSnapshot",
+    "ordered_within": null,
+    "qid": "collab.CollabSnapshot",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "collab.CollabSnapshot",
+      "default": null,
+      "filter": true,
+      "intent": "collab.object_oid",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabSnapshot",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "collab.title",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabSnapshot",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "collab.snapshot_desc",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabSnapshot",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "collab.collab_type_text",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabSnapshot",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Instant",
+        "carrier": null,
+        "class": "instant",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 0
+      },
+      "filter": false,
+      "intent": "collab.snapshot_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.CollabSnapshot",
+      "default": null,
+      "filter": false,
+      "intent": "collab.snapshot_data",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Opaque",
+       "carrier": null,
+       "class": "opaque",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "collab.IndexCollabRecord",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "index_records",
+      "key": false,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "collab.IndexCollabRecord.workspace",
+      "scopes": false,
+      "target": "workspaces.UserWorkspace"
+     }
+    ],
+    "meaning": "whether a collab object has been queued for embedding",
+    "members": [],
+    "module": "collab",
+    "name": "IndexCollabRecord",
+    "ordered_within": null,
+    "qid": "collab.IndexCollabRecord",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "collab.IndexCollabRecord",
+      "default": null,
+      "filter": false,
+      "intent": "collab.object_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "collab.IndexCollabRecord",
+      "default": null,
+      "filter": false,
+      "intent": "collab.content_hash",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "embeddings.InWorkspace"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "embeddings.InWorkspace",
+      "qid": "embeddings.CollabEmbedding.workspace",
+      "scopes": true,
+      "target": "embeddings.Workspace"
+     }
+    ],
+    "meaning": "one embedded fragment of a collab object",
+    "members": [],
+    "module": "embeddings",
+    "name": "CollabEmbedding",
+    "ordered_within": null,
+    "qid": "embeddings.CollabEmbedding",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": null,
+      "filter": true,
+      "intent": "embeddings.object_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.fragment_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.content_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.content",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.embedding_metadata",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 0
+      },
+      "filter": false,
+      "intent": "embeddings.fragment_index",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 0
+      },
+      "filter": false,
+      "intent": "embeddings.embedder_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.CollabEmbedding",
+      "default": null,
+      "filter": true,
+      "intent": "embeddings.embedding",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Vector",
+       "carrier": null,
+       "class": "vector",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "trait",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "embeddings.InWorkspace",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "embeddings.InWorkspace.workspace",
+      "scopes": true,
+      "target": "embeddings.Workspace"
+     }
+    ],
+    "meaning": "an embedding row belongs to one workspace",
+    "members": [],
+    "module": "embeddings",
+    "name": "InWorkspace",
+    "ordered_within": null,
+    "qid": "embeddings.InWorkspace",
+    "scope_via": null,
+    "tightens": [],
+    "uses": []
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "embeddings.InWorkspace"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "embeddings.PendingIndex",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "embeddings.InWorkspace",
+      "qid": "embeddings.PendingIndex.workspace",
+      "scopes": true,
+      "target": "embeddings.Workspace"
+     }
+    ],
+    "meaning": "a collab object waiting to be embedded",
+    "members": [],
+    "module": "embeddings",
+    "name": "PendingIndex",
+    "ordered_within": null,
+    "qid": "embeddings.PendingIndex",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "embeddings.PendingIndex",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.object_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.PendingIndex",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.content",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.PendingIndex",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.collab_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.PendingIndex",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "embeddings.updated_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "embeddings.PendingIndex",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.indexed_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "a workspace id as known to the embedding store; no row is stored here",
+    "members": [],
+    "module": "embeddings",
+    "name": "Workspace",
+    "ordered_within": null,
+    "qid": "embeddings.Workspace",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "embeddings.Workspace",
+      "default": null,
+      "filter": false,
+      "intent": "embeddings.workspace_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "one execution of a flowy-user data migration",
+    "members": [],
+    "module": "migrate",
+    "name": "UserDataMigrationRecord",
+    "ordered_within": null,
+    "qid": "migrate.UserDataMigrationRecord",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "migrate.UserDataMigrationRecord",
+      "default": null,
+      "filter": false,
+      "intent": "migrate.migration_name",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "migrate.UserDataMigrationRecord",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "migrate.executed_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "trait",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "traits.Local",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "traits.Local.owner",
+      "scopes": true,
+      "target": "traits.User"
+     }
+    ],
+    "meaning": "belongs to the local user; the tenancy boundary of this file",
+    "members": [],
+    "module": "traits",
+    "name": "Local",
+    "ordered_within": null,
+    "qid": "traits.Local",
+    "scope_via": null,
+    "tightens": [],
+    "uses": []
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "the local account this SQLite file belongs to",
+    "members": [],
+    "module": "traits",
+    "name": "User",
+    "ordered_within": null,
+    "qid": "traits.User",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "traits.User",
+      "default": null,
+      "filter": false,
+      "intent": "traits.user_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "traits.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "traits.icon_url",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "traits.token",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Email",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": true,
+      "intent": "traits.email",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Email",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 0
+      },
+      "filter": false,
+      "intent": "traits.auth_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Instant",
+        "carrier": null,
+        "class": "instant",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 0
+      },
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "uploads.UploadPart.upload",
+      "many": true,
+      "name": "parts",
+      "source": "uploads.UploadPart"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "uploads",
+      "key": true,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "uploads.UploadFile.workspace",
+      "scopes": false,
+      "target": "workspaces.UserWorkspace"
+     }
+    ],
+    "meaning": "a resumable multipart upload for one file",
+    "members": [],
+    "module": "uploads",
+    "name": "UploadFile",
+    "ordered_within": null,
+    "qid": "uploads.UploadFile",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.file_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.parent_dir",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.local_file_path",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.content_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.chunk_size",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.num_chunk",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": true,
+      "intent": "uploads.upload_oid",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": null,
+      "filter": false,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadFile",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "uploads.is_finish",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "event",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "uploads.UploadPart",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "parts",
+      "key": false,
+      "name": "upload",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "uploads.UploadPart.upload",
+      "scopes": false,
+      "target": "uploads.UploadFile"
+     }
+    ],
+    "meaning": "one part of a multipart upload, ordered by part_num",
+    "members": [],
+    "module": "uploads",
+    "name": "UploadPart",
+    "ordered_within": "uploads.UploadPart.upload",
+    "qid": "uploads.UploadPart",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadPart",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.e_tag",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "uploads.UploadPart",
+      "default": null,
+      "filter": false,
+      "intent": "uploads.part_num",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "workspaces.SharedUser",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "shared_users",
+      "key": true,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "workspaces.SharedUser.workspace",
+      "scopes": false,
+      "target": "workspaces.UserWorkspace"
+     }
+    ],
+    "meaning": "a user listed on a shared view; view_oid is not a kind in this store",
+    "members": [],
+    "module": "workspaces",
+    "name": "SharedUser",
+    "ordered_within": null,
+    "qid": "workspaces.SharedUser",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedUser",
+      "default": null,
+      "filter": true,
+      "intent": "workspaces.view_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedUser",
+      "default": null,
+      "filter": true,
+      "intent": "traits.email",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Email",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedUser",
+      "default": null,
+      "filter": false,
+      "intent": "traits.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedUser",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "workspaces.avatar_url",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedUser",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.role",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedUser",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.access_level",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedUser",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 0
+      },
+      "filter": false,
+      "intent": "workspaces.sort_order",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "workspaces.SharedView",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "shared_views",
+      "key": true,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "workspaces.SharedView.workspace",
+      "scopes": false,
+      "target": "workspaces.UserWorkspace"
+     }
+    ],
+    "meaning": "a view this user can see by share; view rows live in RocksDB",
+    "members": [],
+    "module": "workspaces",
+    "name": "SharedView",
+    "ordered_within": null,
+    "qid": "workspaces.SharedView",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedView",
+      "default": null,
+      "filter": true,
+      "intent": "workspaces.uid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedView",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.view_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedView",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.permission_id",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.SharedView",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "collab.IndexCollabRecord.workspace",
+      "many": true,
+      "name": "index_records",
+      "source": "collab.IndexCollabRecord"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "uploads.UploadFile.workspace",
+      "many": true,
+      "name": "uploads",
+      "source": "uploads.UploadFile"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "workspaces.WorkspaceMember.workspace",
+      "many": true,
+      "name": "members",
+      "source": "workspaces.WorkspaceMember"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "workspaces.WorkspaceSetting.workspace",
+      "many": false,
+      "name": "setting",
+      "source": "workspaces.WorkspaceSetting"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "workspaces.SharedView.workspace",
+      "many": true,
+      "name": "shared_views",
+      "source": "workspaces.SharedView"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "workspaces.SharedUser.workspace",
+      "many": true,
+      "name": "shared_users",
+      "source": "workspaces.SharedUser"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "a workspace this local user has opened",
+    "members": [],
+    "module": "workspaces",
+    "name": "UserWorkspace",
+    "ordered_within": null,
+    "qid": "workspaces.UserWorkspace",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.workspace_oid",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": null,
+      "filter": false,
+      "intent": "traits.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": null,
+      "filter": true,
+      "intent": "workspaces.uid",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Instant",
+        "carrier": null,
+        "class": "instant",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 0
+      },
+      "filter": false,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.database_storage_id",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "workspaces.icon",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 1
+      },
+      "filter": false,
+      "intent": "workspaces.member_count",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.role",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.UserWorkspace",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 1
+      },
+      "filter": false,
+      "intent": "workspaces.workspace_type",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "members",
+      "key": true,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "workspaces.WorkspaceMember.workspace",
+      "scopes": false,
+      "target": "workspaces.UserWorkspace"
+     }
+    ],
+    "meaning": "a person listed on a workspace; composite key email plus workspace",
+    "members": [],
+    "module": "workspaces",
+    "name": "WorkspaceMember",
+    "ordered_within": null,
+    "qid": "workspaces.WorkspaceMember",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": null,
+      "filter": true,
+      "intent": "traits.email",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Email",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.role",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": null,
+      "filter": false,
+      "intent": "traits.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.avatar_url",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": null,
+      "filter": true,
+      "intent": "workspaces.uid",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceMember",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.joined_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "workspaces.WorkspaceSetting",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "setting",
+      "key": true,
+      "name": "workspace",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "workspaces.WorkspaceSetting.workspace",
+      "scopes": false,
+      "target": "workspaces.UserWorkspace"
+     }
+    ],
+    "meaning": "per-workspace local AI and search flags",
+    "members": [],
+    "module": "workspaces",
+    "name": "WorkspaceSetting",
+    "ordered_within": null,
+    "qid": "workspaces.WorkspaceSetting",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceSetting",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "workspaces.disable_search_indexing",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.WorkspaceSetting",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "workspaces.ai_model",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   }
+  ],
+  "compounds": [],
+  "deployments": [
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": "./flowy-database.sqlite",
+     "kind": "env",
+     "name": "APPFLOWY_DB"
+    },
+    "meaning": "metadata store follows the file",
+    "mode": "readwrite",
+    "name": "APPFLOWY_DEV",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "APPFLOWY"
+   },
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": "./vector.sqlite",
+     "kind": "env",
+     "name": "APPFLOWY_VEC_DB"
+    },
+    "meaning": "embedding store follows the file",
+    "mode": "readwrite",
+    "name": "APPFLOWY_VEC_DEV",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "APPFLOWY_VEC"
+   }
+  ],
+  "intents": [
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "local model name",
+    "module": "ai",
+    "name": "model_name",
+    "pattern": null,
+    "qid": "ai.model_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "model type discriminant; schema has no closed set",
+    "module": "ai",
+    "name": "model_type",
+    "pattern": null,
+    "qid": "ai.model_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "author id; may name a user or a bot",
+    "module": "chat",
+    "name": "author_id",
+    "pattern": null,
+    "qid": "chat.author_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "author discriminant; schema has no closed set",
+    "module": "chat",
+    "name": "author_type",
+    "pattern": null,
+    "qid": "chat.author_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "opaque chat metadata blob as text",
+    "module": "chat",
+    "name": "chat_metadata",
+    "pattern": null,
+    "qid": "chat.chat_metadata",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "chat id as stored on chat_table.chat_id",
+    "module": "chat",
+    "name": "chat_oid",
+    "pattern": null,
+    "qid": "chat.chat_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "message body",
+    "module": "chat",
+    "name": "content",
+    "pattern": null,
+    "qid": "chat.content",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "offline outbox flag: true when pushed or authored online",
+    "module": "chat",
+    "name": "is_sync",
+    "pattern": null,
+    "qid": "chat.is_sync",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "local model name",
+    "module": "chat",
+    "name": "local_model_name",
+    "pattern": null,
+    "qid": "chat.local_model_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "filesystem path of a local model",
+    "module": "chat",
+    "name": "local_model_path",
+    "pattern": null,
+    "qid": "chat.local_model_path",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "opaque per-message metadata",
+    "module": "chat",
+    "name": "message_metadata",
+    "pattern": null,
+    "qid": "chat.message_metadata",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "caller-supplied message id; a key, not engine identity",
+    "module": "chat",
+    "name": "message_oid",
+    "pattern": null,
+    "qid": "chat.message_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "RAG file ids attached to a chat; optional",
+    "module": "chat",
+    "name": "rag_ids",
+    "pattern": null,
+    "qid": "chat.rag_ids",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "id of a replied-to message; not a link",
+    "module": "chat",
+    "name": "reply_message_id",
+    "pattern": null,
+    "qid": "chat.reply_message_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "chat summary written by the model",
+    "module": "chat",
+    "name": "summary",
+    "pattern": null,
+    "qid": "chat.summary",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "collab type discriminant on metadata",
+    "module": "collab",
+    "name": "collab_type",
+    "pattern": null,
+    "qid": "collab.collab_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "collab type as text on the vestigial snapshot table",
+    "module": "collab",
+    "name": "collab_type_text",
+    "pattern": null,
+    "qid": "collab.collab_type_text",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "hash of indexed content",
+    "module": "collab",
+    "name": "content_hash",
+    "pattern": null,
+    "qid": "collab.content_hash",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "collab object id",
+    "module": "collab",
+    "name": "object_oid",
+    "pattern": null,
+    "qid": "collab.object_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "CRDT state vector; presence only",
+    "module": "collab",
+    "name": "prev_sync_state_vector",
+    "pattern": null,
+    "qid": "collab.prev_sync_state_vector",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Opaque",
+     "carrier": null,
+     "class": "opaque",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "snapshot timestamp",
+    "module": "collab",
+    "name": "snapshot_at",
+    "pattern": null,
+    "qid": "collab.snapshot_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "snapshot payload; presence only, never compared",
+    "module": "collab",
+    "name": "snapshot_data",
+    "pattern": null,
+    "qid": "collab.snapshot_data",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Opaque",
+     "carrier": null,
+     "class": "opaque",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "snapshot description; SQL column is desc",
+    "module": "collab",
+    "name": "snapshot_desc",
+    "pattern": null,
+    "qid": "collab.snapshot_desc",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "snapshot title",
+    "module": "collab",
+    "name": "title",
+    "pattern": null,
+    "qid": "collab.title",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "pending-index collab type discriminant",
+    "module": "embeddings",
+    "name": "collab_type",
+    "pattern": null,
+    "qid": "embeddings.collab_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "embedded text",
+    "module": "embeddings",
+    "name": "content",
+    "pattern": null,
+    "qid": "embeddings.content",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "fragment content-type discriminant",
+    "module": "embeddings",
+    "name": "content_type",
+    "pattern": null,
+    "qid": "embeddings.content_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "embedder discriminant",
+    "module": "embeddings",
+    "name": "embedder_type",
+    "pattern": null,
+    "qid": "embeddings.embedder_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": 768,
+    "length": null,
+    "meaning": "fixed-dimension collab fragment embedding",
+    "module": "embeddings",
+    "name": "embedding",
+    "pattern": null,
+    "qid": "embeddings.embedding",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Vector",
+     "carrier": null,
+     "class": "vector",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "optional fragment metadata",
+    "module": "embeddings",
+    "name": "embedding_metadata",
+    "pattern": null,
+    "qid": "embeddings.embedding_metadata",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "order of a fragment within its object",
+    "module": "embeddings",
+    "name": "fragment_index",
+    "pattern": null,
+    "qid": "embeddings.fragment_index",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "fragment id within an object",
+    "module": "embeddings",
+    "name": "fragment_oid",
+    "pattern": null,
+    "qid": "embeddings.fragment_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when a pending object was indexed; absent while queued",
+    "module": "embeddings",
+    "name": "indexed_at",
+    "pattern": null,
+    "qid": "embeddings.indexed_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "collab object id",
+    "module": "embeddings",
+    "name": "object_oid",
+    "pattern": null,
+    "qid": "embeddings.object_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this pending row last changed",
+    "module": "embeddings",
+    "name": "updated_at",
+    "pattern": null,
+    "qid": "embeddings.updated_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "workspace id as known to the embedding store",
+    "module": "embeddings",
+    "name": "workspace_oid",
+    "pattern": null,
+    "qid": "embeddings.workspace_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when it ran",
+    "module": "migrate",
+    "name": "executed_at",
+    "pattern": null,
+    "qid": "migrate.executed_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "name of a UserDataMigration that has run",
+    "module": "migrate",
+    "name": "migration_name",
+    "pattern": null,
+    "qid": "migrate.migration_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "AppFlowy auth provider discriminant; the schema has no closed set",
+    "module": "traits",
+    "name": "auth_type",
+    "pattern": null,
+    "qid": "traits.auth_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this individual was minted or first recorded",
+    "module": "traits",
+    "name": "created_at",
+    "pattern": null,
+    "qid": "traits.created_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "a name shown in the shell or member list",
+    "module": "traits",
+    "name": "display_name",
+    "pattern": null,
+    "qid": "traits.display_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "an address that can receive mail",
+    "module": "traits",
+    "name": "email",
+    "pattern": null,
+    "qid": "traits.email",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Email",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "url or path of an avatar or icon",
+    "module": "traits",
+    "name": "icon_url",
+    "pattern": null,
+    "qid": "traits.icon_url",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "session token for the local user",
+    "module": "traits",
+    "name": "token",
+    "pattern": null,
+    "qid": "traits.token",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this individual last changed",
+    "module": "traits",
+    "name": "updated_at",
+    "pattern": null,
+    "qid": "traits.updated_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "AppFlowy user id as stored on user_table.id; a key, not engine identity",
+    "module": "traits",
+    "name": "user_oid",
+    "pattern": null,
+    "qid": "traits.user_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "bytes per part",
+    "module": "uploads",
+    "name": "chunk_size",
+    "pattern": null,
+    "qid": "uploads.chunk_size",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "MIME type",
+    "module": "uploads",
+    "name": "content_type",
+    "pattern": null,
+    "qid": "uploads.content_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "S3 part ETag",
+    "module": "uploads",
+    "name": "e_tag",
+    "pattern": null,
+    "qid": "uploads.e_tag",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "file id within a parent directory",
+    "module": "uploads",
+    "name": "file_oid",
+    "pattern": null,
+    "qid": "uploads.file_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "whether the multipart upload has finished",
+    "module": "uploads",
+    "name": "is_finish",
+    "pattern": null,
+    "qid": "uploads.is_finish",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "local path of the file being uploaded",
+    "module": "uploads",
+    "name": "local_file_path",
+    "pattern": null,
+    "qid": "uploads.local_file_path",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "number of parts",
+    "module": "uploads",
+    "name": "num_chunk",
+    "pattern": null,
+    "qid": "uploads.num_chunk",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "parent directory of an upload",
+    "module": "uploads",
+    "name": "parent_dir",
+    "pattern": null,
+    "qid": "uploads.parent_dir",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "1-based part number",
+    "module": "uploads",
+    "name": "part_num",
+    "pattern": null,
+    "qid": "uploads.part_num",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "multipart upload id; parts join on this use",
+    "module": "uploads",
+    "name": "upload_oid",
+    "pattern": null,
+    "qid": "uploads.upload_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "shared-user access discriminant",
+    "module": "workspaces",
+    "name": "access_level",
+    "pattern": null,
+    "qid": "workspaces.access_level",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "selected local or cloud model name",
+    "module": "workspaces",
+    "name": "ai_model",
+    "pattern": null,
+    "qid": "workspaces.ai_model",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "member or shared-user avatar",
+    "module": "workspaces",
+    "name": "avatar_url",
+    "pattern": null,
+    "qid": "workspaces.avatar_url",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "collab storage id for this workspace",
+    "module": "workspaces",
+    "name": "database_storage_id",
+    "pattern": null,
+    "qid": "workspaces.database_storage_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "local flag: do not index this workspace",
+    "module": "workspaces",
+    "name": "disable_search_indexing",
+    "pattern": null,
+    "qid": "workspaces.disable_search_indexing",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "workspace icon",
+    "module": "workspaces",
+    "name": "icon",
+    "pattern": null,
+    "qid": "workspaces.icon",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when a member joined",
+    "module": "workspaces",
+    "name": "joined_at",
+    "pattern": null,
+    "qid": "workspaces.joined_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "cached member count",
+    "module": "workspaces",
+    "name": "member_count",
+    "pattern": null,
+    "qid": "workspaces.member_count",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "shared-view permission discriminant",
+    "module": "workspaces",
+    "name": "permission_id",
+    "pattern": null,
+    "qid": "workspaces.permission_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "workspace role discriminant; schema has no closed set",
+    "module": "workspaces",
+    "name": "role",
+    "pattern": null,
+    "qid": "workspaces.role",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "display order of a shared user; SQL column is quoted order",
+    "module": "workspaces",
+    "name": "sort_order",
+    "pattern": null,
+    "qid": "workspaces.sort_order",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "numeric user id as stored on workspace rows; not typed as User.user_oid",
+    "module": "workspaces",
+    "name": "uid",
+    "pattern": null,
+    "qid": "workspaces.uid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "a collab view id; views live in RocksDB, not this store",
+    "module": "workspaces",
+    "name": "view_oid",
+    "pattern": null,
+    "qid": "workspaces.view_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "workspace id as stored on user_workspace_table.id",
+    "module": "workspaces",
+    "name": "workspace_oid",
+    "pattern": null,
+    "qid": "workspaces.workspace_oid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "workspace type; back-filled from User.auth_type at 0024",
+    "module": "workspaces",
+    "name": "workspace_type",
+    "pattern": null,
+    "qid": "workspaces.workspace_type",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   }
+  ],
+  "modules": [
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "On-device AI models known to this local user.",
+    "name": "ai"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "traits.created_at",
+      "local": "created_at",
+      "owner": "traits",
+      "source": "created_at"
+     }
+    ],
+    "meaning": "AI chat sessions, their messages as events, and per-chat local settings.",
+    "name": "chat"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "traits.updated_at",
+      "local": "updated_at",
+      "owner": "traits",
+      "source": "updated_at"
+     },
+     {
+      "$": "Import",
+      "identity": "workspaces.UserWorkspace",
+      "local": "UserWorkspace",
+      "owner": "workspaces",
+      "source": "UserWorkspace"
+     }
+    ],
+    "meaning": "Collab snapshot, metadata, and indexing bookkeeping stored beside RocksDB.",
+    "name": "collab"
+   },
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "Collab fragment embeddings and the pending-index queue.",
+    "name": "embeddings"
+   },
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "Records of application-level data migrations that already ran on this file.",
+    "name": "migrate"
+   },
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "Shared intents and the local-user tenancy trait for the AppFlowy metadata store.",
+    "name": "traits"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "traits.created_at",
+      "local": "created_at",
+      "owner": "traits",
+      "source": "created_at"
+     },
+     {
+      "$": "Import",
+      "identity": "workspaces.UserWorkspace",
+      "local": "UserWorkspace",
+      "owner": "workspaces",
+      "source": "UserWorkspace"
+     }
+    ],
+    "meaning": "Resumable file uploads and their parts as events.",
+    "name": "uploads"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "traits.created_at",
+      "local": "created_at",
+      "owner": "traits",
+      "source": "created_at"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.display_name",
+      "local": "display_name",
+      "owner": "traits",
+      "source": "display_name"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.email",
+      "local": "email",
+      "owner": "traits",
+      "source": "email"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.updated_at",
+      "local": "updated_at",
+      "owner": "traits",
+      "source": "updated_at"
+     }
+    ],
+    "meaning": "Workspaces the local user has opened, membership by email, settings, and sharing.",
+    "name": "workspaces"
+   }
+  ],
+  "move_homes": [],
+  "newtypes": [],
+  "reads": [],
+  "restores": [],
+  "restricteds": [],
+  "retypes": [],
+  "scope_paths": {
+   "APPFLOWY": {
+    "ai.LocalAiModel": [],
+    "chat.Chat": [],
+    "chat.ChatLocalSetting": [],
+    "chat.ChatMessage": [],
+    "collab.CollabMetadata": [],
+    "collab.CollabSnapshot": [],
+    "collab.IndexCollabRecord": [],
+    "migrate.UserDataMigrationRecord": [],
+    "traits.User": [],
+    "uploads.UploadFile": [],
+    "uploads.UploadPart": [],
+    "workspaces.SharedUser": [],
+    "workspaces.SharedView": [],
+    "workspaces.UserWorkspace": [],
+    "workspaces.WorkspaceMember": [],
+    "workspaces.WorkspaceSetting": []
+   },
+   "APPFLOWY_VEC": {
+    "embeddings.CollabEmbedding": [
+     "embeddings.CollabEmbedding.workspace"
+    ],
+    "embeddings.PendingIndex": [
+     "embeddings.PendingIndex.workspace"
+    ],
+    "embeddings.Workspace": []
+   }
+  },
+  "tightens": [],
+  "tombstones": [
+   {
+    "$": "Tombstone",
+    "disposition": "drop",
+    "meaning": "short-lived RocksDB mirror; dropped at 0009 with its data",
+    "module": "collab",
+    "name": "RocksdbBackup",
+    "qid": "collab.RocksdbBackup"
+   }
+  ],
+  "worlds": [
+   {
+    "$": "World",
+    "capabilities": [],
+    "durability": "durable",
+    "exempt": [
+     "ai.LocalAiModel",
+     "chat.Chat",
+     "chat.ChatLocalSetting",
+     "chat.ChatMessage",
+     "collab.CollabMetadata",
+     "collab.CollabSnapshot",
+     "collab.IndexCollabRecord",
+     "migrate.UserDataMigrationRecord",
+     "traits.User",
+     "uploads.UploadFile",
+     "uploads.UploadPart",
+     "workspaces.SharedUser",
+     "workspaces.SharedView",
+     "workspaces.UserWorkspace",
+     "workspaces.WorkspaceMember",
+     "workspaces.WorkspaceSetting"
+    ],
+    "generated": [
+     "python",
+     "rust"
+    ],
+    "meaning": "the local AppFlowy metadata store (flowy-database.db)",
+    "modules": [
+     "traits",
+     "workspaces",
+     "chat",
+     "uploads",
+     "collab",
+     "ai",
+     "migrate"
+    ],
+    "name": "APPFLOWY",
+    "quarantine_retention": 3,
+    "requires": "traits.Local",
+    "scope": {
+     "$": "ScopeRoot",
+     "link": "traits.Local.owner",
+     "root": "traits.User",
+     "trait": "traits.Local"
+    },
+    "writer_source": null,
+    "writers": "governed"
+   },
+   {
+    "$": "World",
+    "capabilities": [],
+    "durability": "durable",
+    "exempt": [
+     "embeddings.Workspace"
+    ],
+    "generated": [
+     "python",
+     "rust"
+    ],
+    "meaning": "the local embedding store (vector.db); a second world, a second file",
+    "modules": [
+     "embeddings"
+    ],
+    "name": "APPFLOWY_VEC",
+    "quarantine_retention": 3,
+    "requires": "embeddings.InWorkspace",
+    "scope": {
+     "$": "ScopeRoot",
+     "link": "embeddings.InWorkspace.workspace",
+     "root": "embeddings.Workspace",
+     "trait": "embeddings.InWorkspace"
+    },
+    "writer_source": null,
+    "writers": "governed"
+   }
+  ]
+ },
+ "scope_paths": {
+  "ai.LocalAiModel": [],
+  "chat.Chat": [],
+  "chat.ChatLocalSetting": [],
+  "chat.ChatMessage": [],
+  "collab.CollabMetadata": [],
+  "collab.CollabSnapshot": [],
+  "collab.IndexCollabRecord": [],
+  "migrate.UserDataMigrationRecord": [],
+  "traits.User": [],
+  "uploads.UploadFile": [],
+  "uploads.UploadPart": [],
+  "workspaces.SharedUser": [],
+  "workspaces.SharedView": [],
+  "workspaces.UserWorkspace": [],
+  "workspaces.WorkspaceMember": [],
+  "workspaces.WorkspaceSetting": []
+ },
+ "storage": {
+  "$": "StorageMapping",
+  "engine": {
+   "$": "EngineTables",
+   "generations": "garns_generations",
+   "ledger": "garns_ledger",
+   "revisions": "garns_revisions"
+  },
+  "relations": {
+   "ai.LocalAiModel": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "ai.LocalAiModel",
+    "columns": {
+     "ai.LocalAiModel.model_name": "f_localaimodel_model_name",
+     "ai.LocalAiModel.model_type": "f_localaimodel_model_type"
+    },
+    "identity": "rid_ai_localaimodel",
+    "kind": null,
+    "links": {},
+    "table": "tbl_ai_localaimodel"
+   },
+   "chat.Chat": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "chat.Chat",
+    "columns": {
+     "chat.Chat.chat_metadata": "f_chat_chat_metadata",
+     "chat.Chat.chat_oid": "f_chat_chat_oid",
+     "chat.Chat.created_at": "f_chat_created_at",
+     "chat.Chat.is_sync": "f_chat_is_sync",
+     "chat.Chat.rag_ids": "f_chat_rag_ids",
+     "chat.Chat.summary": "f_chat_summary"
+    },
+    "identity": "rid_chat_chat",
+    "kind": null,
+    "links": {},
+    "table": "tbl_chat_chat"
+   },
+   "chat.ChatLocalSetting": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "chat.ChatLocalSetting",
+    "columns": {
+     "chat.ChatLocalSetting.local_model_name": "f_chatlocalsetting_local_model_name",
+     "chat.ChatLocalSetting.local_model_path": "f_chatlocalsetting_local_model_path"
+    },
+    "identity": "rid_chat_chatlocalsetting",
+    "kind": null,
+    "links": {
+     "chat.ChatLocalSetting.chat": "ref_chatlocalsetting_chat"
+    },
+    "table": "tbl_chat_chatlocalsetting"
+   },
+   "chat.ChatMessage": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "chat.ChatMessage",
+    "columns": {
+     "chat.ChatMessage.author_id": "f_chatmessage_author_id",
+     "chat.ChatMessage.author_type": "f_chatmessage_author_type",
+     "chat.ChatMessage.content": "f_chatmessage_content",
+     "chat.ChatMessage.created_at": "f_chatmessage_created_at",
+     "chat.ChatMessage.is_sync": "f_chatmessage_is_sync",
+     "chat.ChatMessage.message_metadata": "f_chatmessage_message_metadata",
+     "chat.ChatMessage.message_oid": "f_chatmessage_message_oid",
+     "chat.ChatMessage.reply_message_id": "f_chatmessage_reply_message_id"
+    },
+    "identity": "rid_chat_chatmessage",
+    "kind": null,
+    "links": {
+     "chat.ChatMessage.chat": "ref_chatmessage_chat"
+    },
+    "table": "tbl_chat_chatmessage"
+   },
+   "collab.CollabMetadata": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "collab.CollabMetadata",
+    "columns": {
+     "collab.CollabMetadata.collab_type": "f_collabmetadata_collab_type",
+     "collab.CollabMetadata.object_oid": "f_collabmetadata_object_oid",
+     "collab.CollabMetadata.prev_sync_state_vector": "f_collabmetadata_prev_sync_state_vector",
+     "collab.CollabMetadata.updated_at": "f_collabmetadata_updated_at"
+    },
+    "identity": "rid_collab_collabmetadata",
+    "kind": null,
+    "links": {},
+    "table": "tbl_collab_collabmetadata"
+   },
+   "collab.CollabSnapshot": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "collab.CollabSnapshot",
+    "columns": {
+     "collab.CollabSnapshot.collab_type_text": "f_collabsnapshot_collab_type_text",
+     "collab.CollabSnapshot.object_oid": "f_collabsnapshot_object_oid",
+     "collab.CollabSnapshot.snapshot_at": "f_collabsnapshot_snapshot_at",
+     "collab.CollabSnapshot.snapshot_data": "f_collabsnapshot_snapshot_data",
+     "collab.CollabSnapshot.snapshot_desc": "f_collabsnapshot_snapshot_desc",
+     "collab.CollabSnapshot.title": "f_collabsnapshot_title"
+    },
+    "identity": "rid_collab_collabsnapshot",
+    "kind": null,
+    "links": {},
+    "table": "tbl_collab_collabsnapshot"
+   },
+   "collab.IndexCollabRecord": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "collab.IndexCollabRecord",
+    "columns": {
+     "collab.IndexCollabRecord.content_hash": "f_indexcollabrecord_content_hash",
+     "collab.IndexCollabRecord.object_oid": "f_indexcollabrecord_object_oid"
+    },
+    "identity": "rid_collab_indexcollabrecord",
+    "kind": null,
+    "links": {
+     "collab.IndexCollabRecord.workspace": "ref_indexcollabrecord_workspace"
+    },
+    "table": "tbl_collab_indexcollabrecord"
+   },
+   "migrate.UserDataMigrationRecord": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "migrate.UserDataMigrationRecord",
+    "columns": {
+     "migrate.UserDataMigrationRecord.executed_at": "f_userdatamigrationrecord_executed_at",
+     "migrate.UserDataMigrationRecord.migration_name": "f_userdatamigrationrecord_migration_name"
+    },
+    "identity": "rid_migrate_userdatamigrationrecord",
+    "kind": null,
+    "links": {},
+    "table": "tbl_migrate_userdatamigrationrecord"
+   },
+   "traits.User": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "traits.User",
+    "columns": {
+     "traits.User.auth_type": "f_user_auth_type",
+     "traits.User.display_name": "f_user_display_name",
+     "traits.User.email": "f_user_email",
+     "traits.User.icon_url": "f_user_icon_url",
+     "traits.User.token": "f_user_token",
+     "traits.User.updated_at": "f_user_updated_at",
+     "traits.User.user_oid": "f_user_user_oid"
+    },
+    "identity": "rid_traits_user",
+    "kind": null,
+    "links": {},
+    "table": "tbl_traits_user"
+   },
+   "uploads.UploadFile": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "uploads.UploadFile",
+    "columns": {
+     "uploads.UploadFile.chunk_size": "f_uploadfile_chunk_size",
+     "uploads.UploadFile.content_type": "f_uploadfile_content_type",
+     "uploads.UploadFile.created_at": "f_uploadfile_created_at",
+     "uploads.UploadFile.file_oid": "f_uploadfile_file_oid",
+     "uploads.UploadFile.is_finish": "f_uploadfile_is_finish",
+     "uploads.UploadFile.local_file_path": "f_uploadfile_local_file_path",
+     "uploads.UploadFile.num_chunk": "f_uploadfile_num_chunk",
+     "uploads.UploadFile.parent_dir": "f_uploadfile_parent_dir",
+     "uploads.UploadFile.upload_oid": "f_uploadfile_upload_oid"
+    },
+    "identity": "rid_uploads_uploadfile",
+    "kind": null,
+    "links": {
+     "uploads.UploadFile.workspace": "ref_uploadfile_workspace"
+    },
+    "table": "tbl_uploads_uploadfile"
+   },
+   "uploads.UploadPart": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "uploads.UploadPart",
+    "columns": {
+     "uploads.UploadPart.e_tag": "f_uploadpart_e_tag",
+     "uploads.UploadPart.part_num": "f_uploadpart_part_num"
+    },
+    "identity": "rid_uploads_uploadpart",
+    "kind": null,
+    "links": {
+     "uploads.UploadPart.upload": "ref_uploadpart_upload"
+    },
+    "table": "tbl_uploads_uploadpart"
+   },
+   "workspaces.SharedUser": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "workspaces.SharedUser",
+    "columns": {
+     "workspaces.SharedUser.access_level": "f_shareduser_access_level",
+     "workspaces.SharedUser.avatar_url": "f_shareduser_avatar_url",
+     "workspaces.SharedUser.display_name": "f_shareduser_display_name",
+     "workspaces.SharedUser.email": "f_shareduser_email",
+     "workspaces.SharedUser.role": "f_shareduser_role",
+     "workspaces.SharedUser.sort_order": "f_shareduser_sort_order",
+     "workspaces.SharedUser.view_oid": "f_shareduser_view_oid"
+    },
+    "identity": "rid_workspaces_shareduser",
+    "kind": null,
+    "links": {
+     "workspaces.SharedUser.workspace": "ref_shareduser_workspace"
+    },
+    "table": "tbl_workspaces_shareduser"
+   },
+   "workspaces.SharedView": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "workspaces.SharedView",
+    "columns": {
+     "workspaces.SharedView.created_at": "f_sharedview_created_at",
+     "workspaces.SharedView.permission_id": "f_sharedview_permission_id",
+     "workspaces.SharedView.uid": "f_sharedview_uid",
+     "workspaces.SharedView.view_oid": "f_sharedview_view_oid"
+    },
+    "identity": "rid_workspaces_sharedview",
+    "kind": null,
+    "links": {
+     "workspaces.SharedView.workspace": "ref_sharedview_workspace"
+    },
+    "table": "tbl_workspaces_sharedview"
+   },
+   "workspaces.UserWorkspace": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "workspaces.UserWorkspace",
+    "columns": {
+     "workspaces.UserWorkspace.created_at": "f_userworkspace_created_at",
+     "workspaces.UserWorkspace.database_storage_id": "f_userworkspace_database_storage_id",
+     "workspaces.UserWorkspace.display_name": "f_userworkspace_display_name",
+     "workspaces.UserWorkspace.icon": "f_userworkspace_icon",
+     "workspaces.UserWorkspace.member_count": "f_userworkspace_member_count",
+     "workspaces.UserWorkspace.role": "f_userworkspace_role",
+     "workspaces.UserWorkspace.uid": "f_userworkspace_uid",
+     "workspaces.UserWorkspace.workspace_oid": "f_userworkspace_workspace_oid",
+     "workspaces.UserWorkspace.workspace_type": "f_userworkspace_workspace_type"
+    },
+    "identity": "rid_workspaces_userworkspace",
+    "kind": null,
+    "links": {},
+    "table": "tbl_workspaces_userworkspace"
+   },
+   "workspaces.WorkspaceMember": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "workspaces.WorkspaceMember",
+    "columns": {
+     "workspaces.WorkspaceMember.avatar_url": "f_workspacemember_avatar_url",
+     "workspaces.WorkspaceMember.display_name": "f_workspacemember_display_name",
+     "workspaces.WorkspaceMember.email": "f_workspacemember_email",
+     "workspaces.WorkspaceMember.joined_at": "f_workspacemember_joined_at",
+     "workspaces.WorkspaceMember.role": "f_workspacemember_role",
+     "workspaces.WorkspaceMember.uid": "f_workspacemember_uid",
+     "workspaces.WorkspaceMember.updated_at": "f_workspacemember_updated_at"
+    },
+    "identity": "rid_workspaces_workspacemember",
+    "kind": null,
+    "links": {
+     "workspaces.WorkspaceMember.workspace": "ref_workspacemember_workspace"
+    },
+    "table": "tbl_workspaces_workspacemember"
+   },
+   "workspaces.WorkspaceSetting": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "workspaces.WorkspaceSetting",
+    "columns": {
+     "workspaces.WorkspaceSetting.ai_model": "f_workspacesetting_ai_model",
+     "workspaces.WorkspaceSetting.disable_search_indexing": "f_workspacesetting_disable_search_indexing"
+    },
+    "identity": "rid_workspaces_workspacesetting",
+    "kind": null,
+    "links": {
+     "workspaces.WorkspaceSetting.workspace": "ref_workspacesetting_workspace"
+    },
+    "table": "tbl_workspaces_workspacesetting"
+   }
+  },
+  "source": "storage-APPFLOWY.json",
+  "world": "APPFLOWY"
+ },
+ "world": {
+  "$": "World",
+  "capabilities": [],
+  "durability": "durable",
+  "exempt": [
+   "ai.LocalAiModel",
+   "chat.Chat",
+   "chat.ChatLocalSetting",
+   "chat.ChatMessage",
+   "collab.CollabMetadata",
+   "collab.CollabSnapshot",
+   "collab.IndexCollabRecord",
+   "migrate.UserDataMigrationRecord",
+   "traits.User",
+   "uploads.UploadFile",
+   "uploads.UploadPart",
+   "workspaces.SharedUser",
+   "workspaces.SharedView",
+   "workspaces.UserWorkspace",
+   "workspaces.WorkspaceMember",
+   "workspaces.WorkspaceSetting"
+  ],
+  "generated": [
+   "python",
+   "rust"
+  ],
+  "meaning": "the local AppFlowy metadata store (flowy-database.db)",
+  "modules": [
+   "traits",
+   "workspaces",
+   "chat",
+   "uploads",
+   "collab",
+   "ai",
+   "migrate"
+  ],
+  "name": "APPFLOWY",
+  "quarantine_retention": 3,
+  "requires": "traits.Local",
+  "scope": {
+   "$": "ScopeRoot",
+   "link": "traits.Local.owner",
+   "root": "traits.User",
+   "trait": "traits.Local"
+  },
+  "writer_source": null,
+  "writers": "governed"
+ }
+}

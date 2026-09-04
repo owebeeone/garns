@@ -1,0 +1,13 @@
+{
+ "capability": null,
+ "composes": [],
+ "live_bound": 500,
+ "parameters": [],
+ "question": "pantry.open_jars",
+ "retention": 2,
+ "scoped": true,
+ "shape": "collection",
+ "subject": "pantry.Jar",
+ "writer_source": "pantry_daemon",
+ "writers": "external_captured"
+}

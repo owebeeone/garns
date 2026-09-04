@@ -1,0 +1,19 @@
+# Generation 2: Timestamped trait minted; nickname added to Client.
+
+module people "Generation 2: Timestamped trait minted." {
+  intent email : Email "an address that can receive mail"
+  intent created_at : Instant "when this individual was minted"
+
+  resource User "a practitioner" {
+    use email { key }
+    lifecycle retirable
+  }
+
+  trait Owned "belongs to one practitioner" {
+    link owner -> User { end restrict scopes }
+  }
+
+  trait Timestamped "carries the mint instant" {
+    use created_at { order stamp on_mint }
+  }
+}

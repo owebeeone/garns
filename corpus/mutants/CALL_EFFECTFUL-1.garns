@@ -1,0 +1,5 @@
+module m "effectful function" {
+  intent n : Text "n"
+  resource A "a" { use n }
+  query q of A "q" { where call store.purge(n) show n }
+}

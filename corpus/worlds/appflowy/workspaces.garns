@@ -1,0 +1,75 @@
+# Workspaces, membership, settings, and sharing. Every inter-kind
+# reference is `unenforced`: the store has no foreign keys (L3-3).
+
+module workspaces "Workspaces the local user has opened, membership by email, settings, and sharing." {
+  import traits (created_at, display_name, email, updated_at)
+
+  intent workspace_oid : Text "workspace id as stored on user_workspace_table.id"
+  intent uid : Integer "numeric user id as stored on workspace rows; not typed as User.user_oid"
+  intent database_storage_id : Text "collab storage id for this workspace"
+  intent icon : Text "workspace icon"
+  intent member_count : Integer "cached member count"
+  intent role : Integer "workspace role discriminant; schema has no closed set"
+  intent workspace_type : Integer "workspace type; back-filled from User.auth_type at 0024"
+  intent avatar_url : Text "member or shared-user avatar"
+  intent joined_at : Instant "when a member joined"
+  intent disable_search_indexing : Boolean "local flag: do not index this workspace"
+  intent ai_model : Text "selected local or cloud model name"
+  intent view_oid : Text "a collab view id; views live in RocksDB, not this store"
+  intent permission_id : Integer "shared-view permission discriminant"
+  intent access_level : Integer "shared-user access discriminant"
+  intent sort_order : Integer "display order of a shared user; SQL column is quoted order"
+
+  resource UserWorkspace "a workspace this local user has opened" {
+    use workspace_oid { key }
+    use display_name
+    use uid { filter }
+    use created_at { order default 0 }
+    use database_storage_id
+    use icon { default "" }
+    use member_count { default 1 }
+    use role { optional }
+    use workspace_type { default 1 }
+    lifecycle mutable
+  }
+
+  resource WorkspaceMember "a person listed on a workspace; composite key email plus workspace" {
+    use email { key filter }
+    use role
+    use display_name
+    use avatar_url { optional }
+    use uid { filter }
+    use updated_at { default ship_clock }
+    use joined_at { optional }
+    link workspace -> UserWorkspace { unenforced key inverse members }
+    lifecycle mutable
+  }
+
+  resource WorkspaceSetting "per-workspace local AI and search flags" {
+    link workspace -> UserWorkspace { unenforced key inverse setting }
+    use disable_search_indexing { default false }
+    use ai_model { default "" }
+    lifecycle mutable
+  }
+
+  resource SharedView "a view this user can see by share; view rows live in RocksDB" {
+    use uid { key filter }
+    use view_oid { key }
+    use permission_id
+    use created_at { optional default ship_clock }
+    link workspace -> UserWorkspace { unenforced key inverse shared_views }
+    lifecycle mutable
+  }
+
+  resource SharedUser "a user listed on a shared view; view_oid is not a kind in this store" {
+    use view_oid { key filter }
+    use email { key filter }
+    use display_name
+    use avatar_url { default "" }
+    use role
+    use access_level
+    use sort_order { default 0 }
+    link workspace -> UserWorkspace { unenforced key inverse shared_users }
+    lifecycle mutable
+  }
+}

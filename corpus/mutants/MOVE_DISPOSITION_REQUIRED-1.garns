@@ -1,0 +1,6 @@
+module m "move_home without a data decision" {
+  intent n : Text "n"
+  resource A "a" { use n lifecycle mutable }
+  resource B "b" { lifecycle mutable }
+  move_home n of A into B
+}

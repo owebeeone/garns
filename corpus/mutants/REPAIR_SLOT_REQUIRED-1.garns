@@ -1,0 +1,9 @@
+module m "no repair" {
+  intent created_at : Instant "t"
+  trait Timestamped "t" { use created_at { stamp on_mint } }
+  resource User "u" {
+    carry Timestamped
+    lifecycle mutable
+    tighten created_at
+  }
+}

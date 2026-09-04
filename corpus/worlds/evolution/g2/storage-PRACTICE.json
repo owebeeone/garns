@@ -1,0 +1,42 @@
+{
+  "engine": {
+    "generations": "garns_generations",
+    "ledger": "garns_ledger",
+    "revisions": "garns_revisions"
+  },
+  "relations": {
+    "clients.Client": {
+      "columns": {
+        "clients.Client.created_at": "f_client_created_at",
+        "clients.Client.nickname": "f_client_nickname",
+        "clients.Client.user_name": "f_client_user_name"
+      },
+      "identity": "rid_clients_client",
+      "links": {
+        "clients.Client.owner": "ref_client_owner"
+      },
+      "table": "tbl_clients_client"
+    },
+    "clients.Contact": {
+      "columns": {
+        "clients.Contact.email": "f_contact_email",
+        "clients.Contact.user_name": "f_contact_user_name"
+      },
+      "identity": "rid_clients_contact",
+      "links": {
+        "clients.Contact.client": "ref_contact_client"
+      },
+      "table": "tbl_clients_contact"
+    },
+    "people.User": {
+      "columns": {
+        "people.User.email": "f_user_email"
+      },
+      "identity": "rid_people_user",
+      "links": {},
+      "table": "tbl_people_user"
+    }
+  },
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "PRACTICE"
+}

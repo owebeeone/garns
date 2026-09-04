@@ -1,0 +1,5359 @@
+{
+ "program": {
+  "$": "Program",
+  "aliases": [
+   {
+    "$": "Alias",
+    "carrier": "clients.Client",
+    "module": "heldout",
+    "name": "acreate_client",
+    "qid": "heldout.acreate_client",
+    "unscoped": null,
+    "verb": "mint"
+   },
+   {
+    "$": "Alias",
+    "carrier": "refs.FundingModel",
+    "module": "heldout",
+    "name": "aget_all_funding_models",
+    "qid": "heldout.aget_all_funding_models",
+    "unscoped": null,
+    "verb": "list"
+   },
+   {
+    "$": "Alias",
+    "carrier": "clients.Client",
+    "module": "heldout",
+    "name": "aget_client_by_id",
+    "qid": "heldout.aget_client_by_id",
+    "unscoped": "practice_audit",
+    "verb": "by"
+   },
+   {
+    "$": "Alias",
+    "carrier": "people.Organisation",
+    "module": "heldout",
+    "name": "aget_org_analytics_status",
+    "qid": "heldout.aget_org_analytics_status",
+    "unscoped": null,
+    "verb": "by"
+   },
+   {
+    "$": "Alias",
+    "carrier": "merge.MergeTag",
+    "module": "heldout",
+    "name": "ainsert_merge_tags",
+    "qid": "heldout.ainsert_merge_tags",
+    "unscoped": null,
+    "verb": "mint"
+   },
+   {
+    "$": "Alias",
+    "carrier": "people.User",
+    "module": "heldout",
+    "name": "check_user_status",
+    "qid": "heldout.check_user_status",
+    "unscoped": null,
+    "verb": "ensure"
+   },
+   {
+    "$": "Alias",
+    "carrier": "pms.PmsUserMap",
+    "module": "heldout",
+    "name": "db_delete_pms_user_map",
+    "qid": "heldout.db_delete_pms_user_map",
+    "unscoped": null,
+    "verb": "remove"
+   },
+   {
+    "$": "Alias",
+    "carrier": "pms.PmsUserMap",
+    "module": "heldout",
+    "name": "db_upsert_pms_user_map",
+    "qid": "heldout.db_upsert_pms_user_map",
+    "unscoped": null,
+    "verb": "apply"
+   },
+   {
+    "$": "Alias",
+    "carrier": "documents.DocxReferenceDoc",
+    "module": "heldout",
+    "name": "delete_reference_doc",
+    "qid": "heldout.delete_reference_doc",
+    "unscoped": null,
+    "verb": "delete"
+   },
+   {
+    "$": "Alias",
+    "carrier": "documents.DocxReferenceDoc",
+    "module": "heldout",
+    "name": "delete_reference_doc_lookup",
+    "qid": "heldout.delete_reference_doc_lookup",
+    "unscoped": null,
+    "verb": "by"
+   },
+   {
+    "$": "Alias",
+    "carrier": "pms.PmsApiKey",
+    "module": "heldout",
+    "name": "store_api_key",
+    "qid": "heldout.store_api_key",
+    "unscoped": null,
+    "verb": "upsert"
+   }
+  ],
+  "bulks": [
+   {
+    "$": "Bulk",
+    "carrier": "merge.MergeTag",
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "to",
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "meaning": "rename every merge tag of one property",
+    "module": "heldout",
+    "name": "aupdate_tags_value",
+    "over": "heldout.tags_for_property",
+    "qid": "heldout.aupdate_tags_value",
+    "sets": [
+     {
+      "$": "SetTerm",
+      "given": "to",
+      "use": "merge.MergeTag.property_name"
+     }
+    ],
+    "verb": "change"
+   },
+   {
+    "$": "Bulk",
+    "carrier": "pms.PmsUserMap",
+    "givens": [],
+    "meaning": "delete PMS user maps for an organisation",
+    "module": "heldout",
+    "name": "db_delete_org_pms_user_maps",
+    "over": "heldout.org_pms_user_maps",
+    "qid": "heldout.db_delete_org_pms_user_maps",
+    "sets": [],
+    "verb": "remove"
+   },
+   {
+    "$": "Bulk",
+    "carrier": "pms.PmsAdapter",
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "to",
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "meaning": "enable or disable every adapter in one status",
+    "module": "heldout",
+    "name": "upload_document_rowcount",
+    "over": "heldout.adapters_by_status",
+    "qid": "heldout.upload_document_rowcount",
+    "sets": [
+     {
+      "$": "SetTerm",
+      "given": "to",
+      "use": "pms.PmsAdapter.enabled"
+     }
+    ],
+    "verb": "change"
+   }
+  ],
+  "carriers": [
+   {
+    "$": "Carrier",
+    "archived_by": "clients.archived_at",
+    "breaking": [],
+    "carries": [
+     "people.Owned",
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "clients.ClientUser.client",
+      "many": true,
+      "name": "assigned_users",
+      "source": "clients.ClientUser"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "merge.MergeTagClient.client",
+      "many": true,
+      "name": "merge_values",
+      "source": "merge.MergeTagClient"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "archived_by",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "clients.Client",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "people.Owned",
+      "qid": "clients.Client.owner",
+      "scopes": true,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "clients.Client",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": true,
+      "inverse": null,
+      "key": false,
+      "name": "org",
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "qid": "clients.Client.org",
+      "scopes": false,
+      "target": "people.Organisation"
+     }
+    ],
+    "meaning": "a person the practitioner documents",
+    "members": [],
+    "module": "clients",
+    "name": "Client",
+    "ordered_within": null,
+    "qid": "clients.Client",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": null,
+      "filter": true,
+      "intent": "clients.first_name",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": null,
+      "filter": true,
+      "intent": "clients.last_name",
+      "key": false,
+      "optional": true,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": null,
+      "filter": true,
+      "intent": "clients.archived_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "association",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "clients.ClientUser",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "assigned_users",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "clients.ClientUser.client",
+      "scopes": false,
+      "target": "clients.Client"
+     },
+     {
+      "$": "Link",
+      "carrier": "clients.ClientUser",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": "assigned_clients",
+      "key": false,
+      "name": "user",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "clients.ClientUser.user",
+      "scopes": false,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "this user is assigned to this client",
+    "members": [],
+    "module": "clients",
+    "name": "ClientUser",
+    "ordered_within": null,
+    "qid": "clients.ClientUser",
+    "scope_via": "clients.ClientUser.client",
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "clients.ClientUser",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "clients.assigned_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [
+     {
+      "$": "Or",
+      "items": [
+       {
+        "$": "And",
+        "items": [
+         {
+          "$": "Compare",
+          "guard": null,
+          "left": {
+           "$": "PathRef",
+           "root": "documents.DocxReferenceDoc",
+           "steps": [],
+           "terminal": {
+            "$": "UseTerminal",
+            "carrier": "documents.DocxReferenceDoc",
+            "intent": "documents.doc_scope",
+            "type": {
+             "base": "Text",
+             "carrier": null,
+             "class": "text",
+             "closed": [
+              "@personal",
+              "@org"
+             ],
+             "list_of": false,
+             "nominal": null,
+             "optional": false
+            },
+            "use": "documents.DocxReferenceDoc.doc_scope"
+           },
+           "text": "doc_scope"
+          },
+          "op": "=",
+          "right": {
+           "$": "Literal",
+           "type": {
+            "base": "Text",
+            "carrier": null,
+            "class": "text",
+            "closed": [
+             "@personal",
+             "@org"
+            ],
+            "list_of": false,
+            "nominal": null,
+            "optional": false
+           },
+           "value": "personal"
+          }
+         },
+         {
+          "$": "Presence",
+          "guard": null,
+          "path": {
+           "$": "PathRef",
+           "root": "documents.DocxReferenceDoc",
+           "steps": [
+            {
+             "$": "LinkStep",
+             "inverse": false,
+             "link": "documents.DocxReferenceDoc.owner_user",
+             "many": false,
+             "source": "documents.DocxReferenceDoc",
+             "target": "people.User",
+             "text": "owner_user"
+            }
+           ],
+           "terminal": {
+            "$": "LinkTerminal",
+            "carrier": "documents.DocxReferenceDoc",
+            "link": "documents.DocxReferenceDoc.owner_user",
+            "optional": true,
+            "target": "people.User"
+           },
+           "text": "owner_user"
+          },
+          "present": true
+         },
+         {
+          "$": "Presence",
+          "guard": null,
+          "path": {
+           "$": "PathRef",
+           "root": "documents.DocxReferenceDoc",
+           "steps": [
+            {
+             "$": "LinkStep",
+             "inverse": false,
+             "link": "documents.DocxReferenceDoc.org",
+             "many": false,
+             "source": "documents.DocxReferenceDoc",
+             "target": "people.Organisation",
+             "text": "org"
+            }
+           ],
+           "terminal": {
+            "$": "LinkTerminal",
+            "carrier": "documents.DocxReferenceDoc",
+            "link": "documents.DocxReferenceDoc.org",
+            "optional": true,
+            "target": "people.Organisation"
+           },
+           "text": "org"
+          },
+          "present": false
+         }
+        ]
+       },
+       {
+        "$": "And",
+        "items": [
+         {
+          "$": "Compare",
+          "guard": null,
+          "left": {
+           "$": "PathRef",
+           "root": "documents.DocxReferenceDoc",
+           "steps": [],
+           "terminal": {
+            "$": "UseTerminal",
+            "carrier": "documents.DocxReferenceDoc",
+            "intent": "documents.doc_scope",
+            "type": {
+             "base": "Text",
+             "carrier": null,
+             "class": "text",
+             "closed": [
+              "@personal",
+              "@org"
+             ],
+             "list_of": false,
+             "nominal": null,
+             "optional": false
+            },
+            "use": "documents.DocxReferenceDoc.doc_scope"
+           },
+           "text": "doc_scope"
+          },
+          "op": "=",
+          "right": {
+           "$": "Literal",
+           "type": {
+            "base": "Text",
+            "carrier": null,
+            "class": "text",
+            "closed": [
+             "@personal",
+             "@org"
+            ],
+            "list_of": false,
+            "nominal": null,
+            "optional": false
+           },
+           "value": "org"
+          }
+         },
+         {
+          "$": "Presence",
+          "guard": null,
+          "path": {
+           "$": "PathRef",
+           "root": "documents.DocxReferenceDoc",
+           "steps": [
+            {
+             "$": "LinkStep",
+             "inverse": false,
+             "link": "documents.DocxReferenceDoc.owner_user",
+             "many": false,
+             "source": "documents.DocxReferenceDoc",
+             "target": "people.User",
+             "text": "owner_user"
+            }
+           ],
+           "terminal": {
+            "$": "LinkTerminal",
+            "carrier": "documents.DocxReferenceDoc",
+            "link": "documents.DocxReferenceDoc.owner_user",
+            "optional": true,
+            "target": "people.User"
+           },
+           "text": "owner_user"
+          },
+          "present": false
+         },
+         {
+          "$": "Presence",
+          "guard": null,
+          "path": {
+           "$": "PathRef",
+           "root": "documents.DocxReferenceDoc",
+           "steps": [
+            {
+             "$": "LinkStep",
+             "inverse": false,
+             "link": "documents.DocxReferenceDoc.org",
+             "many": false,
+             "source": "documents.DocxReferenceDoc",
+             "target": "people.Organisation",
+             "text": "org"
+            }
+           ],
+           "terminal": {
+            "$": "LinkTerminal",
+            "carrier": "documents.DocxReferenceDoc",
+            "link": "documents.DocxReferenceDoc.org",
+            "optional": true,
+            "target": "people.Organisation"
+           },
+           "text": "org"
+          },
+          "present": true
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner_user",
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "qid": "documents.DocxReferenceDoc.owner_user",
+      "scopes": false,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "org",
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "qid": "documents.DocxReferenceDoc.org",
+      "scopes": false,
+      "target": "people.Organisation"
+     },
+     {
+      "$": "Link",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "created_by",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "documents.DocxReferenceDoc.created_by",
+      "scopes": false,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "a reference document used to fill forms",
+    "members": [],
+    "module": "documents",
+    "name": "DocxReferenceDoc",
+    "ordered_within": null,
+    "qid": "documents.DocxReferenceDoc",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "filter": false,
+      "intent": "documents.doc_scope",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@personal",
+        "@org"
+       ],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "filter": false,
+      "intent": "refs.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "filter": false,
+      "intent": "documents.original_filename",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "filter": false,
+      "intent": "documents.s3_key",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "filter": false,
+      "intent": "documents.file_size_bytes",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.DocxReferenceDoc",
+      "default": null,
+      "filter": false,
+      "intent": "documents.sha256",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "people.Owned",
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "merge.MergeTagClient.tag",
+      "many": true,
+      "name": "client_values",
+      "source": "merge.MergeTagClient"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "merge.MergeTag",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "people.Owned",
+      "qid": "merge.MergeTag.owner",
+      "scopes": true,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "a merge-tag property defined by a user",
+    "members": [],
+    "module": "merge",
+    "name": "MergeTag",
+    "ordered_within": null,
+    "qid": "merge.MergeTag",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTag",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTag",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTag",
+      "default": null,
+      "filter": false,
+      "intent": "merge.property_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTag",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "merge.property_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTag",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": true
+      },
+      "filter": false,
+      "intent": "merge.can_delete",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "association",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "merge.MergeTagClient",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "user",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "merge.MergeTagClient.user",
+      "scopes": false,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "merge.MergeTagClient",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "merge_values",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "merge.MergeTagClient.client",
+      "scopes": false,
+      "target": "clients.Client"
+     },
+     {
+      "$": "Link",
+      "carrier": "merge.MergeTagClient",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "client_values",
+      "key": false,
+      "name": "tag",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "merge.MergeTagClient.tag",
+      "scopes": false,
+      "target": "merge.MergeTag"
+     }
+    ],
+    "meaning": "this merge tag takes this value on this client for this user",
+    "members": [],
+    "module": "merge",
+    "name": "MergeTagClient",
+    "ordered_within": null,
+    "qid": "merge.MergeTagClient",
+    "scope_via": "merge.MergeTagClient.client",
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTagClient",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTagClient",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "merge.MergeTagClient",
+      "default": null,
+      "filter": false,
+      "intent": "merge.property_value",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "people.Organisation",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": true,
+      "name": "created_by",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "people.Organisation.created_by",
+      "scopes": false,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "a practice organisation",
+    "members": [],
+    "module": "people",
+    "name": "Organisation",
+    "ordered_within": null,
+    "qid": "people.Organisation",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "people.Organisation",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.Organisation",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.Organisation",
+      "default": null,
+      "filter": false,
+      "intent": "people.org_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.Organisation",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "people.in_trial",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.Organisation",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "people.is_paying",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.Organisation",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 1
+      },
+      "filter": false,
+      "intent": "people.seats",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.Organisation",
+      "default": null,
+      "filter": false,
+      "intent": "people.stripe_customer_id",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "trait",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "people.Owned",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "people.Owned.owner",
+      "scopes": true,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "belongs to one user; the tenancy boundary of everything that carries it",
+    "members": [],
+    "module": "people",
+    "name": "Owned",
+    "ordered_within": null,
+    "qid": "people.Owned",
+    "scope_via": null,
+    "tightens": [],
+    "uses": []
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "clients.ClientUser.user",
+      "many": true,
+      "name": "assigned_clients",
+      "source": "clients.ClientUser"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "people.UserPreference.user",
+      "many": false,
+      "name": "preferences",
+      "source": "people.UserPreference"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "people.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Id",
+        "carrier": "refs.Profession",
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 1
+      },
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "profession",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "people.User.profession",
+      "scopes": false,
+      "target": "refs.Profession"
+     },
+     {
+      "$": "Link",
+      "carrier": "people.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Id",
+        "carrier": "refs.Language",
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 1
+      },
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "language",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "people.User.language",
+      "scopes": false,
+      "target": "refs.Language"
+     },
+     {
+      "$": "Link",
+      "carrier": "people.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Id",
+        "carrier": "refs.FundingModel",
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 1
+      },
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "funding_model",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "people.User.funding_model",
+      "scopes": false,
+      "target": "refs.FundingModel"
+     }
+    ],
+    "meaning": "an everbility practitioner",
+    "members": [],
+    "module": "people",
+    "name": "User",
+    "ordered_within": null,
+    "qid": "people.User",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": null,
+      "filter": false,
+      "intent": "people.clerk_user_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": null,
+      "filter": false,
+      "intent": "people.email",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Email",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": true
+      },
+      "filter": false,
+      "intent": "people.in_trial",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "people.is_paying",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": null,
+      "filter": false,
+      "intent": "people.stripe_customer_id",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "people.profession_updated",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "people.is_onboarded",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "people.UserPreference",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "preferences",
+      "key": true,
+      "name": "user",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "people.UserPreference.user",
+      "scopes": false,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "note and report templates for one user",
+    "members": [],
+    "module": "people",
+    "name": "UserPreference",
+    "ordered_within": null,
+    "qid": "people.UserPreference",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "people.UserPreference",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.UserPreference",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.UserPreference",
+      "default": null,
+      "filter": false,
+      "intent": "people.note_template",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.UserPreference",
+      "default": null,
+      "filter": false,
+      "intent": "people.report_template",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "Registry of available PMS integrations",
+    "members": [],
+    "module": "pms",
+    "name": "PmsAdapter",
+    "ordered_within": null,
+    "qid": "pms.PmsAdapter",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "pms.PmsAdapter",
+      "default": null,
+      "filter": false,
+      "intent": "pms.pms_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsAdapter",
+      "default": null,
+      "filter": true,
+      "intent": "pms.adapter_status",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@available",
+        "@coming_soon"
+       ],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsAdapter",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "pms.is_development",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsAdapter",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": true
+      },
+      "filter": false,
+      "intent": "pms.enabled",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "people.Owned",
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [
+     {
+      "$": "Or",
+      "items": [
+       {
+        "$": "Compare",
+        "guard": null,
+        "left": {
+         "$": "PathRef",
+         "root": "pms.PmsApiKey",
+         "steps": [],
+         "terminal": {
+          "$": "UseTerminal",
+          "carrier": "pms.PmsApiKey",
+          "intent": "pms.is_org_wide",
+          "type": {
+           "base": "Boolean",
+           "carrier": null,
+           "class": "boolean",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          },
+          "use": "pms.PmsApiKey.is_org_wide"
+         },
+         "text": "is_org_wide"
+        },
+        "op": "=",
+        "right": {
+         "$": "Literal",
+         "type": {
+          "base": "Boolean",
+          "carrier": null,
+          "class": "boolean",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "value": false
+        }
+       },
+       {
+        "$": "Presence",
+        "guard": null,
+        "path": {
+         "$": "PathRef",
+         "root": "pms.PmsApiKey",
+         "steps": [
+          {
+           "$": "LinkStep",
+           "inverse": false,
+           "link": "pms.PmsApiKey.org",
+           "many": false,
+           "source": "pms.PmsApiKey",
+           "target": "people.Organisation",
+           "text": "org"
+          }
+         ],
+         "terminal": {
+          "$": "LinkTerminal",
+          "carrier": "pms.PmsApiKey",
+          "link": "pms.PmsApiKey.org",
+          "optional": true,
+          "target": "people.Organisation"
+         },
+         "text": "org"
+        },
+        "present": true
+       }
+      ]
+     }
+    ],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "pms.PmsApiKey",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "people.Owned",
+      "qid": "pms.PmsApiKey.owner",
+      "scopes": true,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "pms.PmsApiKey",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": true,
+      "name": "adapter",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "pms.PmsApiKey.adapter",
+      "scopes": false,
+      "target": "pms.PmsAdapter"
+     },
+     {
+      "$": "Link",
+      "carrier": "pms.PmsApiKey",
+      "default": null,
+      "enforcement": "detach",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "org",
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "qid": "pms.PmsApiKey.org",
+      "scopes": false,
+      "target": "people.Organisation"
+     }
+    ],
+    "meaning": "Encrypted PMS API keys (ciphertext + KID; EDEK deprecated)",
+    "members": [],
+    "module": "pms",
+    "name": "PmsApiKey",
+    "ordered_within": null,
+    "qid": "pms.PmsApiKey",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "pms.PmsApiKey",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsApiKey",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsApiKey",
+      "default": null,
+      "filter": false,
+      "intent": "pms.kid",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsApiKey",
+      "default": null,
+      "filter": false,
+      "intent": "pms.api_ek",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsApiKey",
+      "default": null,
+      "filter": false,
+      "intent": "pms.api_client_id",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsApiKey",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Boolean",
+        "carrier": null,
+        "class": "boolean",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": false
+      },
+      "filter": false,
+      "intent": "pms.is_org_wide",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Boolean",
+       "carrier": null,
+       "class": "boolean",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "association",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "pms.PmsUserMap",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "user",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "pms.PmsUserMap.user",
+      "scopes": false,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "pms.PmsUserMap",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "adapter",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "pms.PmsUserMap.adapter",
+      "scopes": false,
+      "target": "pms.PmsAdapter"
+     },
+     {
+      "$": "Link",
+      "carrier": "pms.PmsUserMap",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "org",
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "qid": "pms.PmsUserMap.org",
+      "scopes": false,
+      "target": "people.Organisation"
+     }
+    ],
+    "meaning": "Map of Everbility users to PMS users",
+    "members": [],
+    "module": "pms",
+    "name": "PmsUserMap",
+    "ordered_within": null,
+    "qid": "pms.PmsUserMap",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "pms.PmsUserMap",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsUserMap",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pms.PmsUserMap",
+      "default": null,
+      "filter": false,
+      "intent": "pms.pms_user_id",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "a funding model in the reference list",
+    "members": [],
+    "module": "refs",
+    "name": "FundingModel",
+    "ordered_within": null,
+    "qid": "refs.FundingModel",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "refs.FundingModel",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "refs.name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "refs.FundingModel",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": "EMPTY"
+      },
+      "filter": false,
+      "intent": "refs.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "a language in the reference list",
+    "members": [],
+    "module": "refs",
+    "name": "Language",
+    "ordered_within": null,
+    "qid": "refs.Language",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "refs.Language",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": ""
+      },
+      "filter": false,
+      "intent": "refs.name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "a practitioner profession in the reference list",
+    "members": [],
+    "module": "refs",
+    "name": "Profession",
+    "ordered_within": null,
+    "qid": "refs.Profession",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "refs.Profession",
+      "default": null,
+      "filter": false,
+      "intent": "refs.name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "refs.Profession",
+      "default": null,
+      "filter": false,
+      "intent": "refs.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "trait",
+    "lifecycle": null,
+    "links": [],
+    "meaning": "carries mint and change instants written by the engine, never by the caller",
+    "members": [],
+    "module": "traits",
+    "name": "Timestamped",
+    "ordered_within": null,
+    "qid": "traits.Timestamped",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "traits.Timestamped",
+      "default": "ship_clock",
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.Timestamped",
+      "default": "ship_clock",
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   }
+  ],
+  "compounds": [],
+  "deployments": [
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": "./everbility.sqlite",
+     "kind": "env",
+     "name": "EVERBILITY_DB"
+    },
+    "meaning": "development: the store follows the file",
+    "mode": "readwrite",
+    "name": "EVERBILITY_DEV",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "EVERBILITY"
+   }
+  ],
+  "intents": [
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when hidden from default lists",
+    "module": "clients",
+    "name": "archived_at",
+    "pattern": null,
+    "qid": "clients.archived_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this user was assigned to this client",
+    "module": "clients",
+    "name": "assigned_at",
+    "pattern": null,
+    "qid": "clients.assigned_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the client's given name",
+    "module": "clients",
+    "name": "first_name",
+    "pattern": null,
+    "qid": "clients.first_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the client's family name",
+    "module": "clients",
+    "name": "last_name",
+    "pattern": null,
+    "qid": "clients.last_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "personal or organisation ownership of a reference document",
+    "module": "documents",
+    "name": "doc_scope",
+    "pattern": null,
+    "qid": "documents.doc_scope",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [
+      "@personal",
+      "@org"
+     ],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "size of the stored file in bytes",
+    "module": "documents",
+    "name": "file_size_bytes",
+    "pattern": null,
+    "qid": "documents.file_size_bytes",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the filename as uploaded",
+    "module": "documents",
+    "name": "original_filename",
+    "pattern": null,
+    "qid": "documents.original_filename",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "object key in the document store",
+    "module": "documents",
+    "name": "s3_key",
+    "pattern": null,
+    "qid": "documents.s3_key",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "hex digest of the file bytes",
+    "module": "documents",
+    "name": "sha256",
+    "pattern": null,
+    "qid": "documents.sha256",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "whether the user may delete this merge tag",
+    "module": "merge",
+    "name": "can_delete",
+    "pattern": null,
+    "qid": "merge.can_delete",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "stable id of a merge-tag property",
+    "module": "merge",
+    "name": "property_id",
+    "pattern": null,
+    "qid": "merge.property_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the merge-tag property as shown to the author",
+    "module": "merge",
+    "name": "property_name",
+    "pattern": null,
+    "qid": "merge.property_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the merge-tag value for this client",
+    "module": "merge",
+    "name": "property_value",
+    "pattern": null,
+    "qid": "merge.property_value",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the identity provider's user id",
+    "module": "people",
+    "name": "clerk_user_id",
+    "pattern": null,
+    "qid": "people.clerk_user_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "an address that can receive mail",
+    "module": "people",
+    "name": "email",
+    "pattern": null,
+    "qid": "people.email",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Email",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "whether the individual is in a trial",
+    "module": "people",
+    "name": "in_trial",
+    "pattern": null,
+    "qid": "people.in_trial",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "whether the user has finished onboarding",
+    "module": "people",
+    "name": "is_onboarded",
+    "pattern": null,
+    "qid": "people.is_onboarded",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "whether the individual is paying",
+    "module": "people",
+    "name": "is_paying",
+    "pattern": null,
+    "qid": "people.is_paying",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the user's default note template",
+    "module": "people",
+    "name": "note_template",
+    "pattern": null,
+    "qid": "people.note_template",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "stable organisation identifier as shown to the identity provider",
+    "module": "people",
+    "name": "org_id",
+    "pattern": null,
+    "qid": "people.org_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "whether the user has confirmed a profession",
+    "module": "people",
+    "name": "profession_updated",
+    "pattern": null,
+    "qid": "people.profession_updated",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the user's default report template",
+    "module": "people",
+    "name": "report_template",
+    "pattern": null,
+    "qid": "people.report_template",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "how many seats the organisation has bought",
+    "module": "people",
+    "name": "seats",
+    "pattern": null,
+    "qid": "people.seats",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the billing customer's id at the processor",
+    "module": "people",
+    "name": "stripe_customer_id",
+    "pattern": null,
+    "qid": "people.stripe_customer_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "Adapter status: available, coming_soon",
+    "module": "pms",
+    "name": "adapter_status",
+    "pattern": null,
+    "qid": "pms.adapter_status",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [
+      "@available",
+      "@coming_soon"
+     ],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "PMS API client ID (not encrypted, optional)",
+    "module": "pms",
+    "name": "api_client_id",
+    "pattern": null,
+    "qid": "pms.api_client_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "Encrypted PMS API key ciphertext (AES-GCM, Base64URL-encoded)",
+    "module": "pms",
+    "name": "api_ek",
+    "pattern": null,
+    "qid": "pms.api_ek",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "Global feature flag to enable/disable this PMS",
+    "module": "pms",
+    "name": "enabled",
+    "pattern": null,
+    "qid": "pms.enabled",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "whether this adapter is a development-only build",
+    "module": "pms",
+    "name": "is_development",
+    "pattern": null,
+    "qid": "pms.is_development",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "When true, this key is shared across the owner organisation for this PMS",
+    "module": "pms",
+    "name": "is_org_wide",
+    "pattern": null,
+    "qid": "pms.is_org_wide",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Boolean",
+     "carrier": null,
+     "class": "boolean",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "Asymmetric KEK key identifier (KID) used to unwrap/decrypt",
+    "module": "pms",
+    "name": "kid",
+    "pattern": null,
+    "qid": "pms.kid",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "Unique PMS identifier",
+    "module": "pms",
+    "name": "pms_id",
+    "pattern": "^[A-Za-z0-9_-]+$",
+    "qid": "pms.pms_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "PMS user ID",
+    "module": "pms",
+    "name": "pms_user_id",
+    "pattern": null,
+    "qid": "pms.pms_user_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the name shown in the shell",
+    "module": "refs",
+    "name": "display_name",
+    "pattern": null,
+    "qid": "refs.display_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the short name of a reference row",
+    "module": "refs",
+    "name": "name",
+    "pattern": null,
+    "qid": "refs.name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this individual was minted",
+    "module": "traits",
+    "name": "created_at",
+    "pattern": null,
+    "qid": "traits.created_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this individual last changed",
+    "module": "traits",
+    "name": "updated_at",
+    "pattern": null,
+    "qid": "traits.updated_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   }
+  ],
+  "modules": [
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "people.Organisation",
+      "local": "Organisation",
+      "owner": "people",
+      "source": "Organisation"
+     },
+     {
+      "$": "Import",
+      "identity": "people.Owned",
+      "local": "Owned",
+      "owner": "people",
+      "source": "Owned"
+     },
+     {
+      "$": "Import",
+      "identity": "people.User",
+      "local": "User",
+      "owner": "people",
+      "source": "User"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     }
+    ],
+    "meaning": "Clients of a practitioner, and the many-to-many assignment association.",
+    "name": "clients"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "people.Organisation",
+      "local": "Organisation",
+      "owner": "people",
+      "source": "Organisation"
+     },
+     {
+      "$": "Import",
+      "identity": "people.User",
+      "local": "User",
+      "owner": "people",
+      "source": "User"
+     },
+     {
+      "$": "Import",
+      "identity": "refs.display_name",
+      "local": "display_name",
+      "owner": "refs",
+      "source": "display_name"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     }
+    ],
+    "meaning": "Reference documents with a closed scope set and an XOR owner invariant.",
+    "name": "documents"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "clients.Client",
+      "local": "Client",
+      "owner": "clients",
+      "source": "Client"
+     },
+     {
+      "$": "Import",
+      "identity": "documents.DocxReferenceDoc",
+      "local": "DocxReferenceDoc",
+      "owner": "documents",
+      "source": "DocxReferenceDoc"
+     },
+     {
+      "$": "Import",
+      "identity": "merge.MergeTag",
+      "local": "MergeTag",
+      "owner": "merge",
+      "source": "MergeTag"
+     },
+     {
+      "$": "Import",
+      "identity": "people.Organisation",
+      "local": "Organisation",
+      "owner": "people",
+      "source": "Organisation"
+     },
+     {
+      "$": "Import",
+      "identity": "people.User",
+      "local": "User",
+      "owner": "people",
+      "source": "User"
+     },
+     {
+      "$": "Import",
+      "identity": "pms.PmsAdapter",
+      "local": "PmsAdapter",
+      "owner": "pms",
+      "source": "PmsAdapter"
+     },
+     {
+      "$": "Import",
+      "identity": "pms.PmsApiKey",
+      "local": "PmsApiKey",
+      "owner": "pms",
+      "source": "PmsApiKey"
+     },
+     {
+      "$": "Import",
+      "identity": "pms.PmsUserMap",
+      "local": "PmsUserMap",
+      "owner": "pms",
+      "source": "PmsUserMap"
+     },
+     {
+      "$": "Import",
+      "identity": "refs.FundingModel",
+      "local": "FundingModel",
+      "owner": "refs",
+      "source": "FundingModel"
+     }
+    ],
+    "meaning": "held-out census sites denoted over the everbility slice",
+    "name": "heldout"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "clients.Client",
+      "local": "Client",
+      "owner": "clients",
+      "source": "Client"
+     },
+     {
+      "$": "Import",
+      "identity": "people.Owned",
+      "local": "Owned",
+      "owner": "people",
+      "source": "Owned"
+     },
+     {
+      "$": "Import",
+      "identity": "people.User",
+      "local": "User",
+      "owner": "people",
+      "source": "User"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     }
+    ],
+    "meaning": "Merge-tag definitions per user, and the three-way value association onto a client.",
+    "name": "merge"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "refs.FundingModel",
+      "local": "FundingModel",
+      "owner": "refs",
+      "source": "FundingModel"
+     },
+     {
+      "$": "Import",
+      "identity": "refs.Language",
+      "local": "Language",
+      "owner": "refs",
+      "source": "Language"
+     },
+     {
+      "$": "Import",
+      "identity": "refs.Profession",
+      "local": "Profession",
+      "owner": "refs",
+      "source": "Profession"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     }
+    ],
+    "meaning": "Users, organisations, and per-user preferences.",
+    "name": "people"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "people.Organisation",
+      "local": "Organisation",
+      "owner": "people",
+      "source": "Organisation"
+     },
+     {
+      "$": "Import",
+      "identity": "people.Owned",
+      "local": "Owned",
+      "owner": "people",
+      "source": "Owned"
+     },
+     {
+      "$": "Import",
+      "identity": "people.User",
+      "local": "User",
+      "owner": "people",
+      "source": "User"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     }
+    ],
+    "meaning": "Practice-management adapters, API keys with detach, and the user map.",
+    "name": "pms"
+   },
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "Global reference lists: professions, languages, funding models.",
+    "name": "refs"
+   },
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "Shared mint and change stamps for the everbility slice.",
+    "name": "traits"
+   }
+  ],
+  "move_homes": [],
+  "newtypes": [],
+  "reads": [
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "status",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "adapters in one status",
+    "module": "heldout",
+    "name": "adapters_by_status",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "pms.PmsAdapter",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "pms.PmsAdapter",
+       "intent": "pms.adapter_status",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@available",
+         "@coming_soon"
+        ],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "pms.PmsAdapter.adapter_status"
+      },
+      "text": "adapter_status"
+     },
+     "op": "=",
+     "right": {
+      "$": "GivenRef",
+      "name": "status",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "heldout.adapters_by_status",
+    "shape": "collection",
+    "shows": [],
+    "subject": "pms.PmsAdapter",
+    "unscoped": "practice_audit",
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": {
+     "$": "GivenRef",
+     "name": "client",
+     "type": {
+      "base": "Id",
+      "carrier": "clients.Client",
+      "class": "text",
+      "closed": [],
+      "list_of": false,
+      "nominal": null,
+      "optional": false
+     }
+    },
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "client",
+      "type": {
+       "base": "Id",
+       "carrier": "clients.Client",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "a client with its organisation, before deletion",
+    "module": "heldout",
+    "name": "adelete_client_by_id",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Presence",
+     "guard": null,
+     "path": {
+      "$": "PathRef",
+      "root": "clients.Client",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "clients.Client",
+       "intent": "clients.archived_at",
+       "type": {
+        "base": "Instant",
+        "carrier": null,
+        "class": "instant",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "clients.Client.archived_at"
+      },
+      "text": "archived_at"
+     },
+     "present": false
+    },
+    "qid": "heldout.adelete_client_by_id",
+    "shape": "optional_single",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "first_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.first_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.first_name"
+       },
+       "text": "first_name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "org.org_id",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "clients.Client.org",
+         "many": false,
+         "source": "clients.Client",
+         "target": "people.Organisation",
+         "text": "org"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "people.Organisation",
+        "intent": "people.org_id",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "people.Organisation.org_id"
+       },
+       "text": "org.org_id"
+      }
+     }
+    ],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "clerk",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "client whose owner has this clerk id and is not archived",
+    "module": "heldout",
+    "name": "aget_client_by_clerk_user_id",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "And",
+     "items": [
+      {
+       "$": "Compare",
+       "guard": null,
+       "left": {
+        "$": "PathRef",
+        "root": "clients.Client",
+        "steps": [
+         {
+          "$": "LinkStep",
+          "inverse": false,
+          "link": "clients.Client.owner",
+          "many": false,
+          "source": "clients.Client",
+          "target": "people.User",
+          "text": "owner"
+         }
+        ],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "people.User",
+         "intent": "people.clerk_user_id",
+         "type": {
+          "base": "Text",
+          "carrier": null,
+          "class": "text",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "people.User.clerk_user_id"
+        },
+        "text": "owner.clerk_user_id"
+       },
+       "op": "=",
+       "right": {
+        "$": "GivenRef",
+        "name": "clerk",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        }
+       }
+      },
+      {
+       "$": "Presence",
+       "guard": null,
+       "path": {
+        "$": "PathRef",
+        "root": "clients.Client",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "clients.Client",
+         "intent": "clients.archived_at",
+         "type": {
+          "base": "Instant",
+          "carrier": null,
+          "class": "instant",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "clients.Client.archived_at"
+        },
+        "text": "archived_at"
+       },
+       "present": false
+      }
+     ]
+    },
+    "qid": "heldout.aget_client_by_clerk_user_id",
+    "shape": "collection",
+    "shows": [],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "a practitioner's clients that belong to no organisation",
+    "module": "heldout",
+    "name": "aget_personal_clients",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.first_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.first_name"
+       },
+       "text": "first_name"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "And",
+     "items": [
+      {
+       "$": "Presence",
+       "guard": null,
+       "path": {
+        "$": "PathRef",
+        "root": "clients.Client",
+        "steps": [
+         {
+          "$": "LinkStep",
+          "inverse": false,
+          "link": "clients.Client.org",
+          "many": false,
+          "source": "clients.Client",
+          "target": "people.Organisation",
+          "text": "org"
+         }
+        ],
+        "terminal": {
+         "$": "LinkTerminal",
+         "carrier": "clients.Client",
+         "link": "clients.Client.org",
+         "optional": true,
+         "target": "people.Organisation"
+        },
+        "text": "org"
+       },
+       "present": false
+      },
+      {
+       "$": "Presence",
+       "guard": null,
+       "path": {
+        "$": "PathRef",
+        "root": "clients.Client",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "clients.Client",
+         "intent": "clients.archived_at",
+         "type": {
+          "base": "Instant",
+          "carrier": null,
+          "class": "instant",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "clients.Client.archived_at"
+        },
+        "text": "archived_at"
+       },
+       "present": false
+      }
+     ]
+    },
+    "qid": "heldout.aget_personal_clients",
+    "shape": "collection",
+    "shows": [],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "ids",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": true,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "users whose identity is in a given list",
+    "module": "heldout",
+    "name": "celery_get_org_user_db",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "In",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "people.User",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "people.User",
+       "intent": "people.clerk_user_id",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "people.User.clerk_user_id"
+      },
+      "text": "clerk_user_id"
+     },
+     "right": {
+      "$": "GivenRef",
+      "name": "ids",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": true,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "heldout.celery_get_org_user_db",
+    "shape": "collection",
+    "shows": [],
+    "subject": "people.User",
+    "unscoped": "practice_audit",
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "org",
+      "type": {
+       "base": "Id",
+       "carrier": "people.Organisation",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "client belonging to an organisation",
+    "module": "heldout",
+    "name": "check_org_client",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Is",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "clients.Client",
+      "steps": [
+       {
+        "$": "LinkStep",
+        "inverse": false,
+        "link": "clients.Client.org",
+        "many": false,
+        "source": "clients.Client",
+        "target": "people.Organisation",
+        "text": "org"
+       }
+      ],
+      "terminal": {
+       "$": "LinkTerminal",
+       "carrier": "clients.Client",
+       "link": "clients.Client.org",
+       "optional": true,
+       "target": "people.Organisation"
+      },
+      "text": "org"
+     },
+     "right": {
+      "$": "GivenRef",
+      "name": "org",
+      "type": {
+       "base": "Id",
+       "carrier": "people.Organisation",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "heldout.check_org_client",
+    "shape": "collection",
+    "shows": [],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "adapters whose status is available",
+    "module": "heldout",
+    "name": "db_get_available_pms_adapters",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "pms.PmsAdapter",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "pms.PmsAdapter",
+       "intent": "pms.adapter_status",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@available",
+         "@coming_soon"
+        ],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "pms.PmsAdapter.adapter_status"
+      },
+      "text": "adapter_status"
+     },
+     "op": "=",
+     "right": {
+      "$": "Literal",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@available",
+        "@coming_soon"
+       ],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      },
+      "value": "available"
+     }
+    },
+    "qid": "heldout.db_get_available_pms_adapters",
+    "shape": "collection",
+    "shows": [],
+    "subject": "pms.PmsAdapter",
+    "unscoped": "practice_audit",
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "org",
+      "type": {
+       "base": "Id",
+       "carrier": "people.Organisation",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Given",
+      "default": null,
+      "name": "adapter",
+      "type": {
+       "base": "Id",
+       "carrier": "pms.PmsAdapter",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "maps for one organisation and adapter",
+    "module": "heldout",
+    "name": "org_pms_user_maps",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "And",
+     "items": [
+      {
+       "$": "Is",
+       "guard": null,
+       "left": {
+        "$": "PathRef",
+        "root": "pms.PmsUserMap",
+        "steps": [
+         {
+          "$": "LinkStep",
+          "inverse": false,
+          "link": "pms.PmsUserMap.org",
+          "many": false,
+          "source": "pms.PmsUserMap",
+          "target": "people.Organisation",
+          "text": "org"
+         }
+        ],
+        "terminal": {
+         "$": "LinkTerminal",
+         "carrier": "pms.PmsUserMap",
+         "link": "pms.PmsUserMap.org",
+         "optional": true,
+         "target": "people.Organisation"
+        },
+        "text": "org"
+       },
+       "right": {
+        "$": "GivenRef",
+        "name": "org",
+        "type": {
+         "base": "Id",
+         "carrier": "people.Organisation",
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        }
+       }
+      },
+      {
+       "$": "Is",
+       "guard": null,
+       "left": {
+        "$": "PathRef",
+        "root": "pms.PmsUserMap",
+        "steps": [
+         {
+          "$": "LinkStep",
+          "inverse": false,
+          "link": "pms.PmsUserMap.adapter",
+          "many": false,
+          "source": "pms.PmsUserMap",
+          "target": "pms.PmsAdapter",
+          "text": "adapter"
+         }
+        ],
+        "terminal": {
+         "$": "LinkTerminal",
+         "carrier": "pms.PmsUserMap",
+         "link": "pms.PmsUserMap.adapter",
+         "optional": false,
+         "target": "pms.PmsAdapter"
+        },
+        "text": "adapter"
+       },
+       "right": {
+        "$": "GivenRef",
+        "name": "adapter",
+        "type": {
+         "base": "Id",
+         "carrier": "pms.PmsAdapter",
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        }
+       }
+      }
+     ]
+    },
+    "qid": "heldout.org_pms_user_maps",
+    "shape": "collection",
+    "shows": [],
+    "subject": "pms.PmsUserMap",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "property",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "merge tags with one property id",
+    "module": "heldout",
+    "name": "tags_for_property",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "merge.MergeTag",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "merge.MergeTag",
+       "intent": "merge.property_id",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "merge.MergeTag.property_id"
+      },
+      "text": "property_id"
+     },
+     "op": "=",
+     "right": {
+      "$": "GivenRef",
+      "name": "property",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "heldout.tags_for_property",
+    "shape": "collection",
+    "shows": [],
+    "subject": "merge.MergeTag",
+    "unscoped": null,
+    "with_total": false
+   }
+  ],
+  "restores": [],
+  "restricteds": [],
+  "retypes": [],
+  "scope_paths": {
+   "EVERBILITY": {
+    "clients.Client": [
+     "clients.Client.owner"
+    ],
+    "clients.ClientUser": [
+     "clients.ClientUser.client",
+     "clients.Client.owner"
+    ],
+    "documents.DocxReferenceDoc": [],
+    "merge.MergeTag": [
+     "merge.MergeTag.owner"
+    ],
+    "merge.MergeTagClient": [
+     "merge.MergeTagClient.client",
+     "clients.Client.owner"
+    ],
+    "people.Organisation": [],
+    "people.User": [],
+    "people.UserPreference": [],
+    "pms.PmsAdapter": [],
+    "pms.PmsApiKey": [
+     "pms.PmsApiKey.owner"
+    ],
+    "pms.PmsUserMap": [],
+    "refs.FundingModel": [],
+    "refs.Language": [],
+    "refs.Profession": []
+   }
+  },
+  "tightens": [],
+  "tombstones": [],
+  "worlds": [
+   {
+    "$": "World",
+    "capabilities": [
+     "practice_audit"
+    ],
+    "durability": "durable",
+    "exempt": [
+     "documents.DocxReferenceDoc",
+     "people.Organisation",
+     "people.User",
+     "people.UserPreference",
+     "pms.PmsAdapter",
+     "pms.PmsUserMap",
+     "refs.FundingModel",
+     "refs.Language",
+     "refs.Profession"
+    ],
+    "generated": [
+     "python",
+     "rust"
+    ],
+    "meaning": "the everbility slice store",
+    "modules": [
+     "traits",
+     "refs",
+     "people",
+     "clients",
+     "documents",
+     "merge",
+     "pms",
+     "heldout"
+    ],
+    "name": "EVERBILITY",
+    "quarantine_retention": 3,
+    "requires": "people.Owned",
+    "scope": {
+     "$": "ScopeRoot",
+     "link": "people.Owned.owner",
+     "root": "people.User",
+     "trait": "people.Owned"
+    },
+    "writer_source": null,
+    "writers": "governed"
+   }
+  ]
+ },
+ "scope_paths": {
+  "clients.Client": [
+   "clients.Client.owner"
+  ],
+  "clients.ClientUser": [
+   "clients.ClientUser.client",
+   "clients.Client.owner"
+  ],
+  "documents.DocxReferenceDoc": [],
+  "merge.MergeTag": [
+   "merge.MergeTag.owner"
+  ],
+  "merge.MergeTagClient": [
+   "merge.MergeTagClient.client",
+   "clients.Client.owner"
+  ],
+  "people.Organisation": [],
+  "people.User": [],
+  "people.UserPreference": [],
+  "pms.PmsAdapter": [],
+  "pms.PmsApiKey": [
+   "pms.PmsApiKey.owner"
+  ],
+  "pms.PmsUserMap": [],
+  "refs.FundingModel": [],
+  "refs.Language": [],
+  "refs.Profession": []
+ },
+ "storage": {
+  "$": "StorageMapping",
+  "engine": {
+   "$": "EngineTables",
+   "generations": "garns_generations",
+   "ledger": "garns_ledger",
+   "revisions": "garns_revisions"
+  },
+  "relations": {
+   "clients.Client": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "clients.Client",
+    "columns": {
+     "clients.Client.archived_at": "f_client_archived_at",
+     "clients.Client.created_at": "f_client_created_at",
+     "clients.Client.first_name": "f_client_first_name",
+     "clients.Client.last_name": "f_client_last_name",
+     "clients.Client.updated_at": "f_client_updated_at"
+    },
+    "identity": "rid_clients_client",
+    "kind": null,
+    "links": {
+     "clients.Client.org": "ref_client_org",
+     "clients.Client.owner": "ref_client_owner"
+    },
+    "table": "tbl_clients_client"
+   },
+   "clients.ClientUser": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "clients.ClientUser",
+    "columns": {
+     "clients.ClientUser.assigned_at": "f_clientuser_assigned_at"
+    },
+    "identity": "rid_clients_clientuser",
+    "kind": null,
+    "links": {
+     "clients.ClientUser.client": "ref_clientuser_client",
+     "clients.ClientUser.user": "ref_clientuser_user"
+    },
+    "table": "tbl_clients_clientuser"
+   },
+   "documents.DocxReferenceDoc": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "documents.DocxReferenceDoc",
+    "columns": {
+     "documents.DocxReferenceDoc.created_at": "f_docxreferencedoc_created_at",
+     "documents.DocxReferenceDoc.display_name": "f_docxreferencedoc_display_name",
+     "documents.DocxReferenceDoc.doc_scope": "f_docxreferencedoc_doc_scope",
+     "documents.DocxReferenceDoc.file_size_bytes": "f_docxreferencedoc_file_size_bytes",
+     "documents.DocxReferenceDoc.original_filename": "f_docxreferencedoc_original_filename",
+     "documents.DocxReferenceDoc.s3_key": "f_docxreferencedoc_s3_key",
+     "documents.DocxReferenceDoc.sha256": "f_docxreferencedoc_sha256",
+     "documents.DocxReferenceDoc.updated_at": "f_docxreferencedoc_updated_at"
+    },
+    "identity": "rid_documents_docxreferencedoc",
+    "kind": null,
+    "links": {
+     "documents.DocxReferenceDoc.created_by": "ref_docxreferencedoc_created_by",
+     "documents.DocxReferenceDoc.org": "ref_docxreferencedoc_org",
+     "documents.DocxReferenceDoc.owner_user": "ref_docxreferencedoc_owner_user"
+    },
+    "table": "tbl_documents_docxreferencedoc"
+   },
+   "merge.MergeTag": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "merge.MergeTag",
+    "columns": {
+     "merge.MergeTag.can_delete": "f_mergetag_can_delete",
+     "merge.MergeTag.created_at": "f_mergetag_created_at",
+     "merge.MergeTag.property_id": "f_mergetag_property_id",
+     "merge.MergeTag.property_name": "f_mergetag_property_name",
+     "merge.MergeTag.updated_at": "f_mergetag_updated_at"
+    },
+    "identity": "rid_merge_mergetag",
+    "kind": null,
+    "links": {
+     "merge.MergeTag.owner": "ref_mergetag_owner"
+    },
+    "table": "tbl_merge_mergetag"
+   },
+   "merge.MergeTagClient": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "merge.MergeTagClient",
+    "columns": {
+     "merge.MergeTagClient.created_at": "f_mergetagclient_created_at",
+     "merge.MergeTagClient.property_value": "f_mergetagclient_property_value",
+     "merge.MergeTagClient.updated_at": "f_mergetagclient_updated_at"
+    },
+    "identity": "rid_merge_mergetagclient",
+    "kind": null,
+    "links": {
+     "merge.MergeTagClient.client": "ref_mergetagclient_client",
+     "merge.MergeTagClient.tag": "ref_mergetagclient_tag",
+     "merge.MergeTagClient.user": "ref_mergetagclient_user"
+    },
+    "table": "tbl_merge_mergetagclient"
+   },
+   "people.Organisation": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "people.Organisation",
+    "columns": {
+     "people.Organisation.created_at": "f_organisation_created_at",
+     "people.Organisation.in_trial": "f_organisation_in_trial",
+     "people.Organisation.is_paying": "f_organisation_is_paying",
+     "people.Organisation.org_id": "f_organisation_org_id",
+     "people.Organisation.seats": "f_organisation_seats",
+     "people.Organisation.stripe_customer_id": "f_organisation_stripe_customer_id",
+     "people.Organisation.updated_at": "f_organisation_updated_at"
+    },
+    "identity": "rid_people_organisation",
+    "kind": null,
+    "links": {
+     "people.Organisation.created_by": "ref_organisation_created_by"
+    },
+    "table": "tbl_people_organisation"
+   },
+   "people.User": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "people.User",
+    "columns": {
+     "people.User.clerk_user_id": "f_user_clerk_user_id",
+     "people.User.created_at": "f_user_created_at",
+     "people.User.email": "f_user_email",
+     "people.User.in_trial": "f_user_in_trial",
+     "people.User.is_onboarded": "f_user_is_onboarded",
+     "people.User.is_paying": "f_user_is_paying",
+     "people.User.profession_updated": "f_user_profession_updated",
+     "people.User.stripe_customer_id": "f_user_stripe_customer_id",
+     "people.User.updated_at": "f_user_updated_at"
+    },
+    "identity": "rid_people_user",
+    "kind": null,
+    "links": {
+     "people.User.funding_model": "ref_user_funding_model",
+     "people.User.language": "ref_user_language",
+     "people.User.profession": "ref_user_profession"
+    },
+    "table": "tbl_people_user"
+   },
+   "people.UserPreference": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "people.UserPreference",
+    "columns": {
+     "people.UserPreference.created_at": "f_userpreference_created_at",
+     "people.UserPreference.note_template": "f_userpreference_note_template",
+     "people.UserPreference.report_template": "f_userpreference_report_template",
+     "people.UserPreference.updated_at": "f_userpreference_updated_at"
+    },
+    "identity": "rid_people_userpreference",
+    "kind": null,
+    "links": {
+     "people.UserPreference.user": "ref_userpreference_user"
+    },
+    "table": "tbl_people_userpreference"
+   },
+   "pms.PmsAdapter": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "pms.PmsAdapter",
+    "columns": {
+     "pms.PmsAdapter.adapter_status": "f_pmsadapter_adapter_status",
+     "pms.PmsAdapter.enabled": "f_pmsadapter_enabled",
+     "pms.PmsAdapter.is_development": "f_pmsadapter_is_development",
+     "pms.PmsAdapter.pms_id": "f_pmsadapter_pms_id"
+    },
+    "identity": "rid_pms_pmsadapter",
+    "kind": null,
+    "links": {},
+    "table": "tbl_pms_pmsadapter"
+   },
+   "pms.PmsApiKey": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "pms.PmsApiKey",
+    "columns": {
+     "pms.PmsApiKey.api_client_id": "f_pmsapikey_api_client_id",
+     "pms.PmsApiKey.api_ek": "f_pmsapikey_api_ek",
+     "pms.PmsApiKey.created_at": "f_pmsapikey_created_at",
+     "pms.PmsApiKey.is_org_wide": "f_pmsapikey_is_org_wide",
+     "pms.PmsApiKey.kid": "f_pmsapikey_kid",
+     "pms.PmsApiKey.updated_at": "f_pmsapikey_updated_at"
+    },
+    "identity": "rid_pms_pmsapikey",
+    "kind": null,
+    "links": {
+     "pms.PmsApiKey.adapter": "ref_pmsapikey_adapter",
+     "pms.PmsApiKey.org": "ref_pmsapikey_org",
+     "pms.PmsApiKey.owner": "ref_pmsapikey_owner"
+    },
+    "table": "tbl_pms_pmsapikey"
+   },
+   "pms.PmsUserMap": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "pms.PmsUserMap",
+    "columns": {
+     "pms.PmsUserMap.created_at": "f_pmsusermap_created_at",
+     "pms.PmsUserMap.pms_user_id": "f_pmsusermap_pms_user_id",
+     "pms.PmsUserMap.updated_at": "f_pmsusermap_updated_at"
+    },
+    "identity": "rid_pms_pmsusermap",
+    "kind": null,
+    "links": {
+     "pms.PmsUserMap.adapter": "ref_pmsusermap_adapter",
+     "pms.PmsUserMap.org": "ref_pmsusermap_org",
+     "pms.PmsUserMap.user": "ref_pmsusermap_user"
+    },
+    "table": "tbl_pms_pmsusermap"
+   },
+   "refs.FundingModel": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "refs.FundingModel",
+    "columns": {
+     "refs.FundingModel.display_name": "f_fundingmodel_display_name",
+     "refs.FundingModel.name": "f_fundingmodel_name"
+    },
+    "identity": "rid_refs_fundingmodel",
+    "kind": null,
+    "links": {},
+    "table": "tbl_refs_fundingmodel"
+   },
+   "refs.Language": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "refs.Language",
+    "columns": {
+     "refs.Language.name": "f_language_name"
+    },
+    "identity": "rid_refs_language",
+    "kind": null,
+    "links": {},
+    "table": "tbl_refs_language"
+   },
+   "refs.Profession": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "refs.Profession",
+    "columns": {
+     "refs.Profession.display_name": "f_profession_display_name",
+     "refs.Profession.name": "f_profession_name"
+    },
+    "identity": "rid_refs_profession",
+    "kind": null,
+    "links": {},
+    "table": "tbl_refs_profession"
+   }
+  },
+  "source": "storage-EVERBILITY.json",
+  "world": "EVERBILITY"
+ },
+ "world": {
+  "$": "World",
+  "capabilities": [
+   "practice_audit"
+  ],
+  "durability": "durable",
+  "exempt": [
+   "documents.DocxReferenceDoc",
+   "people.Organisation",
+   "people.User",
+   "people.UserPreference",
+   "pms.PmsAdapter",
+   "pms.PmsUserMap",
+   "refs.FundingModel",
+   "refs.Language",
+   "refs.Profession"
+  ],
+  "generated": [
+   "python",
+   "rust"
+  ],
+  "meaning": "the everbility slice store",
+  "modules": [
+   "traits",
+   "refs",
+   "people",
+   "clients",
+   "documents",
+   "merge",
+   "pms",
+   "heldout"
+  ],
+  "name": "EVERBILITY",
+  "quarantine_retention": 3,
+  "requires": "people.Owned",
+  "scope": {
+   "$": "ScopeRoot",
+   "link": "people.Owned.owner",
+   "root": "people.User",
+   "trait": "people.Owned"
+  },
+  "writer_source": null,
+  "writers": "governed"
+ }
+}

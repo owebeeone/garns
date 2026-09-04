@@ -1,0 +1,28 @@
+# Deployments bind a world to an engine and a location, per environment.
+
+deployment DEV "development: the store follows the file" {
+  world PRACTICE
+  engine sqlite
+  at env PRACTICE_DB default "./practice.sqlite"
+  ship on_open
+  mode readwrite
+  snapshot none
+}
+
+deployment TEST "the development deployment, in memory" extends DEV {
+  at memory
+}
+
+deployment PROD "production: ship after a reviewed plan; open never migrates" {
+  world PRACTICE
+  engine sqlite
+  at env DATABASE_URL
+  ship explicit
+  mode readwrite
+  pool 10
+  snapshot before_ship
+}
+
+deployment AUDIT "questions only; no verbs are generated for this role" extends PROD {
+  mode readonly
+}

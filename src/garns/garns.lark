@@ -1,0 +1,353 @@
+// garns v9-5 frozen grammar — convergence and verification iteration.
+// Static query and dynamic question are distinct nouns.
+
+start: toplevel*
+
+toplevel: module | world_decl | deployment_decl | tighten_stmt | retype_stmt | restore_stmt | move_home_stmt
+
+module: "module" NAME STRING "{" import_stmt* decl* "}"
+
+// B2: named import from owner
+import_stmt: "import" NAME "(" import_item ("," import_item)* ")"
+
+import_item: NAME ["as" NAME]
+
+// B7 / D3: qualified name
+qname: NAME ["." NAME]
+
+qname_list: qname ("," qname)*
+
+decl: intent_decl | newtype_decl | trait_decl | resource_decl | event_decl
+    | association_decl | family_decl | query_decl | question_decl | alias_decl | bulk_decl
+    | restricted_decl | compound_decl | tombstone_decl | tighten_stmt
+    | retype_stmt | restore_stmt | move_home_stmt
+
+// --- intents and types ---
+
+intent_decl: "intent" NAME ":" type_ref STRING intent_body?
+
+intent_body: "{" intent_item* "}"
+
+intent_item: "alias" NAME
+           | "renamed_from" qname
+           | "values" ctor_list
+           | "pattern" STRING
+           | "length" INT [".." INT]
+           | "dimension" INT
+           | retype_clause
+           | retire_clause
+           | restore_clause
+
+ctor_list: CTOR ("," CTOR)*
+
+newtype_decl: "newtype" NAME "of" type_ref STRING
+
+type_ref: "optional" opt_inner
+        | "list_of" NAME
+        | NAME
+
+opt_inner: "list_of" NAME
+         | NAME
+
+// --- carriers ---
+
+trait_decl: "trait" NAME STRING "{" carrier_item* "}"
+
+resource_decl: "resource" NAME STRING "{" carrier_item* "}"
+
+event_decl: "event" NAME STRING "{" carrier_item* "}"
+
+association_decl: "association" NAME STRING "{" carrier_item* "}"
+
+family_decl: "family" NAME STRING "{" carrier_item* member_decl* "}"
+
+member_decl: "member" NAME STRING "{" member_item* "}"
+
+member_item: use_stmt
+           | link_stmt
+           | "invariant" expr
+           | "breaking" STRING
+           | "tighten" NAME "repair" repair_val
+
+carrier_item: use_stmt
+            | link_stmt
+            | "lifecycle" lifecycle
+            | "carry" name_list
+            | "ordered_within" NAME
+            | "history" "kept"
+            | "breaking" STRING
+            | "tighten" NAME "repair" repair_val
+            | "invariant" expr
+            | "scope_via" NAME
+
+use_stmt: "use" NAME use_body?
+
+use_body: "{" use_flag* "}"
+
+use_flag: "key" | "optional" | "filter" | "order"
+        | "stamp" stamp_when
+        | "default" default_val
+        | "repair" repair_val
+
+stamp_when: "on_mint" | "on_change"
+
+link_stmt: "link" NAME "->" NAME link_body?
+
+link_body: "{" link_flag* "}"
+
+link_flag: "end" end_kind | "unenforced" | "scopes" | "inverse" NAME | "optional" | "key" | "filter" | "order" | "default" default_val
+
+// `unenforced` is a standalone logical-link flag, never an end action.
+end_kind: "restrict" | "cascade" | "detach"
+
+lifecycle: "mutable" | "retirable" | "archived_by" NAME
+
+// --- static queries and dynamic questions ---
+
+// A query is expressive, fetch-only, and one-shot. It has no live contract and
+// produces no footprint, binding, subscription, or delta artifacts.
+query_decl: "query" NAME "of" NAME STRING "{" query_item* "}"
+
+// A question belongs to the closed dynamic algebra. Resolution requires exactly
+// one `live bounded INT` item and derives its complete live artifacts.
+question_decl: "question" NAME "of" NAME STRING "{" q_item* "}"
+
+given_item: "given" NAME ":" type_ref ["=" literal]
+
+// D5: optional-single one, group by, first n
+q_item: given_item
+      | "where" expr
+      | "show" show_list
+      | "order" order_list
+      | "page" NAME
+      | "limit" NAME
+      | "with_total"
+      | "live" "bounded" INT
+      | "including_archived"
+      | "unscoped" NAME
+      | "by" path_expr
+      | "one"
+      | "group" "by" path_list
+      | "first" INT
+
+query_item: given_item
+          | "where" query_expr
+          | "show" query_show_list
+          | "order" query_order_list
+          | "page" NAME
+          | "limit" NAME
+          | "with_total"
+          | "including_archived"
+          | "unscoped" NAME
+          | "by" path_expr
+          | "one"
+          | "distinct"
+          | "group" "by" path_list
+          | "having" query_expr
+          | "first" INT
+
+query_show_list: query_show_item ("," query_show_item)*
+
+query_show_item: query_show_value ["as" NAME]
+
+?query_show_value: path_expr "[" query_show_list "]" ["last" INT]
+                 | "identity"
+                 | query_scalar
+
+query_order_list: query_order_item ("," query_order_item)*
+
+query_order_item: query_scalar [direction]
+
+show_list: show_item ("," show_item)*
+
+// D5 result shape terms: count(), rank, identity
+show_item: show_value ["as" NAME]
+
+?show_value: path_expr ["[" show_list "]" ["last" INT]]
+           | "identity"
+           | "count" "(" ")"
+           | "rank"
+
+path_list: path_expr ("," path_expr)*
+
+order_list: order_item ("," order_item)*
+
+order_item: path_expr [direction]
+
+direction: "ascending" | "descending"
+
+alias_decl: "alias" NAME "=" dotted_verb ["unscoped" NAME]
+
+// --- verbs ---
+
+bulk_decl: "bulk" NAME STRING "{" given_item* dotted_verb "over" NAME set_clause* "}"
+
+set_clause: "set" NAME "=" NAME
+          | "set" NAME "absent"
+
+restricted_decl: "restricted" NAME STRING "{" dotted_verb "accepts" name_list unscoped_clause? "}"
+
+unscoped_clause: "unscoped" NAME
+
+compound_decl: "compound" NAME STRING "{" step_stmt* "}"
+
+step_stmt: "step" NAME "=" dotted_verb ["each" NAME] ["bind" bind_list]
+
+bind_list: bind_item ("," bind_item)*
+
+bind_item: path_expr "=" NAME
+
+dotted_verb: NAME "." NAME
+
+// --- world and deployment ---
+
+world_decl: "world" NAME STRING "{" world_item* "}"
+
+// D6 scope deployment, D10 writer_source
+world_item: "modules" name_list
+          | "durability" NAME
+          | "writers" NAME
+          | "generated" name_list
+          | "requires" qname ["exempt" qname_list]
+          | "scope" scope_target
+          | "capabilities" name_list
+          | "writer_source" NAME
+          | "quarantine_retention" INT
+
+scope_target: "deployment" | path_expr
+
+deployment_decl: "deployment" NAME STRING ["extends" NAME] "{" dep_item* "}"
+
+dep_item: "world" NAME
+        | "engine" NAME
+        | "at" location
+        | "ship" NAME
+        | "mode" NAME
+        | "snapshot" NAME
+        | "pool" INT
+
+location: "env" NAME ["default" STRING]
+        | "path" STRING
+        | "memory"
+
+// --- evolution decisions ---
+
+tombstone_decl: "tombstone" NAME STRING "{" "data" disposition "}"
+
+tighten_stmt: "tighten" path_expr "repair" repair_val
+
+retype_stmt: "retype" NAME retype_clause
+
+restore_stmt: "restore" NAME
+
+// B9 / D4 ratified move_home
+move_home_stmt: "move_home" NAME "of" NAME "into" NAME "data" disposition
+
+retype_clause: "retype" NAME "forward" adapter "backward" adapter
+
+retire_clause: "retired" "data" disposition
+
+restore_clause: "restore"
+
+adapter: "widen" | "validate"
+
+disposition: "quarantine" | "drop"
+
+repair_val: "ship_clock" | "quarantine" | literal
+
+default_val: "ship_clock" | literal
+
+// --- expression grammar (closed; C-11) ---
+
+?expr: or_expr
+
+?or_expr: and_expr ("or" and_expr)*
+
+?and_expr: not_expr ("and" not_expr)*
+
+?not_expr: "not" not_expr
+         | atom_expr
+
+?atom_expr: "some" comparison
+          | "every" comparison
+          | comparison
+          | "(" expr ")"
+
+comparison: agg_expr cmp_op value_expr given_guard?
+          | path_expr "contains" value_expr given_guard?
+          | path_expr "in" value_expr given_guard?
+          | path_expr "is" value_expr given_guard?
+          | path_expr "present" given_guard?
+          | path_expr "absent" given_guard?
+          | path_expr "within" path_expr
+          | path_expr cmp_op value_expr given_guard?
+
+agg_expr: path_expr "count" "(" [expr] ")"
+        | path_expr "max" "(" path_expr ")"
+        | path_expr "min" "(" path_expr ")"
+
+given_guard: "when" "given"
+
+?value_expr: path_expr | literal | clock
+
+// Static-only expression algebra. Calls resolve against an explicit registry of
+// deterministic, side-effect-free functions; unknown or effectful calls refuse.
+?query_expr: query_or
+
+?query_or: query_and ("or" query_and)*
+
+?query_and: query_not ("and" query_not)*
+
+?query_not: "not" query_not
+          | query_predicate
+          | "(" query_expr ")"
+
+?query_predicate: query_scalar cmp_op query_scalar
+                | query_scalar "contains" query_scalar
+                | query_scalar "in" query_scalar
+                | query_scalar "is" query_scalar
+                | path_expr "present"
+                | path_expr "absent"
+                | path_expr "within" qname
+                | query_scalar
+
+?query_scalar: query_sum
+
+?query_sum: query_product (("+" | "-") query_product)*
+
+?query_product: query_unary (("*" | "/" | "%") query_unary)*
+
+?query_unary: ("+" | "-") query_unary
+            | query_primary
+
+?query_primary: path_expr
+              | literal
+              | clock
+              | query_aggregate
+              | query_call
+              | "(" query_scalar ")"
+
+query_aggregate: ("count" | "sum" | "average" | "minimum" | "maximum") "(" ["distinct"] [path_expr] ")"
+
+query_call: "call" qname "(" [query_arg_list] ")"
+
+query_arg_list: query_scalar ("," query_scalar)*
+
+clock: "engine_clock"
+
+path_expr: NAME ("." NAME)*
+
+cmp_op: "=" | "!=" | "<" | "<=" | ">" | ">="
+
+literal: STRING | INT | CTOR | "true" | "false"
+
+name_list: NAME ("," NAME)*
+
+NAME: /[A-Za-z_][A-Za-z0-9_]*/
+INT: /[0-9]+/
+STRING: /"([^"\\]|\\.)*"/
+CTOR: /@[A-Za-z_][A-Za-z0-9_-]*/
+
+COMMENT: /#[^\n]*/
+%ignore COMMENT
+%ignore /[ \t\f\r\n]+/

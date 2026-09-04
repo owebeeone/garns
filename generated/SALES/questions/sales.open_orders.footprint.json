@@ -1,0 +1,36 @@
+{
+ "atoms": [
+  {
+   "carrier": "sales.Customer",
+   "field": "*"
+  },
+  {
+   "carrier": "sales.Customer",
+   "field": "sales.Customer.name"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "*"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.created_at"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.customer"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.status"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.total"
+  }
+ ],
+ "composes": [],
+ "read": "sales.open_orders",
+ "scope_links": [],
+ "subject": "sales.Order"
+}

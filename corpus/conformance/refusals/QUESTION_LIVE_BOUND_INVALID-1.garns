@@ -1,0 +1,8 @@
+module bad "a live bound is a positive literal" {
+  intent key : Id "key"
+  resource Item "item" { use key { key } }
+  question items of Item "zero bound" {
+    show identity
+    live bounded 0
+  }
+}

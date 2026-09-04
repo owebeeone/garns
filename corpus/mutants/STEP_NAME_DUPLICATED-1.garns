@@ -1,0 +1,7 @@
+module m "dup step" {
+  resource User "u" { lifecycle mutable }
+  compound c "c" {
+    step user = User.mint
+    step user = User.mint
+  }
+}

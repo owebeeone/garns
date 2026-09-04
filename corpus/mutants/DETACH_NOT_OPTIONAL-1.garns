@@ -1,0 +1,7 @@
+module m "detach req" {
+  resource User "u" { lifecycle mutable }
+  resource Key "k" {
+    link org -> User { end detach }
+    lifecycle mutable
+  }
+}

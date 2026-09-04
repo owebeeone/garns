@@ -1,0 +1,9 @@
+module m "a bulk set names a parameter no given declares" {
+  intent sort : DisplayName "k"
+  resource A "a" { use sort { filter } lifecycle mutable }
+  query with_kind of A "by sort" { given k : DisplayName where sort = k }
+  bulk rename_kind "rename" {
+    A.change over with_kind
+    set sort = to
+  }
+}

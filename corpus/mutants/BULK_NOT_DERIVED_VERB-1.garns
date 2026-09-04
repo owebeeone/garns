@@ -1,0 +1,9 @@
+module m "bulk bad" {
+  resource User "u" { lifecycle mutable }
+  intent x : Text "x"
+  resource V "v" { use x }
+  question q of User "q" { show identity live bounded 10 }
+  bulk b "not derived" {
+    User.mint over q
+  }
+}

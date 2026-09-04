@@ -1,0 +1,19 @@
+module m "a scope path that ends at an exempt carrier" {
+  intent nm : Text "n"
+  resource User "u" { use nm { key } lifecycle mutable }
+  trait Owned "o" { link owner -> User { end restrict scopes } }
+  association Map "names a path to User, which the world exempts" {
+    link user -> User { end cascade }
+    link other -> User { end restrict }
+    scope_via user
+  }
+}
+world W "w" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+  requires m.Owned exempt m.User
+  scope m.Owned.owner
+  quarantine_retention 3
+}

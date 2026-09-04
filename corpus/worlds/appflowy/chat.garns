@@ -1,0 +1,50 @@
+# AI chat: chats as resources, messages as events ordered within a chat,
+# local settings as per-user (per-chat) resources (L3-2).
+
+module chat "AI chat sessions, their messages as events, and per-chat local settings." {
+  import traits (created_at)
+
+  intent chat_oid : Text "chat id as stored on chat_table.chat_id"
+  intent chat_metadata : Text "opaque chat metadata blob as text"
+  intent rag_ids : Text "RAG file ids attached to a chat; optional"
+  intent is_sync : Boolean "offline outbox flag: true when pushed or authored online"
+  intent summary : Text "chat summary written by the model"
+  intent message_oid : Integer "caller-supplied message id; a key, not engine identity"
+  intent content : Text "message body"
+  intent author_type : Integer "author discriminant; schema has no closed set"
+  intent author_id : Text "author id; may name a user or a bot"
+  intent reply_message_id : Integer "id of a replied-to message; not a link"
+  intent message_metadata : Text "opaque per-message metadata"
+  intent local_model_path : Text "filesystem path of a local model"
+  intent local_model_name : Text "local model name"
+
+  resource Chat "an AI chat session stored in this file" {
+    use chat_oid { key }
+    use created_at { order }
+    use chat_metadata { default "" }
+    use rag_ids { optional }
+    use is_sync { default true }
+    use summary { default "" }
+    lifecycle mutable
+  }
+
+  event ChatMessage "a message in a chat, in the order written" {
+    use message_oid { key }
+    use content
+    use created_at { order filter }
+    use author_type
+    use author_id { filter }
+    use reply_message_id { optional }
+    use message_metadata { optional }
+    use is_sync { default true }
+    link chat -> Chat { unenforced inverse messages }
+    ordered_within chat
+  }
+
+  resource ChatLocalSetting "per-chat local model selection for this user" {
+    use local_model_path
+    use local_model_name { default "" }
+    link chat -> Chat { unenforced key inverse local_setting }
+    lifecycle mutable
+  }
+}

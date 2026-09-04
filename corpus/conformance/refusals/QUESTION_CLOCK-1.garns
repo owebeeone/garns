@@ -1,0 +1,10 @@
+module bad "a question cannot depend on the engine clock: no write refreshes it" {
+  intent key : Id "key"
+  intent seen_at : Instant "seen"
+  resource Item "item" { use key { key } use seen_at }
+  question stale of Item "unfootprintable" {
+    where seen_at < engine_clock
+    show identity
+    live bounded 10
+  }
+}

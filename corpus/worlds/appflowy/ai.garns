@@ -1,0 +1,12 @@
+# On-device model catalog. Per-user local state (L3-2).
+
+module ai "On-device AI models known to this local user." {
+  intent model_name : Text "local model name"
+  intent model_type : Integer "model type discriminant; schema has no closed set"
+
+  resource LocalAiModel "an on-device model this user can select" {
+    use model_name { key }
+    use model_type
+    lifecycle mutable
+  }
+}

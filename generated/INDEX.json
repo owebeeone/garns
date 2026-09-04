@@ -1,0 +1,53 @@
+{
+ "schema": "garns-v9-5/generated-index/1",
+ "worlds": {
+  "APPFLOWY": {
+   "binding": "corpus/worlds/appflowy/storage-APPFLOWY.json",
+   "files": 5,
+   "source": "corpus/worlds/appflowy",
+   "tree_sha256": "960e3831a9e112925962bfd3f1978658b200705af1577eb80f1e9b7ea24ec3b1"
+  },
+  "APPFLOWY_VEC": {
+   "binding": "corpus/worlds/appflowy/storage-APPFLOWY_VEC.json",
+   "files": 5,
+   "source": "corpus/worlds/appflowy",
+   "tree_sha256": "6a269a79ef0355c4bfe32c0088e10af3b24ce439ddd627104b8ca4e8c569ea32"
+  },
+  "EVERBILITY": {
+   "binding": "corpus/worlds/everbility/storage-EVERBILITY.json",
+   "files": 32,
+   "source": "corpus/worlds/everbility",
+   "tree_sha256": "89a5e52d124493a0ee61ead50e29e38a787f13e12bc4e8c37360146b2f670070"
+  },
+  "LEDGERHOUSE": {
+   "binding": "corpus/conformance/worlds/ledgerhouse/storage-LEDGERHOUSE.json",
+   "files": 32,
+   "source": "corpus/conformance/worlds/ledgerhouse",
+   "tree_sha256": "7c10f4d7ebf4ce47f3796ff9045c50d993956f355a3da7515d7a983dd2577751"
+  },
+  "PRACTICE": {
+   "binding": "corpus/worlds/practice/storage-PRACTICE.json",
+   "files": 50,
+   "source": "corpus/worlds/practice",
+   "tree_sha256": "a5a082784d471620cf56f039284dae09307fca6d93f1e29b6054115c8e35ef1d"
+  },
+  "REPORTING": {
+   "binding": "corpus/conformance/worlds/reporting/storage-REPORTING.json",
+   "files": 8,
+   "source": "corpus/conformance/worlds/reporting",
+   "tree_sha256": "71681f1bcc25d3d4ed9f95493103b918759c89e3cf262781067196af5c94885a"
+  },
+  "SALES": {
+   "binding": "corpus/conformance/worlds/sales/storage-SALES.json",
+   "files": 20,
+   "source": "corpus/conformance/worlds/sales",
+   "tree_sha256": "7240ee4d12f9e8e5e82b1c174a27dd98d107e6410a6fcf64882d365dcf2f7505"
+  },
+  "VAULTWARDEN": {
+   "binding": "corpus/worlds/vaultwarden/storage-VAULTWARDEN.json",
+   "files": 20,
+   "source": "corpus/worlds/vaultwarden",
+   "tree_sha256": "ccfffd949ab1b06aeae9f3c1133f8fba8ee3cc50e2894e20c286b51be869925c"
+  }
+ }
+}

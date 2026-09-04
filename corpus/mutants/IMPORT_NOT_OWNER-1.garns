@@ -1,0 +1,12 @@
+module a "owner of email" {
+  intent email : Email "an address"
+}
+module b "uses email" {
+  import a (email)
+  resource B "b" { use email lifecycle mutable }
+}
+module c "imports email from b, which is not its owner" {
+  import b (email)
+  resource C "c" { use email lifecycle mutable }
+}
+world W "w" { modules a, b, c durability durable writers governed generated python scope deployment quarantine_retention 3 }

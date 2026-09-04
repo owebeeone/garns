@@ -1,0 +1,23 @@
+{
+ "steps": [
+  {
+   "do": "bind",
+   "source": "g1",
+   "world": "W",
+   "binding": "g1/storage-W.json"
+  },
+  {
+   "do": "ship"
+  },
+  {
+   "do": "bind",
+   "source": "g2",
+   "world": "W",
+   "binding": "g1/storage-W.json"
+  },
+  {
+   "do": "open",
+   "deployment": "D"
+  }
+ ]
+}

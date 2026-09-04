@@ -1,0 +1,41 @@
+{
+ "atoms": [
+  {
+   "carrier": "pantry.Jar",
+   "field": "*"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.grams"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.jar_label"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.shelf"
+  },
+  {
+   "carrier": "pantry.Shelf",
+   "field": "*"
+  },
+  {
+   "carrier": "pantry.Shelf",
+   "field": "pantry.Shelf.keeper"
+  },
+  {
+   "carrier": "pantry.Shelf",
+   "field": "pantry.Shelf.shelf_label"
+  }
+ ],
+ "composes": [
+  "pantry.heavy_shelves"
+ ],
+ "read": "pantry.jars_on_heavy_shelves",
+ "scope_links": [
+  "pantry.Jar.shelf",
+  "pantry.Shelf.keeper"
+ ],
+ "subject": "pantry.Jar"
+}

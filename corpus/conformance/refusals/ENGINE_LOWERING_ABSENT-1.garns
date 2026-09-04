@@ -1,0 +1,30 @@
+module archive "a complete world whose deployment names a recognised engine this build cannot lower" {
+  intent key : Id "key"
+  intent amount : Integer "amount"
+  resource Entry "an archived entry" { use key { key } use amount { filter } }
+  query large_entries of Entry "one-shot entries above a floor" {
+    given floor : Integer
+    where amount >= floor
+    show key, amount
+    order amount descending
+  }
+}
+
+world ARCHIVE "deployment-scoped archive world" {
+  modules archive
+  durability durable
+  writers governed
+  generated python, rust
+  scope deployment
+  quarantine_retention 3
+}
+
+deployment ARCHIVE_STORE "otherwise complete: every required item is present, only the engine has no lowering" {
+  world ARCHIVE
+  engine postgres
+  at env ARCHIVE_URL
+  ship explicit
+  mode readwrite
+  snapshot before_ship
+  pool 4
+}

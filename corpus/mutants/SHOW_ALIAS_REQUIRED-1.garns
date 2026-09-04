@@ -1,0 +1,5 @@
+module m "expression column without a name" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  query q of A "q" { show n + 1 }
+}

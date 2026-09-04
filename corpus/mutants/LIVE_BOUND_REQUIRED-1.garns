@@ -1,0 +1,7 @@
+module m "live unbound" {
+  resource User "u" { lifecycle mutable }
+  question q of User "q" {
+    live bounded
+    show x
+  }
+}

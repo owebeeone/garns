@@ -1,0 +1,24 @@
+module clients "Generation 5: nickname restored on Client; Contact.client back to cascade; g4 lifecycles kept." {
+  import people (Owned, Timestamped, email, nickname)
+
+  intent preferred_name : DisplayName "the name this person wants in the waiting room" {
+    alias user_name
+  }
+  intent archived_at : Instant "when hidden from default lists"
+
+  resource Client "a person the practice documents" {
+    use preferred_name { filter order }
+    use nickname { optional }
+    use archived_at { optional }
+    lifecycle archived_by archived_at
+    carry Owned, Timestamped
+  }
+
+  resource Contact "someone related to a client" {
+    use preferred_name
+    use email
+    use archived_at { optional }
+    link client -> Client { end cascade inverse contacts }
+    lifecycle archived_by archived_at
+  }
+}

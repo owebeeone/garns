@@ -1,0 +1,5 @@
+module m "reserved" {
+  tombstone nickname "gone" { data quarantine }
+  intent nickname : DisplayName "back without restore"
+  resource User "u" { use nickname lifecycle mutable }
+}

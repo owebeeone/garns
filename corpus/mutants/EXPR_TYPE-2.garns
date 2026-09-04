@@ -1,0 +1,8 @@
+module m "a string literal against a closed-set use is a type error" {
+  intent status : Text "s" { values @available, @coming_soon }
+  resource A "a" { use status lifecycle mutable }
+  question q of A "string vs closed set" {
+    where status = "available"
+    live bounded 10
+  }
+}

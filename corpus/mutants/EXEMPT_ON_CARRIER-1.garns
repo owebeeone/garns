@@ -1,0 +1,7 @@
+module a "exempt on a carrier is not admitted; exemptions live on the world" {
+  trait Owned "o" { }
+  resource B "b" {
+    lifecycle mutable
+    exempt Owned
+  }
+}

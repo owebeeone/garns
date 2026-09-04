@@ -1,0 +1,10 @@
+module m "cycle" {
+  resource A "a" {
+    link b -> B { end restrict }
+    lifecycle mutable
+  }
+  resource B "b" {
+    link a -> A { end restrict }
+    lifecycle mutable
+  }
+}

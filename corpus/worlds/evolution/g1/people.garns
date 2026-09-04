@@ -1,0 +1,14 @@
+# History fixture, generation 1: a two-module world as first shipped.
+
+module people "History fixture, generation 1: a two-module world as first shipped." {
+  intent email : Email "an address that can receive mail"
+
+  resource User "a practitioner" {
+    use email { key }
+    lifecycle retirable
+  }
+
+  trait Owned "belongs to one practitioner" {
+    link owner -> User { end restrict scopes }
+  }
+}

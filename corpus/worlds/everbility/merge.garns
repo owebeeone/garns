@@ -1,0 +1,27 @@
+module merge "Merge-tag definitions per user, and the three-way value association onto a client." {
+  import clients (Client)
+  import people (Owned, User)
+  import traits (Timestamped)
+
+  intent property_id : Text "stable id of a merge-tag property"
+  intent property_name : DisplayName "the merge-tag property as shown to the author"
+  intent can_delete : Boolean "whether the user may delete this merge tag"
+  intent property_value : Text "the merge-tag value for this client"
+
+  resource MergeTag "a merge-tag property defined by a user" {
+    use property_id { key }
+    use property_name { default "" }
+    use can_delete { default true }
+    lifecycle mutable
+    carry Owned, Timestamped
+  }
+
+  association MergeTagClient "this merge tag takes this value on this client for this user" {
+    link user -> User { end restrict }
+    link client -> Client { end cascade inverse merge_values }
+    link tag -> MergeTag { end cascade inverse client_values }
+    use property_value
+    carry Timestamped
+    scope_via client
+  }
+}

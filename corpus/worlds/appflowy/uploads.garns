@@ -1,0 +1,40 @@
+# Resumable multipart upload. Parts are events ordered within an upload (L3-2).
+# The schema joins parts to files on upload_id, which is a use not the file's
+# identity; the unenforced parent link's lowering joins that use.
+
+module uploads "Resumable file uploads and their parts as events." {
+  import traits (created_at)
+  import workspaces (UserWorkspace)
+
+  intent file_oid : Text "file id within a parent directory"
+  intent parent_dir : Text "parent directory of an upload"
+  intent local_file_path : Text "local path of the file being uploaded"
+  intent content_type : Text "MIME type"
+  intent chunk_size : Integer "bytes per part"
+  intent num_chunk : Integer "number of parts"
+  intent upload_oid : Text "multipart upload id; parts join on this use"
+  intent is_finish : Boolean "whether the multipart upload has finished"
+  intent e_tag : Text "S3 part ETag"
+  intent part_num : Integer "1-based part number"
+
+  resource UploadFile "a resumable multipart upload for one file" {
+    use file_oid { key }
+    use parent_dir { key }
+    use local_file_path
+    use content_type
+    use chunk_size
+    use num_chunk
+    use upload_oid { filter default "" }
+    use created_at { order }
+    use is_finish { default false }
+    link workspace -> UserWorkspace { unenforced key inverse uploads }
+    lifecycle mutable
+  }
+
+  event UploadPart "one part of a multipart upload, ordered by part_num" {
+    use e_tag { key }
+    use part_num { order }
+    link upload -> UploadFile { unenforced inverse parts }
+    ordered_within upload
+  }
+}

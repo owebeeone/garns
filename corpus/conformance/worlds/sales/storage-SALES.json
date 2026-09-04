@@ -1,0 +1,33 @@
+{
+  "engine": {
+    "generations": "en_339a843a1d",
+    "ledger": "en_f8bd8555fd",
+    "revisions": "en_9b3975370b"
+  },
+  "relations": {
+    "sales.Customer": {
+      "columns": {
+        "sales.Customer.customer_id": "co_7ed8c48383",
+        "sales.Customer.name": "co_1e32478f5c"
+      },
+      "identity": "id_268d9db70b",
+      "links": {},
+      "table": "ta_6e060cc01b"
+    },
+    "sales.Order": {
+      "columns": {
+        "sales.Order.created_at": "co_66617ed9a4",
+        "sales.Order.order_id": "co_c2bd8587a7",
+        "sales.Order.status": "co_7cbde43f56",
+        "sales.Order.total": "co_26bff25d88"
+      },
+      "identity": "id_76d3517dac",
+      "links": {
+        "sales.Order.customer": "li_a1a73c58a7"
+      },
+      "table": "ta_8d09f00415"
+    }
+  },
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "SALES"
+}

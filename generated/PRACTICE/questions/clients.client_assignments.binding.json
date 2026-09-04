@@ -1,0 +1,34 @@
+{
+ "capability": null,
+ "composes": [],
+ "live_bound": 10000,
+ "parameters": [
+  {
+   "name": "q",
+   "optional": true,
+   "type": "optional Text"
+  },
+  {
+   "name": "creators",
+   "optional": true,
+   "type": "optional list_of Email"
+  },
+  {
+   "name": "page",
+   "optional": false,
+   "type": "Integer"
+  },
+  {
+   "name": "limit",
+   "optional": false,
+   "type": "Integer"
+  }
+ ],
+ "question": "clients.client_assignments",
+ "retention": 3,
+ "scoped": true,
+ "shape": "windowed",
+ "subject": "clients.Client",
+ "writer_source": null,
+ "writers": "governed"
+}

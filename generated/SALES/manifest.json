@@ -1,0 +1,27 @@
+{
+ "files": {
+  "ir.json": "b091b7ae80161c03029beb41738be0a657b19fa6037837635ed19b1fc678ad97",
+  "python/sales__open_orders.py": "9bed2ff1f20d06cbab859ac07f00d4f31f420568a937e9f659d4ebba6017981f",
+  "python/sales_static__distinct_open_customers.py": "88b6907a2d44eaac75fe7faf49fc934c85e7076d45fcaedcfce971f678bdf5c1",
+  "python/sales_static__open_orders_once.py": "ba4e34270787570d232f53de44780094ccf623e90a26d7c442bf30ebd846c2c1",
+  "python/sales_static__revenue_open_by_customer.py": "3f9d1863ffc24e77890d1f65c9c2905bef3b86924f12d58428e06aa25454fe80",
+  "queries/sales_static.distinct_open_customers.sql": "82c6c9493cd8a51b2e0c91a7caf975a49b8968060f12b12c09c4032454095a74",
+  "queries/sales_static.open_orders_once.sql": "0291200ad33275bf2f80cdb27d80e9485a7439255a3520dfcb32e45427f3597b",
+  "queries/sales_static.revenue_open_by_customer.sql": "98ccef57c9d2d931268aa9b6a5dbabef3d7c277e06ce37065bcf2ad2f1be9365",
+  "questions/sales.open_orders.binding.json": "8a6a01ccd4f6c480b80b6ae618eb9799ef83a9716358534955c00eaba6668c26",
+  "questions/sales.open_orders.footprint.json": "dfe46f1a14c0112d6095a476788345ce03c3572afbcaf04f40f32ff50608c191",
+  "questions/sales.open_orders.routing.json": "0242cf2960d0f93100859140976446ceff1bb2440ea9aa541e6fb9588248a5b5",
+  "questions/sales.open_orders.sql": "0291200ad33275bf2f80cdb27d80e9485a7439255a3520dfcb32e45427f3597b",
+  "rust/main.rs": "bafef4849ac162193ef130d1257437546b913fdb509f0385880171226192e059",
+  "rust/sales__open_orders.rs": "a1639a969839d14d1b8f0599ac17caeae69cd8fef98338272afc45497cda20e3",
+  "rust/sales_static__distinct_open_customers.rs": "461f76bb8ad6a43da3507ccf66193c41f4a546c22c089d1f4d55ebdee08ef17b",
+  "rust/sales_static__open_orders_once.rs": "ac7707fccf51bba106da3a834db1f9f9e70394dd40aded1279f93d49c3df3eb8",
+  "rust/sales_static__revenue_open_by_customer.rs": "7f468958ea7f06418aa38abc35c811928659e4223fc5567ec48ad4f595a8953b",
+  "rust/sqlite.rs": "f2eb7b4126691f8a86a2f7bae8bcc1f393970895cb0cfb5c4a82c1ab959725d7",
+  "schema.sql": "4256b85e1ac385308cf6ff4ba49e3136088564ebd7834441e6d604343c3ec954"
+ },
+ "ir_digest": "8e73dc4c42c605ac4327b31b60a4458d6c61416c58582f23f314577324d85f55",
+ "schema": "garns-v9-5/generated-manifest/1",
+ "storage_digest": "42d63506a6f32a20462b96469cc0da9609b9e805dc81062078ee323045e04541",
+ "world": "SALES"
+}

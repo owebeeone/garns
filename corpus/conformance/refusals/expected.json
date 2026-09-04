@@ -1,0 +1,18 @@
+{
+  "schema": "garns-v9-5/refusal-expectations/1",
+  "note": "assertions only: the runner never reads this file to decide an outcome",
+  "cases": [
+    {"file": "END_UNENFORCED-1.garns", "stage": "decode", "code": "DECL_SHAPE_INVALID"},
+    {"file": "QUERY_LIVE-1.garns", "stage": "decode", "code": "DECL_SHAPE_INVALID"},
+    {"file": "QUESTION_STATIC_CALL-1.garns", "stage": "decode", "code": "DECL_SHAPE_INVALID"},
+    {"file": "QUESTION_LIVE_BOUND_REQUIRED-1.garns", "stage": "validate", "code": "QUESTION_LIVE_BOUND_REQUIRED"},
+    {"file": "QUESTION_LIVE_BOUND_DUPLICATED-1.garns", "stage": "validate", "code": "QUESTION_LIVE_BOUND_DUPLICATED"},
+    {"file": "LINK_ENFORCEMENT_CONFLICT-1.garns", "stage": "validate", "code": "LINK_ENFORCEMENT_CONFLICT"},
+    {"file": "QUESTION_CLOCK-1.garns", "stage": "validate", "code": "QUESTION_NOT_FOOTPRINTABLE"},
+    {"file": "LINK_ENFORCEMENT_REPEATED-1.garns", "stage": "validate", "code": "LINK_ENFORCEMENT_REPEATED"},
+    {"file": "LINK_END_CONFLICT-1.garns", "stage": "validate", "code": "LINK_ENFORCEMENT_REPEATED"},
+    {"file": "QUESTION_LIVE_BOUND_INVALID-1.garns", "stage": "validate", "code": "QUESTION_LIVE_BOUND_INVALID"},
+    {"file": "QUESTION_COMPOSE_STATIC-1.garns", "stage": "validate", "code": "QUESTION_COMPOSE_STATIC"},
+    {"file": "ENGINE_LOWERING_ABSENT-1.garns", "stage": "validate", "code": "ENGINE_LOWERING_ABSENT"}
+  ]
+}

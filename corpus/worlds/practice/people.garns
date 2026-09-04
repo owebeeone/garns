@@ -1,0 +1,17 @@
+# People: the practitioners, and the tenancy trait every owned resource takes on.
+
+module people "People: the practitioners, and the tenancy trait every owned resource takes on." {
+  import traits (Timestamped)
+
+  intent email : Email "an address that can receive mail"
+
+  resource User "a practitioner who can own clients" {
+    use email { key }
+    lifecycle retirable
+    carry Timestamped
+  }
+
+  trait Owned "belongs to one practitioner; the tenancy boundary of everything that carries it" {
+    link owner -> User { end restrict scopes }
+  }
+}

@@ -1,0 +1,9 @@
+module m "fam mint" {
+  family D "d" {
+    lifecycle mutable
+    member F "f" { }
+  }
+  compound c "c" {
+    step d = D.mint
+  }
+}

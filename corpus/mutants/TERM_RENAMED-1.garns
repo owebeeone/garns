@@ -1,0 +1,7 @@
+module m "renamed ref" {
+  intent preferred_name : DisplayName "n" { renamed_from user_name alias user_name }
+  resource User "u" {
+    use user_name
+    lifecycle mutable
+  }
+}

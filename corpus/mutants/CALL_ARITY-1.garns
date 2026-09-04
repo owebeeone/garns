@@ -1,0 +1,5 @@
+module m "wrong arity" {
+  intent n : Text "n"
+  resource A "a" { use n }
+  query q of A "q" { show call text.length(n, n) as l }
+}

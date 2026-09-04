@@ -1,0 +1,4 @@
+module m "engine_clock is a term, not a default; defaults say ship_clock" {
+  intent seen_at : Instant "s"
+  resource A "a" { use seen_at { default engine_clock } lifecycle mutable }
+}

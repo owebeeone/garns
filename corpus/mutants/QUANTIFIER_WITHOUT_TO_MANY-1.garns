@@ -1,0 +1,5 @@
+module m "some over a scalar" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  question q of A "q" { where some n > 3 show n live bounded 10 }
+}

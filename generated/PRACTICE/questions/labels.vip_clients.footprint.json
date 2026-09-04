@@ -1,0 +1,46 @@
+{
+ "atoms": [
+  {
+   "carrier": "clients.Client",
+   "field": "*"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.archived_at"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.owner"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.preferred_name"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "*"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "labels.ClientLabel.client"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "labels.ClientLabel.label"
+  },
+  {
+   "carrier": "labels.Label",
+   "field": "*"
+  },
+  {
+   "carrier": "labels.Label",
+   "field": "labels.Label.label_name"
+  }
+ ],
+ "composes": [],
+ "read": "labels.vip_clients",
+ "scope_links": [
+  "clients.Client.owner"
+ ],
+ "subject": "clients.Client"
+}

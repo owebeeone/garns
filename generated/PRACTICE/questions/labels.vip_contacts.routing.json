@@ -1,0 +1,70 @@
+{
+ "question": "labels.vip_contacts",
+ "routing_keys": [
+  {
+   "carrier": "clients.Client",
+   "field": "*",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.archived_at",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.owner",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.preferred_name",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "*",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "clients.Contact.client",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "clients.Contact.email",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "clients.Contact.preferred_name",
+   "partition": "scope"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "*",
+   "partition": "scope"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "labels.ClientLabel.client",
+   "partition": "scope"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "labels.ClientLabel.label",
+   "partition": "scope"
+  },
+  {
+   "carrier": "labels.Label",
+   "field": "*",
+   "partition": "global"
+  },
+  {
+   "carrier": "labels.Label",
+   "field": "labels.Label.label_name",
+   "partition": "global"
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+# A private schema for capture and scope proofs: nonplural tables, non-id
+# identities, non-_id link columns, a two-hop scope path, renamed changelog
+# metadata. Nothing here shares vocabulary with the seed corpora.
+
+module tenancy "households and the trait that scopes rows to one household" {
+  intent household_code : Text "the household's code"
+  intent settled_on : Instant "when the household joined"
+
+  resource Household "the scope root" {
+    use household_code { key }
+    use settled_on { optional }
+  }
+
+  trait Kept "belongs to one household" {
+    link keeper -> Household { end restrict scopes }
+  }
+}
+
+module pantry "shelves and jars scoped through their shelf" {
+  import tenancy (Kept)
+
+  intent shelf_label : Text "shelf label"
+  intent jar_label : Text "jar label"
+  intent grams : Integer "grams in the jar"
+  intent state : Text "jar state" { values @sealed, @open, @empty }
+
+  resource Shelf "a shelf in a household" {
+    use shelf_label { key }
+    carry Kept
+  }
+
+  resource Jar "a jar on a shelf; scoped through the shelf" {
+    use jar_label { key }
+    use grams
+    use state { filter }
+    link shelf -> Shelf { end cascade inverse jars }
+  }
+
+  question open_jars of Jar "open jars on a household's shelves" {
+    where state = @open
+    show jar_label, grams, shelf.shelf_label as shelf
+    order grams descending
+    live bounded 500
+  }
+
+  question jars_by_state of Jar "how many jars in each state" {
+    show state, count()
+    group by state
+    live bounded 50
+  }
+
+  question heavy_shelves of Shelf "shelves with a jar heavier than half a kilo" {
+    where some jars.grams > 500
+    show shelf_label
+    live bounded 100
+  }
+
+  question jars_on_heavy_shelves of Jar "jars whose shelf is heavy" {
+    where shelf within heavy_shelves
+    show jar_label
+    live bounded 500
+  }
+
+  query jar_report of Jar "one-shot report over jars" {
+    given floor : Integer
+    where grams >= floor
+    show state as state, sum(grams) as total_grams, call math.round(average(grams), 1) as mean_grams
+    group by state
+    having sum(grams) > floor
+    order sum(grams) descending
+  }
+}
+
+world LEDGERHOUSE "captured pantry store" {
+  modules tenancy, pantry
+  durability durable
+  writers external_captured
+  writer_source pantry_daemon
+  generated python, rust
+  requires tenancy.Kept exempt tenancy.Household
+  scope tenancy.Kept.keeper
+  quarantine_retention 2
+}
+
+deployment LEDGERHOUSE_DEV "development on a file" {
+  world LEDGERHOUSE
+  engine sqlite
+  at memory
+  ship on_open
+  mode readwrite
+  snapshot none
+}

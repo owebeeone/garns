@@ -1,0 +1,5 @@
+module m "page without limit" {
+  intent n : Text "n"
+  resource A "a" { use n }
+  question q of A "q" { given p : Integer show n page p live bounded 10 }
+}

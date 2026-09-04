@@ -1,0 +1,1 @@
+SELECT s0."rid_orgs_collection" AS "$k0", s0."f_collection_collection_name" AS "collection_name", s0."f_collection_external_id" AS "external_id" FROM "tbl_orgs_collection" AS s0 WHERE (s0."ref_collection_org" = :org) ORDER BY s0."rid_orgs_collection" ASC

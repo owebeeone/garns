@@ -1,0 +1,8 @@
+module m "an Opaque value admits presence only" {
+  intent blob : Opaque "client-encrypted content"
+  resource A "a" { use blob lifecycle mutable }
+  question q of A "compares an opaque" {
+    where blob = "x"
+    live bounded 10
+  }
+}

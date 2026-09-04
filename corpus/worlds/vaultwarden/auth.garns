@@ -1,0 +1,139 @@
+# Devices, 2FA, SSO, emergency access, auth requests, invitations.
+
+module auth "Devices, two-factor, SSO handshake state, emergency access, and invitations." {
+  import people (Organization, Owned, User, email)
+  import traits (Timestamped, atype)
+  import orgs (membership_status)
+
+  intent device_name : DisplayName "the device's display name"
+  intent push_token : Text "push-notification token"
+  intent refresh_token : Opaque "refresh token material"
+  intent twofactor_remember : Opaque "remember-2fa cookie material"
+  intent push_uuid : Text "push identifier for this device"
+  intent twofactor_enabled : Boolean "whether this 2fa method is on"
+  intent twofactor_data : Opaque "encrypted 2fa configuration"
+  intent last_used : Integer "last-used counter for this 2fa method"
+  intent device_uuid : Text "device identifier during incomplete 2fa"
+  intent login_time : Instant "when the incomplete 2fa login started"
+  intent ip_address : Text "client address recorded with the attempt"
+  intent device_type : Integer "client device-type discriminant"
+  intent duo_state : Text "duo handshake state key"
+  intent duo_nonce : Text "duo handshake nonce"
+  intent duo_exp : Integer "duo handshake expiry as a unix instant"
+  intent key_encrypted : Opaque "emergency-access encrypted key"
+  intent wait_time_days : Integer "days to wait before emergency access is granted"
+  intent recovery_initiated_at : Instant "when recovery was started"
+  intent last_notification_at : Instant "when the grantor was last notified"
+  intent request_device_identifier : Text "device that opened the auth request"
+  intent request_ip : Text "address that opened the auth request"
+  intent response_device_id : Text "device that answered the auth request"
+  intent access_code : Opaque "auth-request access code"
+  intent auth_public_key : Opaque "auth-request public key"
+  intent enc_key : Opaque "auth-request encrypted key"
+  intent master_password_hash : Opaque "auth-request master-password hash"
+  intent approved : Boolean "whether the auth request was approved"
+  intent response_date : Instant "when the auth request was answered"
+  intent authentication_date : Instant "when the auth request was consumed"
+  intent sso_state : Text "oidc handshake state key"
+  intent client_challenge : Opaque "pkce challenge"
+  intent sso_nonce : Text "oidc nonce"
+  intent redirect_uri : Text "oidc redirect uri"
+  intent code_response : Opaque "token-endpoint code response"
+  intent auth_response : Opaque "authorization-endpoint response"
+  intent binding_hash : Opaque "dpop-style binding hash"
+  intent code_response_error : Text "token-endpoint error body"
+  intent sso_identifier : Text "idp subject identifier"
+
+  resource Device "a signed-in device of a user; composite uniqueness is user plus device uuid" {
+    use device_name
+    use atype
+    use push_token { optional }
+    use refresh_token
+    use twofactor_remember { optional }
+    use push_uuid { optional }
+    lifecycle mutable
+    carry Owned, Timestamped
+  }
+
+  resource TwoFactor "one 2fa method for a user" {
+    use atype { filter }
+    use twofactor_enabled
+    use twofactor_data
+    use last_used { default 0 }
+    lifecycle mutable
+    carry Owned
+  }
+
+  resource TwoFactorIncomplete "an in-flight 2fa login for a user and device" {
+    use device_uuid { key }
+    use device_name
+    use login_time { order }
+    use ip_address
+    use device_type { default 14 }
+    lifecycle mutable
+    carry Owned
+  }
+
+  resource TwoFactorDuo "ephemeral duo handshake context" {
+    use duo_state { key }
+    use email
+    use duo_nonce
+    use duo_exp
+    lifecycle mutable
+  }
+
+  resource EmergencyAccess "a grantor/grantee emergency vault-access grant" {
+    use email { optional }
+    use key_encrypted { optional }
+    use atype
+    use membership_status
+    use wait_time_days
+    use recovery_initiated_at { optional }
+    use last_notification_at { optional }
+    link grantor_user -> User { optional end detach inverse emergency_granted }
+    link grantee_user -> User { optional end detach inverse emergency_received }
+    lifecycle mutable
+    carry Timestamped
+  }
+
+  resource AuthRequest "a passwordless or device-approval login request" {
+    use request_device_identifier
+    use device_type
+    use request_ip
+    use response_device_id { optional }
+    use access_code
+    use auth_public_key
+    use enc_key { optional }
+    use master_password_hash { optional }
+    use approved { optional }
+    use response_date { optional }
+    use authentication_date { optional }
+    link org -> Organization { optional end detach }
+    lifecycle mutable
+    carry Owned, Timestamped
+  }
+
+  resource SsoAuth "in-flight oidc handshake state; not durable user data" {
+    use sso_state { key }
+    use client_challenge
+    use sso_nonce
+    use redirect_uri
+    use code_response { optional }
+    use auth_response { optional }
+    use binding_hash { optional }
+    use code_response_error { optional }
+    lifecycle mutable
+    carry Timestamped
+  }
+
+  resource SsoUser "the idp identifier bound to a user" {
+    use sso_identifier { key }
+    lifecycle mutable
+    carry Owned, Timestamped
+  }
+
+  resource Invitation "a pending invite staged by email before a user exists" {
+    use email { key }
+    lifecycle mutable
+  }
+}

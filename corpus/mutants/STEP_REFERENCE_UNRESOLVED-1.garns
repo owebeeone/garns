@@ -1,0 +1,6 @@
+module m "step missing" {
+  resource User "u" { lifecycle mutable link owner -> User { optional end detach } }
+  compound c "c" {
+    step a = User.mint bind owner = nobody
+  }
+}

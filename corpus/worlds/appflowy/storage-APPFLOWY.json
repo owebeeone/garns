@@ -1,0 +1,220 @@
+{
+  "engine": {
+    "generations": "garns_generations",
+    "ledger": "garns_ledger",
+    "revisions": "garns_revisions"
+  },
+  "relations": {
+    "ai.LocalAiModel": {
+      "columns": {
+        "ai.LocalAiModel.model_name": "f_localaimodel_model_name",
+        "ai.LocalAiModel.model_type": "f_localaimodel_model_type"
+      },
+      "identity": "rid_ai_localaimodel",
+      "links": {},
+      "table": "tbl_ai_localaimodel"
+    },
+    "chat.Chat": {
+      "columns": {
+        "chat.Chat.chat_metadata": "f_chat_chat_metadata",
+        "chat.Chat.chat_oid": "f_chat_chat_oid",
+        "chat.Chat.created_at": "f_chat_created_at",
+        "chat.Chat.is_sync": "f_chat_is_sync",
+        "chat.Chat.rag_ids": "f_chat_rag_ids",
+        "chat.Chat.summary": "f_chat_summary"
+      },
+      "identity": "rid_chat_chat",
+      "links": {},
+      "table": "tbl_chat_chat"
+    },
+    "chat.ChatLocalSetting": {
+      "columns": {
+        "chat.ChatLocalSetting.local_model_name": "f_chatlocalsetting_local_model_name",
+        "chat.ChatLocalSetting.local_model_path": "f_chatlocalsetting_local_model_path"
+      },
+      "identity": "rid_chat_chatlocalsetting",
+      "links": {
+        "chat.ChatLocalSetting.chat": "ref_chatlocalsetting_chat"
+      },
+      "table": "tbl_chat_chatlocalsetting"
+    },
+    "chat.ChatMessage": {
+      "columns": {
+        "chat.ChatMessage.author_id": "f_chatmessage_author_id",
+        "chat.ChatMessage.author_type": "f_chatmessage_author_type",
+        "chat.ChatMessage.content": "f_chatmessage_content",
+        "chat.ChatMessage.created_at": "f_chatmessage_created_at",
+        "chat.ChatMessage.is_sync": "f_chatmessage_is_sync",
+        "chat.ChatMessage.message_metadata": "f_chatmessage_message_metadata",
+        "chat.ChatMessage.message_oid": "f_chatmessage_message_oid",
+        "chat.ChatMessage.reply_message_id": "f_chatmessage_reply_message_id"
+      },
+      "identity": "rid_chat_chatmessage",
+      "links": {
+        "chat.ChatMessage.chat": "ref_chatmessage_chat"
+      },
+      "table": "tbl_chat_chatmessage"
+    },
+    "collab.CollabMetadata": {
+      "columns": {
+        "collab.CollabMetadata.collab_type": "f_collabmetadata_collab_type",
+        "collab.CollabMetadata.object_oid": "f_collabmetadata_object_oid",
+        "collab.CollabMetadata.prev_sync_state_vector": "f_collabmetadata_prev_sync_state_vector",
+        "collab.CollabMetadata.updated_at": "f_collabmetadata_updated_at"
+      },
+      "identity": "rid_collab_collabmetadata",
+      "links": {},
+      "table": "tbl_collab_collabmetadata"
+    },
+    "collab.CollabSnapshot": {
+      "columns": {
+        "collab.CollabSnapshot.collab_type_text": "f_collabsnapshot_collab_type_text",
+        "collab.CollabSnapshot.object_oid": "f_collabsnapshot_object_oid",
+        "collab.CollabSnapshot.snapshot_at": "f_collabsnapshot_snapshot_at",
+        "collab.CollabSnapshot.snapshot_data": "f_collabsnapshot_snapshot_data",
+        "collab.CollabSnapshot.snapshot_desc": "f_collabsnapshot_snapshot_desc",
+        "collab.CollabSnapshot.title": "f_collabsnapshot_title"
+      },
+      "identity": "rid_collab_collabsnapshot",
+      "links": {},
+      "table": "tbl_collab_collabsnapshot"
+    },
+    "collab.IndexCollabRecord": {
+      "columns": {
+        "collab.IndexCollabRecord.content_hash": "f_indexcollabrecord_content_hash",
+        "collab.IndexCollabRecord.object_oid": "f_indexcollabrecord_object_oid"
+      },
+      "identity": "rid_collab_indexcollabrecord",
+      "links": {
+        "collab.IndexCollabRecord.workspace": "ref_indexcollabrecord_workspace"
+      },
+      "table": "tbl_collab_indexcollabrecord"
+    },
+    "migrate.UserDataMigrationRecord": {
+      "columns": {
+        "migrate.UserDataMigrationRecord.executed_at": "f_userdatamigrationrecord_executed_at",
+        "migrate.UserDataMigrationRecord.migration_name": "f_userdatamigrationrecord_migration_name"
+      },
+      "identity": "rid_migrate_userdatamigrationrecord",
+      "links": {},
+      "table": "tbl_migrate_userdatamigrationrecord"
+    },
+    "traits.User": {
+      "columns": {
+        "traits.User.auth_type": "f_user_auth_type",
+        "traits.User.display_name": "f_user_display_name",
+        "traits.User.email": "f_user_email",
+        "traits.User.icon_url": "f_user_icon_url",
+        "traits.User.token": "f_user_token",
+        "traits.User.updated_at": "f_user_updated_at",
+        "traits.User.user_oid": "f_user_user_oid"
+      },
+      "identity": "rid_traits_user",
+      "links": {},
+      "table": "tbl_traits_user"
+    },
+    "uploads.UploadFile": {
+      "columns": {
+        "uploads.UploadFile.chunk_size": "f_uploadfile_chunk_size",
+        "uploads.UploadFile.content_type": "f_uploadfile_content_type",
+        "uploads.UploadFile.created_at": "f_uploadfile_created_at",
+        "uploads.UploadFile.file_oid": "f_uploadfile_file_oid",
+        "uploads.UploadFile.is_finish": "f_uploadfile_is_finish",
+        "uploads.UploadFile.local_file_path": "f_uploadfile_local_file_path",
+        "uploads.UploadFile.num_chunk": "f_uploadfile_num_chunk",
+        "uploads.UploadFile.parent_dir": "f_uploadfile_parent_dir",
+        "uploads.UploadFile.upload_oid": "f_uploadfile_upload_oid"
+      },
+      "identity": "rid_uploads_uploadfile",
+      "links": {
+        "uploads.UploadFile.workspace": "ref_uploadfile_workspace"
+      },
+      "table": "tbl_uploads_uploadfile"
+    },
+    "uploads.UploadPart": {
+      "columns": {
+        "uploads.UploadPart.e_tag": "f_uploadpart_e_tag",
+        "uploads.UploadPart.part_num": "f_uploadpart_part_num"
+      },
+      "identity": "rid_uploads_uploadpart",
+      "links": {
+        "uploads.UploadPart.upload": "ref_uploadpart_upload"
+      },
+      "table": "tbl_uploads_uploadpart"
+    },
+    "workspaces.SharedUser": {
+      "columns": {
+        "workspaces.SharedUser.access_level": "f_shareduser_access_level",
+        "workspaces.SharedUser.avatar_url": "f_shareduser_avatar_url",
+        "workspaces.SharedUser.display_name": "f_shareduser_display_name",
+        "workspaces.SharedUser.email": "f_shareduser_email",
+        "workspaces.SharedUser.role": "f_shareduser_role",
+        "workspaces.SharedUser.sort_order": "f_shareduser_sort_order",
+        "workspaces.SharedUser.view_oid": "f_shareduser_view_oid"
+      },
+      "identity": "rid_workspaces_shareduser",
+      "links": {
+        "workspaces.SharedUser.workspace": "ref_shareduser_workspace"
+      },
+      "table": "tbl_workspaces_shareduser"
+    },
+    "workspaces.SharedView": {
+      "columns": {
+        "workspaces.SharedView.created_at": "f_sharedview_created_at",
+        "workspaces.SharedView.permission_id": "f_sharedview_permission_id",
+        "workspaces.SharedView.uid": "f_sharedview_uid",
+        "workspaces.SharedView.view_oid": "f_sharedview_view_oid"
+      },
+      "identity": "rid_workspaces_sharedview",
+      "links": {
+        "workspaces.SharedView.workspace": "ref_sharedview_workspace"
+      },
+      "table": "tbl_workspaces_sharedview"
+    },
+    "workspaces.UserWorkspace": {
+      "columns": {
+        "workspaces.UserWorkspace.created_at": "f_userworkspace_created_at",
+        "workspaces.UserWorkspace.database_storage_id": "f_userworkspace_database_storage_id",
+        "workspaces.UserWorkspace.display_name": "f_userworkspace_display_name",
+        "workspaces.UserWorkspace.icon": "f_userworkspace_icon",
+        "workspaces.UserWorkspace.member_count": "f_userworkspace_member_count",
+        "workspaces.UserWorkspace.role": "f_userworkspace_role",
+        "workspaces.UserWorkspace.uid": "f_userworkspace_uid",
+        "workspaces.UserWorkspace.workspace_oid": "f_userworkspace_workspace_oid",
+        "workspaces.UserWorkspace.workspace_type": "f_userworkspace_workspace_type"
+      },
+      "identity": "rid_workspaces_userworkspace",
+      "links": {},
+      "table": "tbl_workspaces_userworkspace"
+    },
+    "workspaces.WorkspaceMember": {
+      "columns": {
+        "workspaces.WorkspaceMember.avatar_url": "f_workspacemember_avatar_url",
+        "workspaces.WorkspaceMember.display_name": "f_workspacemember_display_name",
+        "workspaces.WorkspaceMember.email": "f_workspacemember_email",
+        "workspaces.WorkspaceMember.joined_at": "f_workspacemember_joined_at",
+        "workspaces.WorkspaceMember.role": "f_workspacemember_role",
+        "workspaces.WorkspaceMember.uid": "f_workspacemember_uid",
+        "workspaces.WorkspaceMember.updated_at": "f_workspacemember_updated_at"
+      },
+      "identity": "rid_workspaces_workspacemember",
+      "links": {
+        "workspaces.WorkspaceMember.workspace": "ref_workspacemember_workspace"
+      },
+      "table": "tbl_workspaces_workspacemember"
+    },
+    "workspaces.WorkspaceSetting": {
+      "columns": {
+        "workspaces.WorkspaceSetting.ai_model": "f_workspacesetting_ai_model",
+        "workspaces.WorkspaceSetting.disable_search_indexing": "f_workspacesetting_disable_search_indexing"
+      },
+      "identity": "rid_workspaces_workspacesetting",
+      "links": {
+        "workspaces.WorkspaceSetting.workspace": "ref_workspacesetting_workspace"
+      },
+      "table": "tbl_workspaces_workspacesetting"
+    }
+  },
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "APPFLOWY"
+}

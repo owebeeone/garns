@@ -1,0 +1,34 @@
+module w "a small scoped world for runtime scenarios" {
+  intent code : Text "code"
+  intent amount : Integer "amount"
+  intent note : Text "note"
+  intent seen_at : Instant "seen"
+  resource Root "the scope root" { use code { key } }
+  trait Held "held by a root" { link holder -> Root { end restrict scopes } }
+  resource Item "an item" {
+    use code { key }
+    use amount { filter }
+    use note { optional }
+    use seen_at { optional stamp on_change }
+    carry Held
+    invariant amount >= 0
+  }
+  resource Detail "a detail scoped through its item" {
+    use note
+    link item -> Item { end cascade inverse details }
+  }
+  query items_once of Item "one-shot" { where amount > 0 show code, amount }
+  question items_live of Item "live" { where amount > 0 show code, amount order amount descending live bounded 2 }
+  query audit of Item "unscoped" { show code unscoped auditor }
+}
+world W "runtime world" {
+  modules w
+  durability durable
+  writers governed
+  generated python, rust
+  requires w.Held exempt w.Root
+  scope w.Held.holder
+  capabilities auditor
+  quarantine_retention 3
+}
+deployment D "explicit shipping" { world W engine sqlite at memory ship explicit mode readwrite snapshot none }

@@ -1,0 +1,51 @@
+# Audit log: append-only. The table has optional user and org, no FK, ordered by
+# event_date. C-04 wants one parent link. v0.1 orders within the optional user
+# link; org-only and parentless rows are the dual-parent gap (V9-2-L2-2).
+
+module events "Append-only audit events, ordered within a user when one is present." {
+  import people (Organization, User)
+  import vault (Cipher)
+  import orgs (Collection, Group, OrgPolicy, UsersOrganizations)
+  import auth (device_type, ip_address)
+
+  intent event_type : Integer "audit event discriminant"
+  intent event_date : Instant "when the event was recorded"
+  intent provider_uuid : Text "external provider identifier recorded with the event"
+  intent provider_user_uuid : Text "external provider-user identifier"
+  intent provider_org_uuid : Text "external provider-org identifier"
+
+  event AuditEvent "an append-only audit record; parent may be a user, an organisation, or neither" {
+    use event_type { filter }
+    use device_type { optional }
+    use ip_address { optional }
+    use event_date { order filter stamp on_mint default ship_clock }
+    use provider_uuid { optional }
+    use provider_user_uuid { optional }
+    use provider_org_uuid { optional }
+    link user -> User { optional end detach inverse audit_events }
+    link org -> Organization { optional end detach inverse audit_events }
+    link cipher -> Cipher { optional end detach }
+    link collection -> Collection { optional end detach }
+    link group -> Group { optional end detach }
+    link membership -> UsersOrganizations { optional end detach }
+    link actor -> User { optional end detach }
+    link policy -> OrgPolicy { optional end detach }
+    ordered_within user
+  }
+
+  query events_for_user of AuditEvent "audit events attached to one user, in time order" {
+    given who : User
+    where user is who
+    show event_type, event_date, ip_address
+    order event_date
+    unscoped vault_audit
+  }
+
+  query events_for_org of AuditEvent "audit events attached to one organisation" {
+    given org : Organization
+    where org is org
+    show event_type, event_date
+    order event_date
+    unscoped vault_audit
+  }
+}

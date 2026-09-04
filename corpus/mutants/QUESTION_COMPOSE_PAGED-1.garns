@@ -1,0 +1,17 @@
+module m "compose paged" {
+  resource User "u" { lifecycle mutable }
+  question paged of User "p" {
+    given page : Integer = 1
+    given limit : Integer = 25
+    page page
+    limit limit
+    with_total
+    show identity
+    live bounded 10
+  }
+  question q of User "q" {
+    where identity within paged
+    show identity
+    live bounded 10
+  }
+}

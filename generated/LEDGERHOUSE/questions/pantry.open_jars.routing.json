@@ -1,0 +1,45 @@
+{
+ "question": "pantry.open_jars",
+ "routing_keys": [
+  {
+   "carrier": "pantry.Jar",
+   "field": "*",
+   "partition": "scope"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.grams",
+   "partition": "scope"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.jar_label",
+   "partition": "scope"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.shelf",
+   "partition": "scope"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.state",
+   "partition": "scope"
+  },
+  {
+   "carrier": "pantry.Shelf",
+   "field": "*",
+   "partition": "scope"
+  },
+  {
+   "carrier": "pantry.Shelf",
+   "field": "pantry.Shelf.keeper",
+   "partition": "scope"
+  },
+  {
+   "carrier": "pantry.Shelf",
+   "field": "pantry.Shelf.shelf_label",
+   "partition": "scope"
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+module a "owner of Owned" {
+  intent nm : Text "n"
+  resource R "root" { use nm { key } lifecycle mutable }
+  trait Owned "o" { link owner -> R { end restrict scopes } }
+}
+module b "carries a trait it never imported" {
+  resource B "b" { lifecycle mutable carry Owned }
+}
+world W "w" { modules a, b durability durable writers governed generated python requires a.Owned exempt a.R scope a.Owned.owner quarantine_retention 3 }

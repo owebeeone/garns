@@ -1,0 +1,13 @@
+{
+ "capability": null,
+ "composes": [],
+ "live_bound": 100,
+ "parameters": [],
+ "question": "pantry.heavy_shelves",
+ "retention": 2,
+ "scoped": true,
+ "shape": "collection",
+ "subject": "pantry.Shelf",
+ "writer_source": "pantry_daemon",
+ "writers": "external_captured"
+}

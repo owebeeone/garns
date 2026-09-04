@@ -1,0 +1,8 @@
+module m "unknown term" {
+  resource User "u" { lifecycle mutable }
+  question q of User "q" {
+    where nope = 1
+    show nope
+    live bounded 10
+  }
+}

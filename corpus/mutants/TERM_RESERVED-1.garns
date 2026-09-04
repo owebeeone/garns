@@ -1,0 +1,4 @@
+module m "an intent named after a language term" {
+  intent identity : Text "i"
+  resource A "a" { use identity }
+}

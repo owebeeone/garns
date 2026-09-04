@@ -1,0 +1,31 @@
+# Vaultwarden world. One C-07 scope root: Owned.owner (User). Organisation is a
+# tenancy in the world, not a second language. Org-wide accessors are unscoped.
+
+world VAULTWARDEN "the vaultwarden store: users, organisations, encrypted vault items" {
+  modules traits, people, vault, orgs, auth, events
+  durability durable
+  writers governed
+  generated python, rust
+  requires people.Owned exempt auth.EmergencyAccess, auth.Invitation, auth.SsoAuth, auth.TwoFactorDuo, events.AuditEvent, orgs.CiphersCollections, orgs.Collection, orgs.CollectionsGroups, orgs.Group, orgs.GroupsUsers, orgs.OrgPolicy, orgs.OrganizationApiKey, orgs.UsersCollections, orgs.UsersOrganizations, people.Organization, people.User, vault.Archive, vault.Attachment, vault.Cipher, vault.Favorite, vault.FoldersCiphers, vault.Send
+  scope people.Owned.owner
+  capabilities vault_admin, vault_audit, vault_org_read
+  quarantine_retention 3
+}
+
+deployment VAULTWARDEN_DEV "development: the store follows the file" {
+  world VAULTWARDEN
+  engine sqlite
+  at env VAULTWARDEN_DB default "./vaultwarden.sqlite"
+  ship on_open
+  mode readwrite
+  snapshot none
+}
+
+deployment VAULTWARDEN_PROD "production: ship after a reviewed plan" {
+  world VAULTWARDEN
+  engine sqlite
+  at env DATABASE_URL
+  ship explicit
+  mode readwrite
+  snapshot before_ship
+}

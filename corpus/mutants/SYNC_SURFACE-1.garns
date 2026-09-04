@@ -1,0 +1,5 @@
+module m "m" {
+  sync resource User "u" {
+    lifecycle mutable
+  }
+}

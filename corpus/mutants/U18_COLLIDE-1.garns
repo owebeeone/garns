@@ -1,0 +1,19 @@
+module m "two worlds never merge" {
+  resource User "u" { lifecycle mutable }
+}
+world A "a" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+  scope deployment
+  quarantine_retention 3
+}
+world B "b" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+  scope deployment
+  quarantine_retention 3
+}

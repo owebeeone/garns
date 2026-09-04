@@ -1,0 +1,14 @@
+module m "to-many" {
+  intent n : Text "n"
+  resource User "u" { lifecycle mutable }
+  resource Client "c" {
+    use n
+    link owner -> User { end restrict inverse clients }
+    lifecycle mutable
+  }
+  question q of User "q" {
+    where clients.n = "a"
+    show identity
+    live bounded 10
+  }
+}

@@ -1,0 +1,1 @@
+SELECT s0."cond" AS "$k0", s0."cond" AS "state", COUNT(*) AS "count" FROM "jar" AS s0 WHERE s0."on_shelf" IN (SELECT p1."shelf_no" FROM "shelf" AS p1 WHERE p1."kept_by" = :_scope) GROUP BY s0."cond" ORDER BY s0."cond" ASC

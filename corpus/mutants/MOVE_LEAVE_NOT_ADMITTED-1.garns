@@ -1,0 +1,6 @@
+module m "the v9-2 leave disposition is not admitted by B9" {
+  intent n : Text "n"
+  resource A "a" { use n lifecycle mutable }
+  resource B "b" { lifecycle mutable }
+  move_home n of A into B data leave
+}

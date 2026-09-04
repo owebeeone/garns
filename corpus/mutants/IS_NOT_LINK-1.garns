@@ -1,0 +1,5 @@
+module m "is on a scalar" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  question q of A "q" { given k : Integer where n is k show n live bounded 10 }
+}

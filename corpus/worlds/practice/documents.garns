@@ -1,0 +1,40 @@
+# A family: one identity space, several member kinds nested in the family block.
+
+module documents "A family: one identity space, several member kinds." {
+  import clients (Client, archived_at)
+  import people (Owned)
+  import traits (Timestamped)
+
+  intent title : DisplayName "what the document is called"
+  intent template_ref : Text "which library template a form was filled from"
+  intent body : Text "the text of a letter"
+
+  family Document "something written for a client" {
+    history kept
+    use title { filter order }
+    use archived_at { optional }
+    link client -> Client { end cascade inverse documents }
+    lifecycle archived_by archived_at
+    carry Owned, Timestamped
+
+    member Form "a filled-in form" {
+      use template_ref
+    }
+    member Letter "a letter to or about the client" {
+      use body
+    }
+  }
+
+  query client_documents of Document "every document of a client, of every kind" {
+    given client : Client
+    where client is client
+    show title, kind, client.preferred_name
+    order title
+  }
+
+  query letters_mentioning of Letter "letters whose body contains the text" {
+    given q : Text
+    where body contains q
+    show title, body
+  }
+}

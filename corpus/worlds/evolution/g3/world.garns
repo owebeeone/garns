@@ -1,0 +1,18 @@
+world PRACTICE "the two-module practice" {
+  modules people, clients
+  durability durable
+  writers governed
+  generated python, rust
+  requires people.Owned exempt people.User
+  scope people.Owned.owner
+  quarantine_retention 3
+}
+
+deployment DEV "development on a file" {
+  world PRACTICE
+  engine sqlite
+  at path "tmp/evolution.sqlite"
+  ship on_open
+  mode readwrite
+  snapshot none
+}

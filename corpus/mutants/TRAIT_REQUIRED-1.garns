@@ -1,0 +1,15 @@
+module m "no owned" {
+  intent nm : Text "n"
+  resource R "r" { use nm { key } }
+  trait Owned "o" { link owner -> R { end restrict scopes } }
+  resource Widget "w" { lifecycle mutable }
+}
+world W "w" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+  requires m.Owned exempt m.R
+  scope m.Owned.owner
+  quarantine_retention 3
+}

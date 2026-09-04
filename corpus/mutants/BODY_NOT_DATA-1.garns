@@ -1,0 +1,6 @@
+module m "m" {
+  resource User "u" {
+    def mint():
+      pass
+  }
+}

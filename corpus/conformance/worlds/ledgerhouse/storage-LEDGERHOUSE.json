@@ -1,0 +1,15 @@
+{
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "LEDGERHOUSE",
+  "engine": {"ledger": "lh_journal", "generations": "lh_epochs", "revisions": "lh_ticks"},
+  "relations": {
+    "tenancy.Household": {"table": "house", "identity": "house_no", "columns": {"tenancy.Household.household_code": "code_txt", "tenancy.Household.settled_on": "since"}, "links": {}},
+    "pantry.Shelf": {"table": "shelf", "identity": "shelf_no", "columns": {"pantry.Shelf.shelf_label": "label_txt"}, "links": {"pantry.Shelf.keeper": "kept_by"}},
+    "pantry.Jar": {"table": "jar", "identity": "jar_no", "columns": {"pantry.Jar.jar_label": "lbl", "pantry.Jar.grams": "mass_g", "pantry.Jar.state": "cond"}, "links": {"pantry.Jar.shelf": "on_shelf"}}
+  },
+  "capture": {
+    "tenancy.Household": {"table": "house_trail", "fields": {"seq": "trail_seq", "op": "verb", "revision": "tick", "identity": "house_ref", "columns": {"tenancy.Household.household_code": "code_txt_v", "tenancy.Household.settled_on": "since_v"}, "links": {}}},
+    "pantry.Shelf": {"table": "shelf_trail", "fields": {"seq": "trail_seq", "op": "verb", "revision": "tick", "identity": "shelf_ref", "columns": {"pantry.Shelf.shelf_label": "label_v"}, "links": {"pantry.Shelf.keeper": "kept_by_v"}}},
+    "pantry.Jar": {"table": "jar_trail", "fields": {"seq": "trail_seq", "op": "verb", "revision": "tick", "identity": "jar_ref", "columns": {"pantry.Jar.jar_label": "lbl_v", "pantry.Jar.grams": "mass_v", "pantry.Jar.state": "cond_v"}, "links": {"pantry.Jar.shelf": "on_shelf_v"}}}
+  }
+}

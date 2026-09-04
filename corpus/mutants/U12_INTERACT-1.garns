@@ -1,0 +1,6 @@
+module m "member vs family life" {
+  family D "d" {
+    lifecycle mutable
+    member F "f" { lifecycle retirable }
+  }
+}

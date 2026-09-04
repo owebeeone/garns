@@ -1,0 +1,5 @@
+module m "captured world without a source" {
+  intent n : Text "n"
+  resource A "a" { use n }
+}
+world W "w" { modules m durability durable writers external_captured generated python scope deployment quarantine_retention 3 }

@@ -1,0 +1,75 @@
+# Clients and their contacts. Links point down the module graph (to people).
+
+module clients "Clients and their contacts. Links point down the module graph." {
+  import people (Owned, email)
+  import traits (Timestamped, updated_at)
+
+  intent preferred_name : DisplayName "the name this person wants in the waiting room" {
+    alias user_name
+  }
+  intent archived_at : Instant "when hidden from default lists"
+  intent relationship : DisplayName "how this contact relates to the client"
+
+  resource Client "a person the practice documents" {
+    use preferred_name { filter order }
+    use archived_at { optional }
+    lifecycle archived_by archived_at
+    carry Owned, Timestamped
+  }
+
+  resource Contact "someone related to a client; scoped through its client, so Owned is not restated" {
+    use preferred_name { order }
+    use email
+    use relationship { filter }
+    use updated_at { filter }  # restates the trait's use to add a policy: narrowing (C-06.3); the trait's optional and stamp stand
+    link client -> Client { end cascade inverse contacts }
+    lifecycle mutable
+    carry Timestamped
+  }
+
+  question client_assignments of Client "the practitioner's clients with their owners, paged, live" {
+    given q : optional Text
+    given creators : optional list_of Email
+    given page : Integer = 1
+    given limit : Integer = 25
+    where preferred_name contains q
+      and owner.email in creators
+    show preferred_name, owner.email
+    order preferred_name
+    page page
+    limit limit
+    with_total
+    live bounded 10000
+  }
+
+  query contacts_named_like of Contact "contacts whose client's name contains the text" {
+    given q : Text
+    where client.preferred_name contains q
+    show preferred_name, client.preferred_name
+    order preferred_name
+  }
+
+  query contacts_with_relationship of Contact "contacts standing in one relationship to their client" {
+    given kind : DisplayName
+    where relationship = kind
+    show preferred_name, relationship
+  }
+
+  query all_clients_for_audit of Client "every client of every practitioner, archived included; a capability, not a scope" {
+    show preferred_name, archived_at, owner.email
+    order preferred_name
+    including_archived
+    unscoped practice_audit
+  }
+
+  bulk rename_relationship "rename one relationship across every contact that carries it" {
+    given to : DisplayName
+    Contact.change over contacts_with_relationship
+    set relationship = to
+  }
+
+  restricted reassign_client "move a client to another practitioner; the only way the scope link changes" {
+    Client.change accepts owner
+    unscoped practice_admin
+  }
+}

@@ -1,0 +1,6 @@
+module m "arity" {
+  resource User "u" { lifecycle mutable }
+  association OnlyOne "one link" {
+    link user -> User { end restrict }
+  }
+}

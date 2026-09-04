@@ -1,0 +1,7 @@
+module m "m" { intent nm : Text "n" resource X "x" { use nm { key } } }
+world W "w" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+}

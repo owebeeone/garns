@@ -1,0 +1,38 @@
+{
+ "atoms": [
+  {
+   "carrier": "clients.Client",
+   "field": "*"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.archived_at"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.owner"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.preferred_name"
+  },
+  {
+   "carrier": "notes.Note",
+   "field": "*"
+  },
+  {
+   "carrier": "notes.Note",
+   "field": "notes.Note.client"
+  },
+  {
+   "carrier": "notes.Note",
+   "field": "notes.Note.recorded_at"
+  }
+ ],
+ "composes": [],
+ "read": "notes.dormant_clients",
+ "scope_links": [
+  "clients.Client.owner"
+ ],
+ "subject": "clients.Client"
+}

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "garns"
+version = "0.1.0a1"
+description = "A declarative data language with qualified IR, explicit storage binding, and derived execution artifacts."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["lark>=1.1,<2"]
+
+[project.scripts]
+garns = "garns.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/garns", "src/garns_rust"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/garns/garns.lark" = "garns/garns.lark"
+"src/garns_rust/sqlite.rs" = "garns_rust/sqlite.rs"

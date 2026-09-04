@@ -1,0 +1,1 @@
+SELECT s0."rid_vault_cipher" AS "$k0", s0."f_cipher_atype" AS "atype" FROM "tbl_vault_cipher" AS s0 WHERE s0."f_cipher_deleted_at" IS NULL AND (s0."f_cipher_cipher_data" IS NOT NULL) ORDER BY s0."rid_vault_cipher" ASC

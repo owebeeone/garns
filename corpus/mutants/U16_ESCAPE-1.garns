@@ -1,0 +1,11 @@
+module m "locations are values" {
+  resource User "u" { lifecycle mutable }
+}
+deployment D "d" {
+  world W
+  engine sqlite
+  at memory
+  ship on_open
+  mode readwrite
+  snapshot none
+}

@@ -1,0 +1,34 @@
+{
+ "atoms": [
+  {
+   "carrier": "clients.Client",
+   "field": "*"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.archived_at"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.owner"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.preferred_name"
+  },
+  {
+   "carrier": "people.User",
+   "field": "*"
+  },
+  {
+   "carrier": "people.User",
+   "field": "people.User.email"
+  }
+ ],
+ "composes": [],
+ "read": "clients.client_assignments",
+ "scope_links": [
+  "clients.Client.owner"
+ ],
+ "subject": "clients.Client"
+}

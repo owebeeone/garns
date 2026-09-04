@@ -1,0 +1,4 @@
+module m "m" {
+  class User(Resource):
+    pass
+}

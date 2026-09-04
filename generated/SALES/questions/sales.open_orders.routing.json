@@ -1,0 +1,40 @@
+{
+ "question": "sales.open_orders",
+ "routing_keys": [
+  {
+   "carrier": "sales.Customer",
+   "field": "*",
+   "partition": "global"
+  },
+  {
+   "carrier": "sales.Customer",
+   "field": "sales.Customer.name",
+   "partition": "global"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "*",
+   "partition": "global"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.created_at",
+   "partition": "global"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.customer",
+   "partition": "global"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.status",
+   "partition": "global"
+  },
+  {
+   "carrier": "sales.Order",
+   "field": "sales.Order.total",
+   "partition": "global"
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+# Semver-gated Rust data migrations recorded in SQLite so they run once.
+
+module migrate "Records of application-level data migrations that already ran on this file." {
+  intent migration_name : Text "name of a UserDataMigration that has run"
+  intent executed_at : Instant "when it ran"
+
+  resource UserDataMigrationRecord "one execution of a flowy-user data migration" {
+    use migration_name { key }
+    use executed_at { stamp on_mint default ship_clock }
+    lifecycle mutable
+  }
+}

@@ -1,0 +1,6 @@
+module m "ungrouped column beside an aggregate" {
+  intent n : Integer "n"
+  intent k : Text "k"
+  resource A "a" { use n use k }
+  query q of A "q" { show k, sum(n) as total }
+}

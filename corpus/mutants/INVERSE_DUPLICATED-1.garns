@@ -1,0 +1,6 @@
+module m "two links claim one inverse" {
+  intent n : Text "n"
+  resource T "t" { use n }
+  resource A "a" { use n link t -> T { end cascade inverse things } }
+  resource B "b" { use n link t -> T { end cascade inverse things } }
+}

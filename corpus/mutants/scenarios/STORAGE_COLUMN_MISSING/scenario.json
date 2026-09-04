@@ -1,0 +1,10 @@
+{
+ "steps": [
+  {
+   "do": "bind",
+   "source": "g1",
+   "world": "W",
+   "binding": "bad.json"
+  }
+ ]
+}

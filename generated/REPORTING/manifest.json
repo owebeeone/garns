@@ -1,0 +1,15 @@
+{
+ "files": {
+  "ir.json": "63ac196d47912954639ec6196a8adc626a7587c2256789f316139d152fd57c98",
+  "python/reporting__revenue_by_customer.py": "9c1cbfec9b9e930f0b0ec224d0b71f50739c4bf1f2127e984dc4a1b9d49d8415",
+  "queries/reporting.revenue_by_customer.sql": "029803e3343a5e241bac30cbac869405108f7baaa7ddfa19c704a2455807a052",
+  "rust/main.rs": "face10224a6e87ca57d2f22afc18408a339085f20bbee97fb1254e0a2cda6eda",
+  "rust/reporting__revenue_by_customer.rs": "425e0c6923092837712ace0e1296f80535ebe128949466a8ce97f577c08ebb8a",
+  "rust/sqlite.rs": "f2eb7b4126691f8a86a2f7bae8bcc1f393970895cb0cfb5c4a82c1ab959725d7",
+  "schema.sql": "dcd627e5624ce0526fa1b8ddba17f77455be1f0f512569f567c288461a2d7b5d"
+ },
+ "ir_digest": "14859886c1f4a86f786c2ed6e22c9c699d4754b88d20982c0a05f0c2a96a502c",
+ "schema": "garns-v9-5/generated-manifest/1",
+ "storage_digest": "ced28c09040d1d9c28e91f41602c7edaa3b30d42fb04c8466978e0f7897c5a9a",
+ "world": "REPORTING"
+}

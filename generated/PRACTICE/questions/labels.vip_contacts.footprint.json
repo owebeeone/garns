@@ -1,0 +1,65 @@
+{
+ "atoms": [
+  {
+   "carrier": "clients.Client",
+   "field": "*"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.archived_at"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.owner"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.preferred_name"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "*"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "clients.Contact.client"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "clients.Contact.email"
+  },
+  {
+   "carrier": "clients.Contact",
+   "field": "clients.Contact.preferred_name"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "*"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "labels.ClientLabel.client"
+  },
+  {
+   "carrier": "labels.ClientLabel",
+   "field": "labels.ClientLabel.label"
+  },
+  {
+   "carrier": "labels.Label",
+   "field": "*"
+  },
+  {
+   "carrier": "labels.Label",
+   "field": "labels.Label.label_name"
+  }
+ ],
+ "composes": [
+  "labels.vip_clients"
+ ],
+ "read": "labels.vip_contacts",
+ "scope_links": [
+  "clients.Contact.client",
+  "clients.Client.owner"
+ ],
+ "subject": "clients.Contact"
+}

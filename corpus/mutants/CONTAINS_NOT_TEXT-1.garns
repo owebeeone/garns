@@ -1,0 +1,5 @@
+module m "contains on a number" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  question q of A "q" { given k : Text where n contains k show n live bounded 10 }
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "garns-cut-manifest/1",
+  "cut_at": "2026-09-04",
+  "source": "datascad/garns-v9-5/build/B2",
+  "source_composite_sha256": "eaf4937f853861f76c26be55f5f8903b8b90caeb729ecec40315f93f3b5eb60b",
+  "documentation_source": "datascad/garns-v9-5/docs-staging/F51",
+  "documentation_composite_sha256": "dc3fe76f79dc02291768c939e89331558970c49bfd87a637630238297dd69825",
+  "copied_trees": {
+    "corpus": "dd0b84212230f6facba8a339aa72ff0e6ad93e5bc57e687f299c1e419c0fde5d",
+    "generated": "b0bce911063252b55eaa50cec6cde7e4695753464868bf421110f5f3db38801b",
+    "grammar": "73c3ded04255aaf706fe405b6ca07959d81483abd3eaff0addb24080b3158197",
+    "src": "18cb8b9caf64bce7ba2d46f44f33098bf17942416057d8fd6054991a75b8dd67",
+    "tests": "b476b44077cdf5b0a64fe73b0b8871dd127ae4bf67fe3c0960fd6ec3f1af92ec",
+    "tools": "3e861daced49b30bf17a2defa226de9687599d29cd6cf977bc6e070c8a38692e"
+  },
+  "ratification": {
+    "R1": "ratify",
+    "R2": "ratify"
+  }
+}

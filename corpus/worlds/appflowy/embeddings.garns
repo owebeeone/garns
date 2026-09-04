@@ -1,0 +1,53 @@
+# Vector store: a second SQLite file (vector.db). Workspace is a stub kind
+# so InWorkspace can be the scope root; the lowering does not create a
+# workspace table. Dimension is a refinement, not a type constructor (L3-1).
+
+module embeddings "Collab fragment embeddings and the pending-index queue." {
+  intent workspace_oid : Text "workspace id as known to the embedding store"
+  intent object_oid : Text "collab object id"
+  intent fragment_oid : Text "fragment id within an object"
+  intent content_type : Integer "fragment content-type discriminant"
+  intent content : Text "embedded text"
+  intent embedding_metadata : Text "optional fragment metadata"
+  intent fragment_index : Integer "order of a fragment within its object"
+  intent embedder_type : Integer "embedder discriminant"
+  intent embedding : Vector "fixed-dimension collab fragment embedding" {
+    dimension 768
+  }
+  intent collab_type : Integer "pending-index collab type discriminant"
+  intent indexed_at : Instant "when a pending object was indexed; absent while queued"
+
+  resource Workspace "a workspace id as known to the embedding store; no row is stored here" {
+    use workspace_oid { key }
+    lifecycle mutable
+  }
+
+  trait InWorkspace "an embedding row belongs to one workspace" {
+    link workspace -> Workspace { unenforced scopes }
+  }
+
+  resource CollabEmbedding "one embedded fragment of a collab object" {
+    use object_oid { filter key }
+    use fragment_oid { key }
+    use content_type
+    use content
+    use embedding_metadata { optional }
+    use fragment_index { order default 0 }
+    use embedder_type { default 0 }
+    use embedding { filter }
+    carry InWorkspace
+    lifecycle mutable
+  }
+
+  resource PendingIndex "a collab object waiting to be embedded" {
+    use object_oid { key }
+    use content
+    use collab_type
+    use updated_at { stamp on_change default ship_clock }
+    use indexed_at { optional }
+    carry InWorkspace
+    lifecycle mutable
+  }
+
+  intent updated_at : Instant "when this pending row last changed"
+}

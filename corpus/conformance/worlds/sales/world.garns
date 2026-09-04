@@ -1,0 +1,17 @@
+world SALES "the dynamic conformance module and its static twins" {
+  modules sales, sales_static
+  durability durable
+  writers governed
+  generated python, rust
+  scope deployment
+  quarantine_retention 3
+}
+
+deployment SALES_DEV "in memory" {
+  world SALES
+  engine sqlite
+  at memory
+  ship on_open
+  mode readwrite
+  snapshot none
+}

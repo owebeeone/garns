@@ -1,0 +1,3 @@
+module m "m" {
+  User = resource("User", "a practitioner")
+}

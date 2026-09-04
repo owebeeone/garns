@@ -1,0 +1,18 @@
+module clients "Clients as first shipped." {
+  import people (Owned, email)
+
+  intent user_name : DisplayName "the name this person is addressed by"
+
+  resource Client "a person the practice documents" {
+    use user_name { filter order }
+    lifecycle mutable
+    carry Owned
+  }
+
+  resource Contact "someone related to a client" {
+    use user_name
+    use email { optional }
+    link client -> Client { end cascade inverse contacts }
+    lifecycle mutable
+  }
+}

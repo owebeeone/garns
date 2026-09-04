@@ -1,0 +1,46 @@
+# Collab bookkeeping in SQLite. Document bodies live in RocksDB.
+# collab_snapshot is vestigial; rocksdb_backup is a tombstone after 0009.
+
+module collab "Collab snapshot, metadata, and indexing bookkeeping stored beside RocksDB." {
+  import traits (updated_at)
+  import workspaces (UserWorkspace)
+
+  intent object_oid : Text "collab object id"
+  intent title : Text "snapshot title"
+  intent snapshot_desc : Text "snapshot description; SQL column is desc"
+  intent collab_type_text : Text "collab type as text on the vestigial snapshot table"
+  intent snapshot_at : Instant "snapshot timestamp"
+  intent snapshot_data : Opaque "snapshot payload; presence only, never compared"
+  intent prev_sync_state_vector : Opaque "CRDT state vector; presence only"
+  intent collab_type : Integer "collab type discriminant on metadata"
+  intent content_hash : Text "hash of indexed content"
+
+  resource CollabSnapshot "a vestigial local snapshot of a collab object; no non-migration readers" {
+    use object_oid { filter }
+    use title { default "" }
+    use snapshot_desc { default "" }
+    use collab_type_text { default "" }
+    use snapshot_at { default 0 }
+    use snapshot_data
+    lifecycle mutable
+  }
+
+  tombstone RocksdbBackup "short-lived RocksDB mirror; dropped at 0009 with its data" {
+    data drop
+  }
+
+  resource CollabMetadata "sync bookkeeping for one collab object" {
+    use object_oid { key }
+    use updated_at
+    use prev_sync_state_vector
+    use collab_type
+    lifecycle mutable
+  }
+
+  resource IndexCollabRecord "whether a collab object has been queued for embedding" {
+    use object_oid { key }
+    use content_hash
+    link workspace -> UserWorkspace { unenforced inverse index_records }
+    lifecycle mutable
+  }
+}

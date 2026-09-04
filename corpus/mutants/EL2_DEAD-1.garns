@@ -1,0 +1,4 @@
+module m "dead" {
+  intent stray : Text "unused"
+  resource User "u" { lifecycle mutable }
+}

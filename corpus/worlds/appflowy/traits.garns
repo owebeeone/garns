@@ -1,0 +1,30 @@
+# AppFlowy local store: one user per file. Timestamps are Instant; the
+# engine writes stamps. Local is the tenancy trait; the SQLite file is
+# already one user's, so most kinds exempt it rather than carry a column.
+
+module traits "Shared intents and the local-user tenancy trait for the AppFlowy metadata store." {
+  intent created_at : Instant "when this individual was minted or first recorded"
+  intent updated_at : Instant "when this individual last changed"
+
+  resource User "the local account this SQLite file belongs to" {
+    use user_oid { key }
+    use display_name { default "" }
+    use icon_url { default "" }
+    use token { default "" }
+    use email { filter default "" }
+    use auth_type { default 0 }
+    use updated_at { default 0 }
+    lifecycle mutable
+  }
+
+  trait Local "belongs to the local user; the tenancy boundary of this file" {
+    link owner -> User { unenforced scopes }
+  }
+
+  intent user_oid : Text "AppFlowy user id as stored on user_table.id; a key, not engine identity"
+  intent display_name : DisplayName "a name shown in the shell or member list"
+  intent icon_url : Text "url or path of an avatar or icon"
+  intent token : Text "session token for the local user"
+  intent email : Email "an address that can receive mail"
+  intent auth_type : Integer "AppFlowy auth provider discriminant; the schema has no closed set"
+}

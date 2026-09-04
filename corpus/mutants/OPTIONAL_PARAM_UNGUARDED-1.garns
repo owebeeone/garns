@@ -1,0 +1,10 @@
+module m "unguarded" {
+  resource User "u" { lifecycle mutable use n { } }
+  intent n : Text "n"
+  question q of User "q" {
+    given x : optional Text
+    where n = x or n = "a"
+    show n
+    live bounded 10
+  }
+}

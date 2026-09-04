@@ -1,0 +1,9 @@
+module m "conflict" {
+  intent t : Instant "t"
+  trait A "a" { use t { stamp on_mint } }
+  trait B "b" { use t { stamp on_change } }
+  resource User "u" {
+    carry A, B
+    lifecycle mutable
+  }
+}

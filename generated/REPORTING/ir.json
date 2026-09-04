@@ -1,0 +1,817 @@
+{
+ "program": {
+  "$": "Program",
+  "aliases": [],
+  "bulks": [],
+  "carriers": [
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "reporting.Invoice.customer",
+      "many": true,
+      "name": "invoices",
+      "source": "reporting.Invoice"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": null,
+    "links": [],
+    "meaning": "customer",
+    "members": [],
+    "module": "reporting",
+    "name": "Customer",
+    "ordered_within": null,
+    "qid": "reporting.Customer",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "reporting.Customer",
+      "default": null,
+      "filter": false,
+      "intent": "reporting.customer_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Id",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "reporting.Customer",
+      "default": null,
+      "filter": false,
+      "intent": "reporting.name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "reporting.Invoice",
+      "default": null,
+      "enforcement": "unenforced",
+      "filter": false,
+      "inverse": "invoices",
+      "key": false,
+      "name": "customer",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "reporting.Invoice.customer",
+      "scopes": false,
+      "target": "reporting.Customer"
+     }
+    ],
+    "meaning": "invoice",
+    "members": [],
+    "module": "reporting",
+    "name": "Invoice",
+    "ordered_within": null,
+    "qid": "reporting.Invoice",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "reporting.Invoice",
+      "default": null,
+      "filter": false,
+      "intent": "reporting.invoice_id",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Id",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "reporting.Invoice",
+      "default": null,
+      "filter": false,
+      "intent": "reporting.total",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "reporting.Invoice",
+      "default": null,
+      "filter": false,
+      "intent": "reporting.issued_at",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   }
+  ],
+  "compounds": [],
+  "deployments": [
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": null,
+     "kind": "memory",
+     "name": null
+    },
+    "meaning": "in memory",
+    "mode": "readwrite",
+    "name": "REPORTING_DEV",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "REPORTING"
+   }
+  ],
+  "intents": [
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "customer identity",
+    "module": "reporting",
+    "name": "customer_id",
+    "pattern": null,
+    "qid": "reporting.customer_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Id",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "invoice identity",
+    "module": "reporting",
+    "name": "invoice_id",
+    "pattern": null,
+    "qid": "reporting.invoice_id",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Id",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "issue time",
+    "module": "reporting",
+    "name": "issued_at",
+    "pattern": null,
+    "qid": "reporting.issued_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "customer name",
+    "module": "reporting",
+    "name": "name",
+    "pattern": null,
+    "qid": "reporting.name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "invoice total",
+    "module": "reporting",
+    "name": "total",
+    "pattern": null,
+    "qid": "reporting.total",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Money",
+     "carrier": null,
+     "class": "decimal",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   }
+  ],
+  "modules": [
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "static query conformance",
+    "name": "reporting"
+   }
+  ],
+  "move_homes": [],
+  "newtypes": [],
+  "reads": [
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "floor",
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [
+     {
+      "$": "PathRef",
+      "root": "reporting.Invoice",
+      "steps": [
+       {
+        "$": "LinkStep",
+        "inverse": false,
+        "link": "reporting.Invoice.customer",
+        "many": false,
+        "source": "reporting.Invoice",
+        "target": "reporting.Customer",
+        "text": "customer"
+       }
+      ],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "reporting.Customer",
+       "intent": "reporting.name",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "reporting.Customer.name"
+      },
+      "text": "customer.name"
+     }
+    ],
+    "having": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "StaticAggregate",
+      "distinct": false,
+      "fn": "sum",
+      "path": {
+       "$": "PathRef",
+       "root": "reporting.Invoice",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "reporting.Invoice",
+        "intent": "reporting.total",
+        "type": {
+         "base": "Money",
+         "carrier": null,
+         "class": "decimal",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "reporting.Invoice.total"
+       },
+       "text": "total"
+      },
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     "op": ">",
+     "right": {
+      "$": "GivenRef",
+      "name": "floor",
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "one-shot revenue report",
+    "module": "reporting",
+    "name": "revenue_by_customer",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": true,
+      "key": {
+       "$": "StaticAggregate",
+       "distinct": false,
+       "fn": "sum",
+       "path": {
+        "$": "PathRef",
+        "root": "reporting.Invoice",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "reporting.Invoice",
+         "intent": "reporting.total",
+         "type": {
+          "base": "Money",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "reporting.Invoice.total"
+        },
+        "text": "total"
+       },
+       "type": {
+        "base": "Money",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "reporting.Invoice",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "reporting.Invoice",
+       "intent": "reporting.total",
+       "type": {
+        "base": "Money",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "reporting.Invoice.total"
+      },
+      "text": "total"
+     },
+     "op": ">=",
+     "right": {
+      "$": "GivenRef",
+      "name": "floor",
+      "type": {
+       "base": "Money",
+       "carrier": null,
+       "class": "decimal",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "reporting.revenue_by_customer",
+    "shape": "grouped",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "customer",
+      "path": {
+       "$": "PathRef",
+       "root": "reporting.Invoice",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "reporting.Invoice.customer",
+         "many": false,
+         "source": "reporting.Invoice",
+         "target": "reporting.Customer",
+         "text": "customer"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "reporting.Customer",
+        "intent": "reporting.name",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "reporting.Customer.name"
+       },
+       "text": "customer.name"
+      }
+     },
+     {
+      "$": "ShowScalar",
+      "column": "revenue",
+      "expr": {
+       "$": "StaticAggregate",
+       "distinct": false,
+       "fn": "sum",
+       "path": {
+        "$": "PathRef",
+        "root": "reporting.Invoice",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "reporting.Invoice",
+         "intent": "reporting.total",
+         "type": {
+          "base": "Money",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "reporting.Invoice.total"
+        },
+        "text": "total"
+       },
+       "type": {
+        "base": "Money",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     },
+     {
+      "$": "ShowScalar",
+      "column": "average_invoice",
+      "expr": {
+       "$": "Call",
+       "args": [
+        {
+         "$": "Arith",
+         "left": {
+          "$": "StaticAggregate",
+          "distinct": false,
+          "fn": "sum",
+          "path": {
+           "$": "PathRef",
+           "root": "reporting.Invoice",
+           "steps": [],
+           "terminal": {
+            "$": "UseTerminal",
+            "carrier": "reporting.Invoice",
+            "intent": "reporting.total",
+            "type": {
+             "base": "Money",
+             "carrier": null,
+             "class": "decimal",
+             "closed": [],
+             "list_of": false,
+             "nominal": null,
+             "optional": false
+            },
+            "use": "reporting.Invoice.total"
+           },
+           "text": "total"
+          },
+          "type": {
+           "base": "Money",
+           "carrier": null,
+           "class": "decimal",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          }
+         },
+         "op": "/",
+         "right": {
+          "$": "StaticAggregate",
+          "distinct": false,
+          "fn": "count",
+          "path": null,
+          "type": {
+           "base": "Integer",
+           "carrier": null,
+           "class": "integer",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          }
+         },
+         "type": {
+          "base": "Money",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         }
+        },
+        {
+         "$": "Literal",
+         "type": {
+          "base": "Integer",
+          "carrier": null,
+          "class": "integer",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "value": 2
+        }
+       ],
+       "function": "money.round",
+       "type": {
+        "base": "Money",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     }
+    ],
+    "subject": "reporting.Invoice",
+    "unscoped": null,
+    "with_total": false
+   }
+  ],
+  "restores": [],
+  "restricteds": [],
+  "retypes": [],
+  "scope_paths": {
+   "REPORTING": {
+    "reporting.Customer": [],
+    "reporting.Invoice": []
+   }
+  },
+  "tightens": [],
+  "tombstones": [],
+  "worlds": [
+   {
+    "$": "World",
+    "capabilities": [],
+    "durability": "durable",
+    "exempt": [],
+    "generated": [
+     "python",
+     "rust"
+    ],
+    "meaning": "the static conformance module in a deployment-scoped world",
+    "modules": [
+     "reporting"
+    ],
+    "name": "REPORTING",
+    "quarantine_retention": 3,
+    "requires": null,
+    "scope": null,
+    "writer_source": null,
+    "writers": "governed"
+   }
+  ]
+ },
+ "scope_paths": {
+  "reporting.Customer": [],
+  "reporting.Invoice": []
+ },
+ "storage": {
+  "$": "StorageMapping",
+  "engine": {
+   "$": "EngineTables",
+   "generations": "en_5bf68daea4",
+   "ledger": "en_f59db8c5a7",
+   "revisions": "en_08f62a4c16"
+  },
+  "relations": {
+   "reporting.Customer": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "reporting.Customer",
+    "columns": {
+     "reporting.Customer.customer_id": "co_1672fa0252",
+     "reporting.Customer.name": "co_01dbbfc0f1"
+    },
+    "identity": "id_56e790d195",
+    "kind": null,
+    "links": {},
+    "table": "ta_a841ea5a67"
+   },
+   "reporting.Invoice": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "reporting.Invoice",
+    "columns": {
+     "reporting.Invoice.invoice_id": "co_95da97f99a",
+     "reporting.Invoice.issued_at": "co_13dd0e180e",
+     "reporting.Invoice.total": "co_ba8dae4721"
+    },
+    "identity": "id_dea8a7c8d9",
+    "kind": null,
+    "links": {
+     "reporting.Invoice.customer": "li_c21e9feb86"
+    },
+    "table": "ta_342006d009"
+   }
+  },
+  "source": "storage-REPORTING.json",
+  "world": "REPORTING"
+ },
+ "world": {
+  "$": "World",
+  "capabilities": [],
+  "durability": "durable",
+  "exempt": [],
+  "generated": [
+   "python",
+   "rust"
+  ],
+  "meaning": "the static conformance module in a deployment-scoped world",
+  "modules": [
+   "reporting"
+  ],
+  "name": "REPORTING",
+  "quarantine_retention": 3,
+  "requires": null,
+  "scope": null,
+  "writer_source": null,
+  "writers": "governed"
+ }
+}

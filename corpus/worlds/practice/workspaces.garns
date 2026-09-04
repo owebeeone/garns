@@ -1,0 +1,14 @@
+# Workspaces: keyed, global, with kept history.
+
+module workspaces "Workspaces: keyed, global, with kept history." {
+  newtype WorkspaceShare of Text "stable workspace identity as a typed share token"
+  intent share : WorkspaceShare "stable workspace identity"
+  intent display_name : DisplayName "workspace title as shown in the shell"
+
+  resource Workspace "the named share this practice opens" {
+    history kept
+    use share { key }
+    use display_name
+    lifecycle mutable
+  }
+}

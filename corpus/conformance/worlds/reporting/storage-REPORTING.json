@@ -1,0 +1,32 @@
+{
+  "engine": {
+    "generations": "en_5bf68daea4",
+    "ledger": "en_f59db8c5a7",
+    "revisions": "en_08f62a4c16"
+  },
+  "relations": {
+    "reporting.Customer": {
+      "columns": {
+        "reporting.Customer.customer_id": "co_1672fa0252",
+        "reporting.Customer.name": "co_01dbbfc0f1"
+      },
+      "identity": "id_56e790d195",
+      "links": {},
+      "table": "ta_a841ea5a67"
+    },
+    "reporting.Invoice": {
+      "columns": {
+        "reporting.Invoice.invoice_id": "co_95da97f99a",
+        "reporting.Invoice.issued_at": "co_13dd0e180e",
+        "reporting.Invoice.total": "co_ba8dae4721"
+      },
+      "identity": "id_dea8a7c8d9",
+      "links": {
+        "reporting.Invoice.customer": "li_c21e9feb86"
+      },
+      "table": "ta_342006d009"
+    }
+  },
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "REPORTING"
+}

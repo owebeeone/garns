@@ -1,0 +1,6 @@
+module m "list_of optional does not nest" {
+  resource A "a" { lifecycle mutable }
+  question q of A "nested" {
+    given xs : list_of optional Text
+  }
+}

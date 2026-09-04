@@ -1,0 +1,21 @@
+module refs "Global reference lists: professions, languages, funding models." {
+  intent name : DisplayName "the short name of a reference row"
+  intent display_name : DisplayName "the name shown in the shell"
+
+  resource Profession "a practitioner profession in the reference list" {
+    use name
+    use display_name
+    lifecycle mutable
+  }
+
+  resource Language "a language in the reference list" {
+    use name { default "" }
+    lifecycle mutable
+  }
+
+  resource FundingModel "a funding model in the reference list" {
+    use name { default "" }
+    use display_name { default "EMPTY" }
+    lifecycle mutable
+  }
+}

@@ -1,0 +1,13 @@
+{
+ "capability": null,
+ "composes": [],
+ "live_bound": 1000,
+ "parameters": [],
+ "question": "labels.vip_clients",
+ "retention": 3,
+ "scoped": true,
+ "shape": "collection",
+ "subject": "clients.Client",
+ "writer_source": null,
+ "writers": "governed"
+}

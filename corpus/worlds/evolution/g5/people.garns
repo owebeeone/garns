@@ -1,0 +1,24 @@
+# Generation 5: a partial reversal of generation 4, without thawing it.
+
+module people "Generation 5: email retyped back; nickname restored inside retention." {
+  intent email : Email "an address that can receive mail" {
+    retype Text forward validate backward widen
+  }
+  intent created_at : Instant "when this individual was minted"
+  intent nickname : DisplayName "informal name; may be absent" {
+    restore
+  }
+
+  resource User "a practitioner" {
+    use email { key }
+    lifecycle retirable
+  }
+
+  trait Owned "belongs to one practitioner" {
+    link owner -> User { end restrict scopes }
+  }
+
+  trait Timestamped "carries the mint instant" {
+    use created_at { order stamp on_mint }
+  }
+}

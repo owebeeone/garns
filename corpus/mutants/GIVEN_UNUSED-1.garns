@@ -1,0 +1,5 @@
+module m "unused given" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  query q of A "q" { given floor : Integer show n }
+}

@@ -1,0 +1,49 @@
+{
+ "steps": [
+  {
+   "do": "bind",
+   "source": "g1",
+   "world": "W",
+   "binding": "g1/storage-W.json"
+  },
+  {
+   "do": "ship"
+  },
+  {
+   "do": "write",
+   "ops": [
+    {
+     "verb": "mint",
+     "carrier": "w.Root",
+     "values": {
+      "w.Root.code": "R1"
+     },
+     "as": "r1"
+    },
+    {
+     "verb": "mint",
+     "carrier": "w.Item",
+     "values": {
+      "w.Item.code": "I1",
+      "w.Item.amount": 5,
+      "w.Item.holder": "$r1"
+     },
+     "as": "i1"
+    }
+   ]
+  },
+  {
+   "do": "write",
+   "ops": [
+    {
+     "verb": "change",
+     "carrier": "w.Item",
+     "identity": "$i1",
+     "values": {
+      "w.Item.seen_at": 5
+     }
+    }
+   ]
+  }
+ ]
+}

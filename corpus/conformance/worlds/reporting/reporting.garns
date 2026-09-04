@@ -1,0 +1,28 @@
+module reporting "static query conformance" {
+  intent customer_id : Id "customer identity"
+  intent invoice_id : Id "invoice identity"
+  intent name : Text "customer name"
+  intent total : Money "invoice total"
+  intent issued_at : Instant "issue time"
+
+  resource Customer "customer" {
+    use customer_id { key }
+    use name
+  }
+
+  resource Invoice "invoice" {
+    use invoice_id { key }
+    use total
+    use issued_at
+    link customer -> Customer { unenforced inverse invoices }
+  }
+
+  query revenue_by_customer of Invoice "one-shot revenue report" {
+    given floor : Money
+    where total >= floor
+    show customer.name as customer, sum(total) as revenue, call money.round(sum(total) / count(), 2) as average_invoice
+    group by customer.name
+    having sum(total) > floor
+    order sum(total) descending
+  }
+}

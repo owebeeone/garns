@@ -1,0 +1,201 @@
+{
+  "engine": {
+    "generations": "garns_generations",
+    "ledger": "garns_ledger",
+    "revisions": "garns_revisions"
+  },
+  "relations": {
+    "clients.Client": {
+      "columns": {
+        "clients.Client.archived_at": "f_client_archived_at",
+        "clients.Client.created_at": "f_client_created_at",
+        "clients.Client.first_name": "f_client_first_name",
+        "clients.Client.last_name": "f_client_last_name",
+        "clients.Client.updated_at": "f_client_updated_at"
+      },
+      "identity": "rid_clients_client",
+      "links": {
+        "clients.Client.org": "ref_client_org",
+        "clients.Client.owner": "ref_client_owner"
+      },
+      "table": "tbl_clients_client"
+    },
+    "clients.ClientUser": {
+      "columns": {
+        "clients.ClientUser.assigned_at": "f_clientuser_assigned_at"
+      },
+      "identity": "rid_clients_clientuser",
+      "links": {
+        "clients.ClientUser.client": "ref_clientuser_client",
+        "clients.ClientUser.user": "ref_clientuser_user"
+      },
+      "table": "tbl_clients_clientuser"
+    },
+    "documents.DocxReferenceDoc": {
+      "columns": {
+        "documents.DocxReferenceDoc.created_at": "f_docxreferencedoc_created_at",
+        "documents.DocxReferenceDoc.display_name": "f_docxreferencedoc_display_name",
+        "documents.DocxReferenceDoc.doc_scope": "f_docxreferencedoc_doc_scope",
+        "documents.DocxReferenceDoc.file_size_bytes": "f_docxreferencedoc_file_size_bytes",
+        "documents.DocxReferenceDoc.original_filename": "f_docxreferencedoc_original_filename",
+        "documents.DocxReferenceDoc.s3_key": "f_docxreferencedoc_s3_key",
+        "documents.DocxReferenceDoc.sha256": "f_docxreferencedoc_sha256",
+        "documents.DocxReferenceDoc.updated_at": "f_docxreferencedoc_updated_at"
+      },
+      "identity": "rid_documents_docxreferencedoc",
+      "links": {
+        "documents.DocxReferenceDoc.created_by": "ref_docxreferencedoc_created_by",
+        "documents.DocxReferenceDoc.org": "ref_docxreferencedoc_org",
+        "documents.DocxReferenceDoc.owner_user": "ref_docxreferencedoc_owner_user"
+      },
+      "table": "tbl_documents_docxreferencedoc"
+    },
+    "merge.MergeTag": {
+      "columns": {
+        "merge.MergeTag.can_delete": "f_mergetag_can_delete",
+        "merge.MergeTag.created_at": "f_mergetag_created_at",
+        "merge.MergeTag.property_id": "f_mergetag_property_id",
+        "merge.MergeTag.property_name": "f_mergetag_property_name",
+        "merge.MergeTag.updated_at": "f_mergetag_updated_at"
+      },
+      "identity": "rid_merge_mergetag",
+      "links": {
+        "merge.MergeTag.owner": "ref_mergetag_owner"
+      },
+      "table": "tbl_merge_mergetag"
+    },
+    "merge.MergeTagClient": {
+      "columns": {
+        "merge.MergeTagClient.created_at": "f_mergetagclient_created_at",
+        "merge.MergeTagClient.property_value": "f_mergetagclient_property_value",
+        "merge.MergeTagClient.updated_at": "f_mergetagclient_updated_at"
+      },
+      "identity": "rid_merge_mergetagclient",
+      "links": {
+        "merge.MergeTagClient.client": "ref_mergetagclient_client",
+        "merge.MergeTagClient.tag": "ref_mergetagclient_tag",
+        "merge.MergeTagClient.user": "ref_mergetagclient_user"
+      },
+      "table": "tbl_merge_mergetagclient"
+    },
+    "people.Organisation": {
+      "columns": {
+        "people.Organisation.created_at": "f_organisation_created_at",
+        "people.Organisation.in_trial": "f_organisation_in_trial",
+        "people.Organisation.is_paying": "f_organisation_is_paying",
+        "people.Organisation.org_id": "f_organisation_org_id",
+        "people.Organisation.seats": "f_organisation_seats",
+        "people.Organisation.stripe_customer_id": "f_organisation_stripe_customer_id",
+        "people.Organisation.updated_at": "f_organisation_updated_at"
+      },
+      "identity": "rid_people_organisation",
+      "links": {
+        "people.Organisation.created_by": "ref_organisation_created_by"
+      },
+      "table": "tbl_people_organisation"
+    },
+    "people.User": {
+      "columns": {
+        "people.User.clerk_user_id": "f_user_clerk_user_id",
+        "people.User.created_at": "f_user_created_at",
+        "people.User.email": "f_user_email",
+        "people.User.in_trial": "f_user_in_trial",
+        "people.User.is_onboarded": "f_user_is_onboarded",
+        "people.User.is_paying": "f_user_is_paying",
+        "people.User.profession_updated": "f_user_profession_updated",
+        "people.User.stripe_customer_id": "f_user_stripe_customer_id",
+        "people.User.updated_at": "f_user_updated_at"
+      },
+      "identity": "rid_people_user",
+      "links": {
+        "people.User.funding_model": "ref_user_funding_model",
+        "people.User.language": "ref_user_language",
+        "people.User.profession": "ref_user_profession"
+      },
+      "table": "tbl_people_user"
+    },
+    "people.UserPreference": {
+      "columns": {
+        "people.UserPreference.created_at": "f_userpreference_created_at",
+        "people.UserPreference.note_template": "f_userpreference_note_template",
+        "people.UserPreference.report_template": "f_userpreference_report_template",
+        "people.UserPreference.updated_at": "f_userpreference_updated_at"
+      },
+      "identity": "rid_people_userpreference",
+      "links": {
+        "people.UserPreference.user": "ref_userpreference_user"
+      },
+      "table": "tbl_people_userpreference"
+    },
+    "pms.PmsAdapter": {
+      "columns": {
+        "pms.PmsAdapter.adapter_status": "f_pmsadapter_adapter_status",
+        "pms.PmsAdapter.enabled": "f_pmsadapter_enabled",
+        "pms.PmsAdapter.is_development": "f_pmsadapter_is_development",
+        "pms.PmsAdapter.pms_id": "f_pmsadapter_pms_id"
+      },
+      "identity": "rid_pms_pmsadapter",
+      "links": {},
+      "table": "tbl_pms_pmsadapter"
+    },
+    "pms.PmsApiKey": {
+      "columns": {
+        "pms.PmsApiKey.api_client_id": "f_pmsapikey_api_client_id",
+        "pms.PmsApiKey.api_ek": "f_pmsapikey_api_ek",
+        "pms.PmsApiKey.created_at": "f_pmsapikey_created_at",
+        "pms.PmsApiKey.is_org_wide": "f_pmsapikey_is_org_wide",
+        "pms.PmsApiKey.kid": "f_pmsapikey_kid",
+        "pms.PmsApiKey.updated_at": "f_pmsapikey_updated_at"
+      },
+      "identity": "rid_pms_pmsapikey",
+      "links": {
+        "pms.PmsApiKey.adapter": "ref_pmsapikey_adapter",
+        "pms.PmsApiKey.org": "ref_pmsapikey_org",
+        "pms.PmsApiKey.owner": "ref_pmsapikey_owner"
+      },
+      "table": "tbl_pms_pmsapikey"
+    },
+    "pms.PmsUserMap": {
+      "columns": {
+        "pms.PmsUserMap.created_at": "f_pmsusermap_created_at",
+        "pms.PmsUserMap.pms_user_id": "f_pmsusermap_pms_user_id",
+        "pms.PmsUserMap.updated_at": "f_pmsusermap_updated_at"
+      },
+      "identity": "rid_pms_pmsusermap",
+      "links": {
+        "pms.PmsUserMap.adapter": "ref_pmsusermap_adapter",
+        "pms.PmsUserMap.org": "ref_pmsusermap_org",
+        "pms.PmsUserMap.user": "ref_pmsusermap_user"
+      },
+      "table": "tbl_pms_pmsusermap"
+    },
+    "refs.FundingModel": {
+      "columns": {
+        "refs.FundingModel.display_name": "f_fundingmodel_display_name",
+        "refs.FundingModel.name": "f_fundingmodel_name"
+      },
+      "identity": "rid_refs_fundingmodel",
+      "links": {},
+      "table": "tbl_refs_fundingmodel"
+    },
+    "refs.Language": {
+      "columns": {
+        "refs.Language.name": "f_language_name"
+      },
+      "identity": "rid_refs_language",
+      "links": {},
+      "table": "tbl_refs_language"
+    },
+    "refs.Profession": {
+      "columns": {
+        "refs.Profession.display_name": "f_profession_display_name",
+        "refs.Profession.name": "f_profession_name"
+      },
+      "identity": "rid_refs_profession",
+      "links": {},
+      "table": "tbl_refs_profession"
+    }
+  },
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "EVERBILITY"
+}

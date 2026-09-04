@@ -1,0 +1,7 @@
+module a "owner of A" {
+  resource A "a" { lifecycle mutable }
+}
+module b "links to a kind it never imported" {
+  resource B "b" { lifecycle mutable link target -> A { end restrict } }
+}
+world W "w" { modules a, b durability durable writers governed generated python scope deployment quarantine_retention 3 }

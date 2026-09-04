@@ -1,0 +1,12 @@
+# The world: which modules, durability, writers, languages, required trait, scope root, retention.
+
+world PRACTICE "the practice's store" {
+  modules traits, people, clients, notes, labels, documents, workspaces
+  durability durable
+  writers governed
+  generated python, rust
+  requires people.Owned exempt labels.Label, people.User, workspaces.Workspace
+  scope people.Owned.owner
+  capabilities practice_admin, practice_audit
+  quarantine_retention 3
+}

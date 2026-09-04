@@ -1,0 +1,6 @@
+module m "distinct rows carry no identity for nested rows" {
+  intent n : Text "n"
+  resource P "p" { use n }
+  resource C "c" { use n link p -> P { end cascade inverse kids } }
+  query q of P "q" { show n, kids [n] distinct }
+}

@@ -1,0 +1,9 @@
+module a "owner" {
+  intent email : Email "an address"
+  resource A "a" { use email }
+}
+module b "imports a name it never uses" {
+  import a (email)
+  resource B "b" { lifecycle mutable }
+}
+world W "w" { modules a, b durability durable writers governed generated python scope deployment quarantine_retention 3 }

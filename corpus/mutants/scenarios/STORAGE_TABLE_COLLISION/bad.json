@@ -1,0 +1,42 @@
+{
+ "engine": {
+  "generations": "w_epochs",
+  "ledger": "w_journal",
+  "revisions": "w_ticks"
+ },
+ "relations": {
+  "w.Detail": {
+   "columns": {
+    "w.Detail.note": "memo"
+   },
+   "identity": "particular_key",
+   "links": {
+    "w.Detail.item": "of_thing"
+   },
+   "table": "thing"
+  },
+  "w.Item": {
+   "columns": {
+    "w.Item.amount": "qty",
+    "w.Item.code": "code_v",
+    "w.Item.note": "memo",
+    "w.Item.seen_at": "seen"
+   },
+   "identity": "thing_key",
+   "links": {
+    "w.Item.holder": "held_by"
+   },
+   "table": "thing"
+  },
+  "w.Root": {
+   "columns": {
+    "w.Root.code": "code_v"
+   },
+   "identity": "anchor_key",
+   "links": {},
+   "table": "anchor"
+  }
+ },
+ "schema": "garns-v9-5/storage-binding/1",
+ "world": "W"
+}

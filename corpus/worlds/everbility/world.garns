@@ -1,0 +1,19 @@
+world EVERBILITY "the everbility slice store" {
+  modules traits, refs, people, clients, documents, merge, pms, heldout
+  durability durable
+  writers governed
+  generated python, rust
+  requires people.Owned exempt documents.DocxReferenceDoc, people.Organisation, people.User, people.UserPreference, pms.PmsAdapter, pms.PmsUserMap, refs.FundingModel, refs.Language, refs.Profession
+  scope people.Owned.owner
+  capabilities practice_audit
+  quarantine_retention 3
+}
+
+deployment EVERBILITY_DEV "development: the store follows the file" {
+  world EVERBILITY
+  engine sqlite
+  at env EVERBILITY_DB default "./everbility.sqlite"
+  ship on_open
+  mode readwrite
+  snapshot none
+}

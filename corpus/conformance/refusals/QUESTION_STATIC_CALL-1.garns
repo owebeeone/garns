@@ -1,0 +1,10 @@
+module bad "a dynamic question cannot call the static function registry" {
+  intent key : Id "key"
+  intent name : Text "name"
+  resource Item "item" { use key { key } use name }
+  question normalized of Item "invalid static operation" {
+    show call text.normalize(name) as normalized
+    live bounded 10
+  }
+}
+

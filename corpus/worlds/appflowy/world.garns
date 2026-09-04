@@ -1,0 +1,40 @@
+# Two worlds: the diesel metadata file and the rusqlite-vec file.
+# They do not share a store. Scope is the local user / workspace stub.
+
+world APPFLOWY "the local AppFlowy metadata store (flowy-database.db)" {
+  modules traits, workspaces, chat, uploads, collab, ai, migrate
+  durability durable
+  writers governed
+  generated python, rust
+  requires traits.Local exempt ai.LocalAiModel, chat.Chat, chat.ChatLocalSetting, chat.ChatMessage, collab.CollabMetadata, collab.CollabSnapshot, collab.IndexCollabRecord, migrate.UserDataMigrationRecord, traits.User, uploads.UploadFile, uploads.UploadPart, workspaces.SharedUser, workspaces.SharedView, workspaces.UserWorkspace, workspaces.WorkspaceMember, workspaces.WorkspaceSetting
+  scope traits.Local.owner
+  quarantine_retention 3
+}
+
+world APPFLOWY_VEC "the local embedding store (vector.db); a second world, a second file" {
+  modules embeddings
+  durability durable
+  writers governed
+  generated python, rust
+  requires embeddings.InWorkspace exempt embeddings.Workspace
+  scope embeddings.InWorkspace.workspace
+  quarantine_retention 3
+}
+
+deployment APPFLOWY_DEV "metadata store follows the file" {
+  world APPFLOWY
+  engine sqlite
+  at env APPFLOWY_DB default "./flowy-database.sqlite"
+  ship on_open
+  mode readwrite
+  snapshot none
+}
+
+deployment APPFLOWY_VEC_DEV "embedding store follows the file" {
+  world APPFLOWY_VEC
+  engine sqlite
+  at env APPFLOWY_VEC_DB default "./vector.sqlite"
+  ship on_open
+  mode readwrite
+  snapshot none
+}

@@ -1,0 +1,49 @@
+# Notes are events on a client. This module also holds questions and verbs that span clients and notes.
+
+module notes "Notes are events on a client, and the questions and verbs that span clients and notes." {
+  import clients (Client)
+
+  intent note_body : Text "what was written about the client"
+  intent recorded_at : Instant "when the note was written"
+
+  event Note "a dated note on a client, in the order written" {
+    use note_body
+    use recorded_at { order filter }
+    link client -> Client { end cascade inverse notes }
+    ordered_within client
+  }
+
+  query client_card of Client "one client with owner, contacts, and the last five notes" {
+    given client : Client
+    by client
+    show preferred_name, archived_at, owner.email, contacts [preferred_name, email, relationship], notes [note_body, recorded_at] last 5
+    including_archived
+  }
+
+  query notes_in_window of Note "a client's notes between two instants" {
+    given client : Client
+    given from : optional Instant
+    given until : optional Instant
+    where client is client
+      and recorded_at >= from
+      and recorded_at < until
+    show note_body, recorded_at
+    order recorded_at
+  }
+
+  question dormant_clients of Client "clients with no note since an instant" {
+    given after : Instant
+    where notes count (recorded_at >= after) = 0
+    show preferred_name
+    live bounded 1000
+  }
+
+  bulk archive_dormant "archive every dormant client" {
+    Client.archive over dormant_clients
+  }
+
+  compound intake_client "mint a client and record the intake notes as one transaction" {
+    step client = Client.mint
+    step notes = Note.append each notes bind client = client
+  }
+}

@@ -1,0 +1,16 @@
+module m "m" { intent nm : Text "n" resource X "x" { use nm { key } } }
+world W "w" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+  scope deployment
+  quarantine_retention 3
+}
+deployment D "d" {
+  world W
+  at memory
+  ship on_open
+  mode readwrite
+  snapshot none
+}

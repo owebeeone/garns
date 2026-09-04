@@ -1,0 +1,9 @@
+module m "m" { intent nm : Text "n" resource R "r" { use nm { key } } trait Owned "o" { link owner -> R { end restrict scopes } } }
+world W "w" {
+  modules m
+  durability durable
+  writers governed
+  generated python
+  requires m.Owned exempt m.R
+  scope m.Owned.owner
+}

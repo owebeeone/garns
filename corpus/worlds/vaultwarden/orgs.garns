@@ -1,0 +1,103 @@
+# Organisation-owned kinds and the five associations that join the two tenancies.
+# Collection, Group, OrgPolicy, OrganizationApiKey carry OrgOwned and exempt Owned:
+# there is no required one-link path to User (C-07.2). Org-wide reads are unscoped.
+
+module orgs "Collections, groups, policies, membership, and the five joining associations." {
+  import people (OrgOwned, Organization, User, external_id)
+  import traits (atype, created_at)
+  import vault (Cipher)
+
+  intent access_all : Boolean "whether this membership or group sees every collection"
+  intent membership_key : Opaque "the member's encrypted organisation key"
+  intent membership_status : Integer "invite/accepted/confirmed discriminant"
+  intent membership_type : Integer "role discriminant"
+  intent reset_password_key : Opaque "encrypted reset-password key for this membership"
+  intent invited_by_email : Email "who invited this member"
+  intent read_only : Boolean "collection ACL: view without edit"
+  intent hide_passwords : Boolean "collection ACL: hide password fields"
+  intent manage : Boolean "collection ACL: manage the collection"
+  intent collection_name : Opaque "encrypted collection name"
+  intent group_name : DisplayName "group name inside an organisation"
+  intent policy_enabled : Boolean "whether this policy is in force"
+  intent policy_data : Opaque "encrypted or structured policy payload"
+  intent org_api_key : Opaque "organisation api key material"
+  intent revision_date : Instant "when this organisation-owned row last changed"
+
+  association UsersOrganizations "this user is a member of this organisation" {
+    link member -> User { end cascade inverse memberships }
+    link org -> Organization { end cascade inverse members }
+    use access_all
+    use membership_key
+    use membership_status
+    use membership_type
+    use reset_password_key { optional }
+    use external_id { optional }
+    use invited_by_email { optional }
+  }
+
+  resource Collection "an organisation-owned collection of ciphers" {
+    use collection_name
+    use external_id { optional }
+    lifecycle mutable
+    carry OrgOwned
+  }
+
+  association UsersCollections "this user may see this collection" {
+    link member -> User { end cascade }
+    link collection -> Collection { end cascade inverse users }
+    use read_only { default false }
+    use hide_passwords { default false }
+    use manage { default false }
+  }
+
+  association CiphersCollections "this cipher is in this collection" {
+    link cipher -> Cipher { end cascade inverse collections }
+    link collection -> Collection { end cascade inverse ciphers }
+  }
+
+  resource Group "an organisation-owned group" {
+    use group_name { filter }
+    use access_all
+    use external_id { optional }
+    use created_at { stamp on_mint default ship_clock }
+    use revision_date { stamp on_change }
+    lifecycle mutable
+    carry OrgOwned
+  }
+
+  association GroupsUsers "this group includes this organisation membership" {
+    link group -> Group { end cascade inverse members }
+    link membership -> UsersOrganizations { end cascade inverse groups }
+  }
+
+  association CollectionsGroups "this group may see this collection" {
+    link collection -> Collection { end cascade inverse groups }
+    link group -> Group { end cascade inverse collections }
+    use read_only
+    use hide_passwords
+    use manage { default false }
+  }
+
+  resource OrgPolicy "an organisation policy of one type" {
+    use atype { filter }
+    use policy_enabled { filter }
+    use policy_data
+    lifecycle mutable
+    carry OrgOwned
+  }
+
+  resource OrganizationApiKey "an organisation api key" {
+    use atype
+    use org_api_key
+    use revision_date { stamp on_change default ship_clock }
+    lifecycle mutable
+    carry OrgOwned
+  }
+
+  query org_collections of Collection "collections of one organisation; unscoped because OrgOwned is not the root" {
+    given org : Organization
+    where org is org
+    show collection_name, external_id
+    unscoped vault_org_read
+  }
+}

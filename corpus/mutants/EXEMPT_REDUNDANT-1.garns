@@ -1,0 +1,7 @@
+module m "exempting a carrier that carries the trait" {
+  intent n : Text "n"
+  resource R "r" { use n { key } }
+  trait Owned "o" { link owner -> R { end restrict scopes } }
+  resource A "a" { use n carry Owned }
+}
+world W "w" { modules m durability durable writers governed generated python requires m.Owned exempt m.R, m.A scope m.Owned.owner quarantine_retention 3 }

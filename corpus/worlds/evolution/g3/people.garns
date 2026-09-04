@@ -1,0 +1,20 @@
+# Generation 3: nickname moved here (same identity: not an event).
+
+module people "Generation 3: nickname moved here; same identity, so the move is not an event." {
+  intent email : Email "an address that can receive mail"
+  intent created_at : Instant "when this individual was minted"
+  intent nickname : DisplayName "informal name; may be absent" { renamed_from clients.nickname }
+
+  resource User "a practitioner" {
+    use email { key }
+    lifecycle retirable
+  }
+
+  trait Owned "belongs to one practitioner" {
+    link owner -> User { end restrict scopes }
+  }
+
+  trait Timestamped "carries the mint instant" {
+    use created_at { order stamp on_mint }
+  }
+}

@@ -1,0 +1,17 @@
+world REPORTING "the static conformance module in a deployment-scoped world" {
+  modules reporting
+  durability durable
+  writers governed
+  generated python, rust
+  scope deployment
+  quarantine_retention 3
+}
+
+deployment REPORTING_DEV "in memory" {
+  world REPORTING
+  engine sqlite
+  at memory
+  ship on_open
+  mode readwrite
+  snapshot none
+}

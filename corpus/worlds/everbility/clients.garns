@@ -1,0 +1,25 @@
+module clients "Clients of a practitioner, and the many-to-many assignment association." {
+  import people (Organisation, Owned, User)
+  import traits (Timestamped)
+
+  intent first_name : DisplayName "the client's given name"
+  intent last_name : DisplayName "the client's family name"
+  intent archived_at : Instant "when hidden from default lists"
+  intent assigned_at : Instant "when this user was assigned to this client"
+
+  resource Client "a person the practitioner documents" {
+    use first_name { filter order }
+    use last_name { optional filter order }
+    use archived_at { optional filter }
+    link org -> Organisation { optional end restrict filter }
+    lifecycle archived_by archived_at
+    carry Owned, Timestamped
+  }
+
+  association ClientUser "this user is assigned to this client" {
+    link client -> Client { end cascade inverse assigned_users }
+    link user -> User { end restrict inverse assigned_clients }
+    use assigned_at { default ship_clock }
+    scope_via client
+  }
+}

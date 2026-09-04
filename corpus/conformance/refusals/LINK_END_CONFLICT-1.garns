@@ -1,0 +1,8 @@
+module bad "two end actions on one link" {
+  intent key : Id "key"
+  resource Parent "parent" { use key { key } }
+  resource Child "child" {
+    use key { key }
+    link parent -> Parent { end restrict end cascade }
+  }
+}

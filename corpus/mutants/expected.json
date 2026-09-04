@@ -1,0 +1,846 @@
+{
+ "schema": "garns-v9-5/mutant-expectations/1",
+ "note": "authored assertions; never read by the runner",
+ "cases": [
+  {
+   "mutant": "MEANS_REQUIRED-1.garns",
+   "stage": "decode",
+   "code": "MEANS_REQUIRED"
+  },
+  {
+   "mutant": "ESCAPE_BODY-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "HOST_EXPR-1.garns",
+   "stage": "decode",
+   "code": "EXPR_NOT_ADMITTED"
+  },
+  {
+   "mutant": "SQL_ESCAPE-1.garns",
+   "stage": "decode",
+   "code": "EXPR_NOT_ADMITTED"
+  },
+  {
+   "mutant": "KIND_NOT_ADMITTED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "STORAGE_KNOB-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "META_BLOCK-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "TYPE_INLINE-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "DECL_SHAPE_INVALID-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "EXPR_NOT_ADMITTED-1.garns",
+   "stage": "decode",
+   "code": "EXPR_NOT_ADMITTED"
+  },
+  {
+   "mutant": "WORLD_NOT_DATA-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "BODY_NOT_DATA-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "DJANGO_LOOKUP-1.garns",
+   "stage": "decode",
+   "code": "EXPR_NOT_ADMITTED"
+  },
+  {
+   "mutant": "OVERRIDE-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "PRECEDENCE-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "NOW_CALL-1.garns",
+   "stage": "decode",
+   "code": "EXPR_NOT_ADMITTED"
+  },
+  {
+   "mutant": "TABLENAME-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "COLUMN-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "SUPER-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "DEPENDS-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "U2_SHAPE-1.garns",
+   "stage": "decode",
+   "code": "TYPE_SHAPE_INVALID"
+  },
+  {
+   "mutant": "U7_MAGNITUDE-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "SYNC_SURFACE-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "RAW_SQL_BLOCK-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "GENERATION_MISMATCH-1.garns",
+   "stage": "decode",
+   "code": "SOURCE_NOT_GARNS"
+  },
+  {
+   "mutant": "FAMILY_LIFECYCLE_FIXED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "FAMILY_DEPTH-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "LIVE_BOUND_REQUIRED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "REPAIR_SLOT_REQUIRED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "RETYPE_ADAPTER_REQUIRED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "ERE4_DESTRUCTIVE-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "U12_INTERACT-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "TYPE_CONSTRUCTOR_NESTED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "TYPE_CONSTRUCTOR_NESTED-2.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "MEMBER_ITEM_NOT_ADMITTED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "WHOLE_MODULE_IMPORT-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "EXEMPT_ON_CARRIER-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "ENGINE_CLOCK_NOT_DEFAULT-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "MOVE_DISPOSITION_REQUIRED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "MOVE_LEAVE_NOT_ADMITTED-1.garns",
+   "stage": "decode",
+   "code": "DECL_SHAPE_INVALID"
+  },
+  {
+   "mutant": "TRAIT_POLICY_CONFLICT-1.garns",
+   "stage": "validate",
+   "code": "TRAIT_POLICY_CONFLICT"
+  },
+  {
+   "mutant": "TRAIT_WIDENED-1.garns",
+   "stage": "validate",
+   "code": "TRAIT_WIDENED"
+  },
+  {
+   "mutant": "ID_DUPLICATED-1.garns",
+   "stage": "validate",
+   "code": "ID_DUPLICATED"
+  },
+  {
+   "mutant": "ID_DUPLICATED-2.garns",
+   "stage": "validate",
+   "code": "ID_DUPLICATED"
+  },
+  {
+   "mutant": "ID_RESERVED-1.garns",
+   "stage": "validate",
+   "code": "ID_RESERVED"
+  },
+  {
+   "mutant": "TERM_RENAMED-1.garns",
+   "stage": "validate",
+   "code": "TERM_UNKNOWN"
+  },
+  {
+   "mutant": "QUESTION_INTENT_RETIRED-1.garns",
+   "stage": "validate",
+   "code": "QUESTION_INTENT_RETIRED"
+  },
+  {
+   "mutant": "RETIRE_REASON_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "RETIRE_REASON_REQUIRED"
+  },
+  {
+   "mutant": "ASSOCIATION_ARITY-1.garns",
+   "stage": "validate",
+   "code": "ASSOCIATION_ARITY"
+  },
+  {
+   "mutant": "VERB_INPUT_ENGINE_OWNED-1.garns",
+   "stage": "validate",
+   "code": "VERB_INPUT_ENGINE_OWNED"
+  },
+  {
+   "mutant": "BULK_NOT_DERIVED_VERB-1.garns",
+   "stage": "validate",
+   "code": "BULK_NOT_DERIVED_VERB"
+  },
+  {
+   "mutant": "QUARANTINE_RETENTION_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "QUARANTINE_RETENTION_REQUIRED"
+  },
+  {
+   "mutant": "TRAIT_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "TRAIT_REQUIRED"
+  },
+  {
+   "mutant": "SCOPE_ROOT_NOT_SCOPED-1.garns",
+   "stage": "validate",
+   "code": "SCOPE_ROOT_NOT_SCOPED"
+  },
+  {
+   "mutant": "SCOPE_LINK_NOT_ROOT-1.garns",
+   "stage": "validate",
+   "code": "SCOPE_LINK_NOT_ROOT"
+  },
+  {
+   "mutant": "SCOPE_PATH_AMBIGUOUS-1.garns",
+   "stage": "validate",
+   "code": "SCOPE_PATH_AMBIGUOUS"
+  },
+  {
+   "mutant": "MODULE_CYCLE-1.garns",
+   "stage": "validate",
+   "code": "MODULE_CYCLE"
+  },
+  {
+   "mutant": "MODULE_NOT_LISTED-1.garns",
+   "stage": "validate",
+   "code": "MODULE_NOT_LISTED"
+  },
+  {
+   "mutant": "DETACH_NOT_OPTIONAL-1.garns",
+   "stage": "validate",
+   "code": "DETACH_NOT_OPTIONAL"
+  },
+  {
+   "mutant": "OPTIONAL_PARAM_UNGUARDED-1.garns",
+   "stage": "validate",
+   "code": "OPTIONAL_PARAM_UNGUARDED"
+  },
+  {
+   "mutant": "TERM_TO_MANY_UNQUANTIFIED-1.garns",
+   "stage": "validate",
+   "code": "TERM_TO_MANY_UNQUANTIFIED"
+  },
+  {
+   "mutant": "EXPR_TYPE-1.garns",
+   "stage": "validate",
+   "code": "EXPR_TYPE"
+  },
+  {
+   "mutant": "EXPR_TYPE-2.garns",
+   "stage": "validate",
+   "code": "EXPR_TYPE"
+  },
+  {
+   "mutant": "TERM_UNKNOWN-1.garns",
+   "stage": "validate",
+   "code": "TERM_UNKNOWN"
+  },
+  {
+   "mutant": "QUESTION_COMPOSE_PAGED-1.garns",
+   "stage": "validate",
+   "code": "QUESTION_COMPOSE_PAGED"
+  },
+  {
+   "mutant": "QUESTION_COMPOSE_UNSCOPED-1.garns",
+   "stage": "validate",
+   "code": "QUESTION_COMPOSE_UNSCOPED"
+  },
+  {
+   "mutant": "QUESTION_CLOCK_NOT_A_TERM-1.garns",
+   "stage": "validate",
+   "code": "QUESTION_CLOCK_NOT_A_TERM"
+  },
+  {
+   "mutant": "ENGINE_LOWERING_ABSENT-1.garns",
+   "stage": "validate",
+   "code": "ENGINE_LOWERING_ABSENT"
+  },
+  {
+   "mutant": "ENGINE_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "ENGINE_REQUIRED"
+  },
+  {
+   "mutant": "DEPLOYMENT_LOCATION_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "DEPLOYMENT_LOCATION_REQUIRED"
+  },
+  {
+   "mutant": "SHIP_MODE_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "SHIP_MODE_REQUIRED"
+  },
+  {
+   "mutant": "DEPLOYMENT_MODE_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "DEPLOYMENT_MODE_REQUIRED"
+  },
+  {
+   "mutant": "DEPLOYMENT_SNAPSHOT_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "DEPLOYMENT_SNAPSHOT_REQUIRED"
+  },
+  {
+   "mutant": "USE_DUPLICATED-1.garns",
+   "stage": "validate",
+   "code": "USE_DUPLICATED"
+  },
+  {
+   "mutant": "STEP_NAME_DUPLICATED-1.garns",
+   "stage": "validate",
+   "code": "STEP_NAME_DUPLICATED"
+  },
+  {
+   "mutant": "INTENT_HOMELESS-1.garns",
+   "stage": "validate",
+   "code": "INTENT_HOMELESS"
+  },
+  {
+   "mutant": "LINK_CYCLE_UNMINTABLE-1.garns",
+   "stage": "validate",
+   "code": "LINK_CYCLE_UNMINTABLE"
+  },
+  {
+   "mutant": "STEP_CYCLE-1.garns",
+   "stage": "validate",
+   "code": "STEP_CYCLE"
+  },
+  {
+   "mutant": "STEP_REFERENCE_UNRESOLVED-1.garns",
+   "stage": "validate",
+   "code": "STEP_REFERENCE_UNRESOLVED"
+  },
+  {
+   "mutant": "STEP_BIND_TYPE-1.garns",
+   "stage": "validate",
+   "code": "STEP_BIND_TYPE"
+  },
+  {
+   "mutant": "FAMILY_MEMBER_MINT_ONLY-1.garns",
+   "stage": "validate",
+   "code": "FAMILY_MEMBER_MINT_ONLY"
+  },
+  {
+   "mutant": "PRESET_CONFLICT-1.garns",
+   "stage": "validate",
+   "code": "PRESET_CONFLICT"
+  },
+  {
+   "mutant": "EL2_DEAD-1.garns",
+   "stage": "validate",
+   "code": "INTENT_HOMELESS"
+  },
+  {
+   "mutant": "U16_ESCAPE-1.garns",
+   "stage": "validate",
+   "code": "WORLD_UNKNOWN"
+  },
+  {
+   "mutant": "U17_INCOMPLETE-1.garns",
+   "stage": "validate",
+   "code": "WORLD_SCOPE_REQUIRED"
+  },
+  {
+   "mutant": "U18_COLLIDE-1.garns",
+   "stage": "validate",
+   "code": "WORLD_MODULE_COLLISION"
+  },
+  {
+   "mutant": "CLOSED_SET_MEMBER_UNKNOWN-1.garns",
+   "stage": "validate",
+   "code": "CLOSED_SET_MEMBER_UNKNOWN"
+  },
+  {
+   "mutant": "BULK_PARAM_UNDECLARED-1.garns",
+   "stage": "validate",
+   "code": "BULK_PARAM_UNDECLARED"
+  },
+  {
+   "mutant": "ALIAS_NOT_DERIVED-1.garns",
+   "stage": "validate",
+   "code": "ALIAS_NOT_DERIVED"
+  },
+  {
+   "mutant": "NAME_NOT_IMPORTED-1.garns",
+   "stage": "validate",
+   "code": "NAME_NOT_IMPORTED"
+  },
+  {
+   "mutant": "NAME_NOT_IMPORTED-2.garns",
+   "stage": "validate",
+   "code": "NAME_NOT_IMPORTED"
+  },
+  {
+   "mutant": "IMPORT_UNKNOWN-1.garns",
+   "stage": "validate",
+   "code": "IMPORT_UNKNOWN"
+  },
+  {
+   "mutant": "IMPORT_NOT_OWNER-1.garns",
+   "stage": "validate",
+   "code": "IMPORT_NOT_OWNER"
+  },
+  {
+   "mutant": "IMPORT_UNUSED-1.garns",
+   "stage": "validate",
+   "code": "IMPORT_UNUSED"
+  },
+  {
+   "mutant": "IMPORT_AMBIGUOUS-1.garns",
+   "stage": "validate",
+   "code": "IMPORT_AMBIGUOUS"
+  },
+  {
+   "mutant": "CAPABILITY_UNKNOWN-1.garns",
+   "stage": "validate",
+   "code": "CAPABILITY_UNKNOWN"
+  },
+  {
+   "mutant": "SET_ABSENT_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "SET_ABSENT_REQUIRED"
+  },
+  {
+   "mutant": "OPAQUE_COMPARED-1.garns",
+   "stage": "validate",
+   "code": "OPAQUE_COMPARED"
+  },
+  {
+   "mutant": "SCOPE_PATH_TO_EXEMPT-1.garns",
+   "stage": "validate",
+   "code": "SCOPE_PATH_TO_EXEMPT"
+  },
+  {
+   "mutant": "CALL_UNKNOWN-1.garns",
+   "stage": "validate",
+   "code": "CALL_UNKNOWN"
+  },
+  {
+   "mutant": "CALL_VOLATILE-1.garns",
+   "stage": "validate",
+   "code": "CALL_VOLATILE"
+  },
+  {
+   "mutant": "CALL_EFFECTFUL-1.garns",
+   "stage": "validate",
+   "code": "CALL_EFFECTFUL"
+  },
+  {
+   "mutant": "CALL_ARITY-1.garns",
+   "stage": "validate",
+   "code": "CALL_ARITY"
+  },
+  {
+   "mutant": "CALL_ARGUMENT_TYPE-1.garns",
+   "stage": "validate",
+   "code": "CALL_ARGUMENT_TYPE"
+  },
+  {
+   "mutant": "AGGREGATE_MISUSED-1.garns",
+   "stage": "validate",
+   "code": "AGGREGATE_MISUSED"
+  },
+  {
+   "mutant": "AGGREGATE_MISUSED-2.garns",
+   "stage": "validate",
+   "code": "AGGREGATE_MISUSED"
+  },
+  {
+   "mutant": "HAVING_WITHOUT_GROUP-1.garns",
+   "stage": "validate",
+   "code": "HAVING_WITHOUT_GROUP"
+  },
+  {
+   "mutant": "SHOW_ALIAS_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "SHOW_ALIAS_REQUIRED"
+  },
+  {
+   "mutant": "DIMENSION_NOT_VECTOR-1.garns",
+   "stage": "validate",
+   "code": "DIMENSION_NOT_VECTOR"
+  },
+  {
+   "mutant": "DIMENSION_NOT_POSITIVE-1.garns",
+   "stage": "validate",
+   "code": "DIMENSION_NOT_POSITIVE"
+  },
+  {
+   "mutant": "COMPOSE_INNER_GIVENS-1.garns",
+   "stage": "validate",
+   "code": "COMPOSE_INNER_GIVENS"
+  },
+  {
+   "mutant": "GIVEN_UNUSED-1.garns",
+   "stage": "validate",
+   "code": "GIVEN_UNUSED"
+  },
+  {
+   "mutant": "INVERSE_DUPLICATED-1.garns",
+   "stage": "validate",
+   "code": "INVERSE_DUPLICATED"
+  },
+  {
+   "mutant": "EXEMPT_REDUNDANT-1.garns",
+   "stage": "validate",
+   "code": "EXEMPT_REDUNDANT"
+  },
+  {
+   "mutant": "WRITER_SOURCE_REQUIRED-1.garns",
+   "stage": "validate",
+   "code": "WRITER_SOURCE_REQUIRED"
+  },
+  {
+   "mutant": "TARGET_UNKNOWN-1.garns",
+   "stage": "validate",
+   "code": "TARGET_UNKNOWN"
+  },
+  {
+   "mutant": "SHAPE_CONFLICT-1.garns",
+   "stage": "validate",
+   "code": "SHAPE_CONFLICT"
+  },
+  {
+   "mutant": "PAGE_LIMIT_PAIR-1.garns",
+   "stage": "validate",
+   "code": "PAGE_LIMIT_PAIR"
+  },
+  {
+   "mutant": "RANK_WITHOUT_ORDER-1.garns",
+   "stage": "validate",
+   "code": "RANK_WITHOUT_ORDER"
+  },
+  {
+   "mutant": "QUANTIFIER_WITHOUT_TO_MANY-1.garns",
+   "stage": "validate",
+   "code": "QUANTIFIER_WITHOUT_TO_MANY"
+  },
+  {
+   "mutant": "IS_NOT_LINK-1.garns",
+   "stage": "validate",
+   "code": "IS_NOT_LINK"
+  },
+  {
+   "mutant": "IN_NOT_LIST-1.garns",
+   "stage": "validate",
+   "code": "IN_NOT_LIST"
+  },
+  {
+   "mutant": "CONTAINS_NOT_TEXT-1.garns",
+   "stage": "validate",
+   "code": "CONTAINS_NOT_TEXT"
+  },
+  {
+   "mutant": "TERM_RESERVED-1.garns",
+   "stage": "validate",
+   "code": "TERM_RESERVED"
+  },
+  {
+   "mutant": "GIVEN_NAME_RESERVED-1.garns",
+   "stage": "validate",
+   "code": "GIVEN_NAME_RESERVED"
+  },
+  {
+   "mutant": "USE_FLAG_CONFLICT-1.garns",
+   "stage": "validate",
+   "code": "USE_FLAG_CONFLICT"
+  },
+  {
+   "mutant": "USE_FLAG_REPEATED-1.garns",
+   "stage": "validate",
+   "code": "USE_FLAG_REPEATED"
+  },
+  {
+   "mutant": "STAMP_NOT_INSTANT-1.garns",
+   "stage": "validate",
+   "code": "STAMP_NOT_INSTANT"
+  },
+  {
+   "mutant": "ARCHIVED_BY_INVALID-1.garns",
+   "stage": "validate",
+   "code": "ARCHIVED_BY_INVALID"
+  },
+  {
+   "mutant": "NESTED_SHOW_WITH_DISTINCT-1.garns",
+   "stage": "validate",
+   "code": "NESTED_SHOW_WITH_DISTINCT"
+  },
+  {
+   "mutant": "INCLUDING_ARCHIVED_NOT_ARCHIVABLE-1.garns",
+   "stage": "validate",
+   "code": "INCLUDING_ARCHIVED_NOT_ARCHIVABLE"
+  },
+  {
+   "mutant": "scenarios/STORAGE_COLUMN_MISSING",
+   "stage": "validate",
+   "code": "STORAGE_COLUMN_MISSING"
+  },
+  {
+   "mutant": "scenarios/STORAGE_TABLE_COLLISION",
+   "stage": "validate",
+   "code": "STORAGE_TABLE_COLLISION"
+  },
+  {
+   "mutant": "scenarios/STORAGE_RELATION_MISSING",
+   "stage": "validate",
+   "code": "STORAGE_RELATION_MISSING"
+  },
+  {
+   "mutant": "scenarios/STORAGE_COLUMN_COLLISION",
+   "stage": "validate",
+   "code": "STORAGE_COLUMN_COLLISION"
+  },
+  {
+   "mutant": "scenarios/STORAGE_WORLD_MISMATCH",
+   "stage": "validate",
+   "code": "STORAGE_WORLD_MISMATCH"
+  },
+  {
+   "mutant": "scenarios/WORLD_UNKNOWN_SELECTION",
+   "stage": "validate",
+   "code": "WORLD_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/WRITER_CAPTURE_INCOMPLETE_BINDING",
+   "stage": "validate",
+   "code": "WRITER_CAPTURE_INCOMPLETE"
+  },
+  {
+   "mutant": "scenarios/STORE_BEHIND",
+   "stage": "load",
+   "code": "STORE_BEHIND"
+  },
+  {
+   "mutant": "scenarios/STORE_DRIFT",
+   "stage": "load",
+   "code": "STORE_DRIFT"
+  },
+  {
+   "mutant": "scenarios/STORE_UNSHIPPED",
+   "stage": "load",
+   "code": "STORE_UNSHIPPED"
+  },
+  {
+   "mutant": "scenarios/RETYPE_KEY_EQUALITY",
+   "stage": "ship",
+   "code": "RETYPE_KEY_EQUALITY"
+  },
+  {
+   "mutant": "scenarios/RENAME_TARGET_UNKNOWN",
+   "stage": "ship",
+   "code": "RENAME_TARGET_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/RETIREMENT_POLICY_REQUIRED",
+   "stage": "ship",
+   "code": "RETIREMENT_POLICY_REQUIRED"
+  },
+  {
+   "mutant": "scenarios/ACCESSOR_BREAKING_UNACKNOWLEDGED",
+   "stage": "ship",
+   "code": "ACCESSOR_BREAKING_UNACKNOWLEDGED"
+  },
+  {
+   "mutant": "scenarios/RESTORE_DATA_UNAVAILABLE",
+   "stage": "ship",
+   "code": "RESTORE_DATA_UNAVAILABLE"
+  },
+  {
+   "mutant": "scenarios/MOVE_HOME_INCONSISTENT",
+   "stage": "ship",
+   "code": "MOVE_HOME_INCONSISTENT"
+  },
+  {
+   "mutant": "scenarios/GENERATION_OUTSIDE_WINDOW",
+   "stage": "load",
+   "code": "GENERATION_OUTSIDE_WINDOW"
+  },
+  {
+   "mutant": "scenarios/KEY_DUPLICATED",
+   "stage": "runtime",
+   "code": "KEY_DUPLICATED"
+  },
+  {
+   "mutant": "scenarios/VERB_INPUT_REQUIRED",
+   "stage": "runtime",
+   "code": "VERB_INPUT_REQUIRED"
+  },
+  {
+   "mutant": "scenarios/VERB_INPUT_ENGINE_OWNED",
+   "stage": "runtime",
+   "code": "VERB_INPUT_ENGINE_OWNED"
+  },
+  {
+   "mutant": "scenarios/LEDGER_WRITER_UNKNOWN",
+   "stage": "runtime",
+   "code": "LEDGER_WRITER_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/LEDGER_TRANSACTION_INVALID",
+   "stage": "runtime",
+   "code": "LEDGER_TRANSACTION_INVALID"
+  },
+  {
+   "mutant": "scenarios/LEDGER_FIELD_UNKNOWN",
+   "stage": "runtime",
+   "code": "LEDGER_FIELD_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/LEDGER_CARRIER_UNKNOWN",
+   "stage": "runtime",
+   "code": "LEDGER_CARRIER_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/LEDGER_SCOPE_UNKNOWN",
+   "stage": "runtime",
+   "code": "LEDGER_SCOPE_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/LEDGER_VALUE_TYPE",
+   "stage": "runtime",
+   "code": "LEDGER_VALUE_TYPE"
+  },
+  {
+   "mutant": "scenarios/INVARIANT_VIOLATED",
+   "stage": "runtime",
+   "code": "INVARIANT_VIOLATED"
+  },
+  {
+   "mutant": "scenarios/SCOPE_REQUIRED",
+   "stage": "runtime",
+   "code": "SCOPE_REQUIRED"
+  },
+  {
+   "mutant": "scenarios/CAPABILITY_REQUIRED",
+   "stage": "runtime",
+   "code": "CAPABILITY_REQUIRED"
+  },
+  {
+   "mutant": "scenarios/PARAM_UNKNOWN",
+   "stage": "runtime",
+   "code": "PARAM_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/READ_UNKNOWN_SELECTION",
+   "stage": "runtime",
+   "code": "READ_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/QUERY_NOT_LIVE",
+   "stage": "runtime",
+   "code": "QUERY_NOT_LIVE"
+  },
+  {
+   "mutant": "scenarios/LIVE_BOUND_EXCEEDED",
+   "stage": "runtime",
+   "code": "LIVE_BOUND_EXCEEDED"
+  },
+  {
+   "mutant": "scenarios/CAPTURE_NOT_DECLARED",
+   "stage": "runtime",
+   "code": "CAPTURE_NOT_DECLARED"
+  },
+  {
+   "mutant": "scenarios/IDENTITY_UNKNOWN",
+   "stage": "runtime",
+   "code": "IDENTITY_UNKNOWN"
+  },
+  {
+   "mutant": "scenarios/ENGINE_LOWERING_ABSENT",
+   "stage": "validate",
+   "code": "ENGINE_LOWERING_ABSENT"
+  },
+  {
+   "mutant": "scenarios/ACCEPTED_CONTROL",
+   "stage": "accepted",
+   "code": "ACCEPTED"
+  }
+ ]
+}

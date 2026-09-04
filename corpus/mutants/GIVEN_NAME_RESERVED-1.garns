@@ -1,0 +1,6 @@
+module m "a given named like an engine parameter" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  query q of A "q" { given _scope : Integer where n = _scope show n }
+}
+world W "w" { modules m durability durable writers governed generated python scope deployment quarantine_retention 3 }

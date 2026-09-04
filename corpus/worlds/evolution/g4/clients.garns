@@ -1,0 +1,25 @@
+module clients "Generation 4: archived_at added; Client and Contact become archived_by; Contact.client restrict." {
+  import people (Owned, Timestamped, email)
+
+  intent preferred_name : DisplayName "the name this person wants in the waiting room" {
+    alias user_name
+  }
+  intent archived_at : Instant "when hidden from default lists"
+
+  resource Client "a person the practice documents" {
+    use preferred_name { filter order }
+    use archived_at { optional }
+    lifecycle archived_by archived_at
+    carry Owned, Timestamped
+    breaking "delete replaced by archive and retire"
+  }
+
+  resource Contact "someone related to a client" {
+    use preferred_name
+    use email
+    use archived_at { optional }
+    link client -> Client { end restrict inverse contacts }
+    lifecycle archived_by archived_at
+    breaking "delete replaced by archive and retire"
+  }
+}

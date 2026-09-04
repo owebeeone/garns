@@ -1,0 +1,9 @@
+module m "set absent on a required use" {
+  intent sort : DisplayName "k"
+  resource A "a" { use sort { filter } lifecycle mutable }
+  query with_kind of A "by sort" { given k : DisplayName where sort = k }
+  bulk clear_kind "clear a required use" {
+    A.change over with_kind
+    set sort absent
+  }
+}

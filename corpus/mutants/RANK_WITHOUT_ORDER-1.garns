@@ -1,0 +1,5 @@
+module m "rank without order" {
+  intent n : Text "n"
+  resource A "a" { use n }
+  question q of A "q" { show n, rank live bounded 10 }
+}

@@ -1,0 +1,10 @@
+module m "retired ref" {
+  tombstone nickname "gone" { data drop }
+  resource User "u" { lifecycle mutable }
+  question q of User "q" {
+    where nickname = x
+    given x : DisplayName
+    show nickname
+    live bounded 10
+  }
+}

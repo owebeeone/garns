@@ -1,0 +1,18 @@
+module beta "second module: identical local names, distinct qualified identities" {
+  intent code : Text "a beta code"
+  intent amount : Integer "a beta amount"
+  resource Root "beta root" { use code { key } }
+  trait Held "held by a beta root" { link holder -> Root { end restrict scopes } }
+  resource Item "a beta item" {
+    use code { key }
+    use amount { filter }
+    carry Held
+  }
+  question heavy of Item "beta items above a threshold" {
+    given floor : Integer
+    where amount > floor
+    show code, amount
+    order amount descending
+    live bounded 100
+  }
+}

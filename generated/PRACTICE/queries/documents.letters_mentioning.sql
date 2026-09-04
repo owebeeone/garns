@@ -1,0 +1,1 @@
+SELECT s0."rid_documents_document" AS "$k0", s0."f_document_title" AS "title", s0."f_letter_body" AS "body" FROM "tbl_documents_document" AS s0 WHERE s0."member_of_documents_document" = 'Letter' AND s0."f_document_archived_at" IS NULL AND s0."ref_document_owner" = :_scope AND (instr(s0."f_letter_body", :q) > 0) ORDER BY s0."rid_documents_document" ASC

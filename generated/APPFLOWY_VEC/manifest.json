@@ -1,0 +1,12 @@
+{
+ "files": {
+  "ir.json": "e03f996693af82b91c40491941e96cdc7b13de5afdd5425e1256f31618c32719",
+  "rust/main.rs": "8fc7f2d4868144d197f84c468f52d384296e5b7e2c7c81cb17779caf73a544f3",
+  "rust/sqlite.rs": "f2eb7b4126691f8a86a2f7bae8bcc1f393970895cb0cfb5c4a82c1ab959725d7",
+  "schema.sql": "eef5624e2fef4d087d5fe289e716b1a65850c68217de462205a6ea3e81331717"
+ },
+ "ir_digest": "69a5b977173cdf7214c7b6f70a4cc406c04b4d2daaed24af589f8c2d6deb10f1",
+ "schema": "garns-v9-5/generated-manifest/1",
+ "storage_digest": "5836fd10e72c1fb9cc9f77f14a4573e19de84f8941e232b2d8fdae65aa1a0efb",
+ "world": "APPFLOWY_VEC"
+}

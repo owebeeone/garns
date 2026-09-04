@@ -1,0 +1,5 @@
+module m "aggregate in where" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  query q of A "q" { where sum(n) > 3 show n }
+}

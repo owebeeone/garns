@@ -1,0 +1,4 @@
+module m "stamping a text" {
+  intent n : Text "n"
+  resource A "a" { use n { stamp on_mint } }
+}

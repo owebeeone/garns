@@ -1,0 +1,27 @@
+{
+ "atoms": [
+  {
+   "carrier": "pantry.Jar",
+   "field": "*"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.shelf"
+  },
+  {
+   "carrier": "pantry.Jar",
+   "field": "pantry.Jar.state"
+  },
+  {
+   "carrier": "pantry.Shelf",
+   "field": "pantry.Shelf.keeper"
+  }
+ ],
+ "composes": [],
+ "read": "pantry.jars_by_state",
+ "scope_links": [
+  "pantry.Jar.shelf",
+  "pantry.Shelf.keeper"
+ ],
+ "subject": "pantry.Jar"
+}

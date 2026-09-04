@@ -1,0 +1,27 @@
+{
+ "files": {
+  "ir.json": "1ef7a9de7d1f979f5c5e3d7f03c1e05bf5cb88290f4a01233d2dec7e04cd751c",
+  "python/events__events_for_org.py": "08ded442636ff72482133d76632b9126705555cca32d26112402a3ff74647eee",
+  "python/events__events_for_user.py": "78c365961fdec92aff4d94ebc6163a11ff68988ef13ac5ef56147f2b95989c39",
+  "python/orgs__org_collections.py": "351253e3f4bde7811cd242de8ee8beb1d59e7a67c343f8919c7d7da798907f11",
+  "python/vault__opaque_present.py": "03b35219292c4d0691619945419363e27d27d8d8759d7b058a28ccb4aed80dbd",
+  "python/vault__unexpired_sends.py": "a17cfa00fdfadfad0e39899ac1b02b758778aef0312353f315ed535fc1a3dff5",
+  "queries/events.events_for_org.sql": "e13ae843ee6e538715cdcad7bd9cf3570b314cd14bb643c7b67b0aa7c7d8e4bf",
+  "queries/events.events_for_user.sql": "752372ebd664f717de9d3144dbd8e2a82c637c3d4db1e111bd79169711b3a5c0",
+  "queries/orgs.org_collections.sql": "33e51056d280115b6ea8db889fb5b74f9d47e7fc7fdf2df447e0fe1f4a74e76d",
+  "queries/vault.opaque_present.sql": "67fc0fd5c8abf0ee52fe1a76678f9cb58bc00a0dc77327fd64503838f13d69ea",
+  "queries/vault.unexpired_sends.sql": "ab27fbfa6bfd80bf2a309be6b22a8a6854b40ae8357232164ec7928451c2744c",
+  "rust/events__events_for_org.rs": "a323aad8f7f50bf67954918b0c66e12cf6b784797b316ace565ca088ccd111d2",
+  "rust/events__events_for_user.rs": "dc30220c78ccb24c717c96afcbed6a97eda4d5561467122db9634b264dca3296",
+  "rust/main.rs": "e0d2d8652c5cf0c1191afc3bee6c4802a1552c314dfd6d3756fd9a2320036dc3",
+  "rust/orgs__org_collections.rs": "4e7e702c9cf68a6e662099a3258e17cf88f2bc62f3bff1e885f862305bc4cf89",
+  "rust/sqlite.rs": "f2eb7b4126691f8a86a2f7bae8bcc1f393970895cb0cfb5c4a82c1ab959725d7",
+  "rust/vault__opaque_present.rs": "6eed715a647a964711c23ea80fd4b8b74e161dcdf098805ecfa7b19949793526",
+  "rust/vault__unexpired_sends.rs": "f987906de2e1b656b764858de103840a4491545d18a1355c39764f1066685f2e",
+  "schema.sql": "c0301fe868e499c26d47f274001c1a4bdda51b37ca2c76b68a8ce13ea97f3248"
+ },
+ "ir_digest": "0bae35ee2e733b89d94511d1a921aa2652edd24755cd7d22e9da3ca7bec6ec65",
+ "schema": "garns-v9-5/generated-manifest/1",
+ "storage_digest": "2e40c9fe571c5c6a8acb7246c080a2d425d8d837737f8356ca740bf418aab961",
+ "world": "VAULTWARDEN"
+}

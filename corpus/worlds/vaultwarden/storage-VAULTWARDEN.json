@@ -1,0 +1,426 @@
+{
+  "engine": {
+    "generations": "garns_generations",
+    "ledger": "garns_ledger",
+    "revisions": "garns_revisions"
+  },
+  "relations": {
+    "auth.AuthRequest": {
+      "columns": {
+        "auth.AuthRequest.access_code": "f_authrequest_access_code",
+        "auth.AuthRequest.approved": "f_authrequest_approved",
+        "auth.AuthRequest.auth_public_key": "f_authrequest_auth_public_key",
+        "auth.AuthRequest.authentication_date": "f_authrequest_authentication_date",
+        "auth.AuthRequest.created_at": "f_authrequest_created_at",
+        "auth.AuthRequest.device_type": "f_authrequest_device_type",
+        "auth.AuthRequest.enc_key": "f_authrequest_enc_key",
+        "auth.AuthRequest.master_password_hash": "f_authrequest_master_password_hash",
+        "auth.AuthRequest.request_device_identifier": "f_authrequest_request_device_identifier",
+        "auth.AuthRequest.request_ip": "f_authrequest_request_ip",
+        "auth.AuthRequest.response_date": "f_authrequest_response_date",
+        "auth.AuthRequest.response_device_id": "f_authrequest_response_device_id",
+        "auth.AuthRequest.updated_at": "f_authrequest_updated_at"
+      },
+      "identity": "rid_auth_authrequest",
+      "links": {
+        "auth.AuthRequest.org": "ref_authrequest_org",
+        "auth.AuthRequest.owner": "ref_authrequest_owner"
+      },
+      "table": "tbl_auth_authrequest"
+    },
+    "auth.Device": {
+      "columns": {
+        "auth.Device.atype": "f_device_atype",
+        "auth.Device.created_at": "f_device_created_at",
+        "auth.Device.device_name": "f_device_device_name",
+        "auth.Device.push_token": "f_device_push_token",
+        "auth.Device.push_uuid": "f_device_push_uuid",
+        "auth.Device.refresh_token": "f_device_refresh_token",
+        "auth.Device.twofactor_remember": "f_device_twofactor_remember",
+        "auth.Device.updated_at": "f_device_updated_at"
+      },
+      "identity": "rid_auth_device",
+      "links": {
+        "auth.Device.owner": "ref_device_owner"
+      },
+      "table": "tbl_auth_device"
+    },
+    "auth.EmergencyAccess": {
+      "columns": {
+        "auth.EmergencyAccess.atype": "f_emergencyaccess_atype",
+        "auth.EmergencyAccess.created_at": "f_emergencyaccess_created_at",
+        "auth.EmergencyAccess.email": "f_emergencyaccess_email",
+        "auth.EmergencyAccess.key_encrypted": "f_emergencyaccess_key_encrypted",
+        "auth.EmergencyAccess.last_notification_at": "f_emergencyaccess_last_notification_at",
+        "auth.EmergencyAccess.membership_status": "f_emergencyaccess_membership_status",
+        "auth.EmergencyAccess.recovery_initiated_at": "f_emergencyaccess_recovery_initiated_at",
+        "auth.EmergencyAccess.updated_at": "f_emergencyaccess_updated_at",
+        "auth.EmergencyAccess.wait_time_days": "f_emergencyaccess_wait_time_days"
+      },
+      "identity": "rid_auth_emergencyaccess",
+      "links": {
+        "auth.EmergencyAccess.grantee_user": "ref_emergencyaccess_grantee_user",
+        "auth.EmergencyAccess.grantor_user": "ref_emergencyaccess_grantor_user"
+      },
+      "table": "tbl_auth_emergencyaccess"
+    },
+    "auth.Invitation": {
+      "columns": {
+        "auth.Invitation.email": "f_invitation_email"
+      },
+      "identity": "rid_auth_invitation",
+      "links": {},
+      "table": "tbl_auth_invitation"
+    },
+    "auth.SsoAuth": {
+      "columns": {
+        "auth.SsoAuth.auth_response": "f_ssoauth_auth_response",
+        "auth.SsoAuth.binding_hash": "f_ssoauth_binding_hash",
+        "auth.SsoAuth.client_challenge": "f_ssoauth_client_challenge",
+        "auth.SsoAuth.code_response": "f_ssoauth_code_response",
+        "auth.SsoAuth.code_response_error": "f_ssoauth_code_response_error",
+        "auth.SsoAuth.created_at": "f_ssoauth_created_at",
+        "auth.SsoAuth.redirect_uri": "f_ssoauth_redirect_uri",
+        "auth.SsoAuth.sso_nonce": "f_ssoauth_sso_nonce",
+        "auth.SsoAuth.sso_state": "f_ssoauth_sso_state",
+        "auth.SsoAuth.updated_at": "f_ssoauth_updated_at"
+      },
+      "identity": "rid_auth_ssoauth",
+      "links": {},
+      "table": "tbl_auth_ssoauth"
+    },
+    "auth.SsoUser": {
+      "columns": {
+        "auth.SsoUser.created_at": "f_ssouser_created_at",
+        "auth.SsoUser.sso_identifier": "f_ssouser_sso_identifier",
+        "auth.SsoUser.updated_at": "f_ssouser_updated_at"
+      },
+      "identity": "rid_auth_ssouser",
+      "links": {
+        "auth.SsoUser.owner": "ref_ssouser_owner"
+      },
+      "table": "tbl_auth_ssouser"
+    },
+    "auth.TwoFactor": {
+      "columns": {
+        "auth.TwoFactor.atype": "f_twofactor_atype",
+        "auth.TwoFactor.last_used": "f_twofactor_last_used",
+        "auth.TwoFactor.twofactor_data": "f_twofactor_twofactor_data",
+        "auth.TwoFactor.twofactor_enabled": "f_twofactor_twofactor_enabled"
+      },
+      "identity": "rid_auth_twofactor",
+      "links": {
+        "auth.TwoFactor.owner": "ref_twofactor_owner"
+      },
+      "table": "tbl_auth_twofactor"
+    },
+    "auth.TwoFactorDuo": {
+      "columns": {
+        "auth.TwoFactorDuo.duo_exp": "f_twofactorduo_duo_exp",
+        "auth.TwoFactorDuo.duo_nonce": "f_twofactorduo_duo_nonce",
+        "auth.TwoFactorDuo.duo_state": "f_twofactorduo_duo_state",
+        "auth.TwoFactorDuo.email": "f_twofactorduo_email"
+      },
+      "identity": "rid_auth_twofactorduo",
+      "links": {},
+      "table": "tbl_auth_twofactorduo"
+    },
+    "auth.TwoFactorIncomplete": {
+      "columns": {
+        "auth.TwoFactorIncomplete.device_name": "f_twofactorincomplete_device_name",
+        "auth.TwoFactorIncomplete.device_type": "f_twofactorincomplete_device_type",
+        "auth.TwoFactorIncomplete.device_uuid": "f_twofactorincomplete_device_uuid",
+        "auth.TwoFactorIncomplete.ip_address": "f_twofactorincomplete_ip_address",
+        "auth.TwoFactorIncomplete.login_time": "f_twofactorincomplete_login_time"
+      },
+      "identity": "rid_auth_twofactorincomplete",
+      "links": {
+        "auth.TwoFactorIncomplete.owner": "ref_twofactorincomplete_owner"
+      },
+      "table": "tbl_auth_twofactorincomplete"
+    },
+    "events.AuditEvent": {
+      "columns": {
+        "events.AuditEvent.device_type": "f_auditevent_device_type",
+        "events.AuditEvent.event_date": "f_auditevent_event_date",
+        "events.AuditEvent.event_type": "f_auditevent_event_type",
+        "events.AuditEvent.ip_address": "f_auditevent_ip_address",
+        "events.AuditEvent.provider_org_uuid": "f_auditevent_provider_org_uuid",
+        "events.AuditEvent.provider_user_uuid": "f_auditevent_provider_user_uuid",
+        "events.AuditEvent.provider_uuid": "f_auditevent_provider_uuid"
+      },
+      "identity": "rid_events_auditevent",
+      "links": {
+        "events.AuditEvent.actor": "ref_auditevent_actor",
+        "events.AuditEvent.cipher": "ref_auditevent_cipher",
+        "events.AuditEvent.collection": "ref_auditevent_collection",
+        "events.AuditEvent.group": "ref_auditevent_group",
+        "events.AuditEvent.membership": "ref_auditevent_membership",
+        "events.AuditEvent.org": "ref_auditevent_org",
+        "events.AuditEvent.policy": "ref_auditevent_policy",
+        "events.AuditEvent.user": "ref_auditevent_user"
+      },
+      "table": "tbl_events_auditevent"
+    },
+    "orgs.CiphersCollections": {
+      "columns": {},
+      "identity": "rid_orgs_cipherscollections",
+      "links": {
+        "orgs.CiphersCollections.cipher": "ref_cipherscollections_cipher",
+        "orgs.CiphersCollections.collection": "ref_cipherscollections_collection"
+      },
+      "table": "tbl_orgs_cipherscollections"
+    },
+    "orgs.Collection": {
+      "columns": {
+        "orgs.Collection.collection_name": "f_collection_collection_name",
+        "orgs.Collection.external_id": "f_collection_external_id"
+      },
+      "identity": "rid_orgs_collection",
+      "links": {
+        "orgs.Collection.org": "ref_collection_org"
+      },
+      "table": "tbl_orgs_collection"
+    },
+    "orgs.CollectionsGroups": {
+      "columns": {
+        "orgs.CollectionsGroups.hide_passwords": "f_collectionsgroups_hide_passwords",
+        "orgs.CollectionsGroups.manage": "f_collectionsgroups_manage",
+        "orgs.CollectionsGroups.read_only": "f_collectionsgroups_read_only"
+      },
+      "identity": "rid_orgs_collectionsgroups",
+      "links": {
+        "orgs.CollectionsGroups.collection": "ref_collectionsgroups_collection",
+        "orgs.CollectionsGroups.group": "ref_collectionsgroups_group"
+      },
+      "table": "tbl_orgs_collectionsgroups"
+    },
+    "orgs.Group": {
+      "columns": {
+        "orgs.Group.access_all": "f_group_access_all",
+        "orgs.Group.created_at": "f_group_created_at",
+        "orgs.Group.external_id": "f_group_external_id",
+        "orgs.Group.group_name": "f_group_group_name",
+        "orgs.Group.revision_date": "f_group_revision_date"
+      },
+      "identity": "rid_orgs_group",
+      "links": {
+        "orgs.Group.org": "ref_group_org"
+      },
+      "table": "tbl_orgs_group"
+    },
+    "orgs.GroupsUsers": {
+      "columns": {},
+      "identity": "rid_orgs_groupsusers",
+      "links": {
+        "orgs.GroupsUsers.group": "ref_groupsusers_group",
+        "orgs.GroupsUsers.membership": "ref_groupsusers_membership"
+      },
+      "table": "tbl_orgs_groupsusers"
+    },
+    "orgs.OrgPolicy": {
+      "columns": {
+        "orgs.OrgPolicy.atype": "f_orgpolicy_atype",
+        "orgs.OrgPolicy.policy_data": "f_orgpolicy_policy_data",
+        "orgs.OrgPolicy.policy_enabled": "f_orgpolicy_policy_enabled"
+      },
+      "identity": "rid_orgs_orgpolicy",
+      "links": {
+        "orgs.OrgPolicy.org": "ref_orgpolicy_org"
+      },
+      "table": "tbl_orgs_orgpolicy"
+    },
+    "orgs.OrganizationApiKey": {
+      "columns": {
+        "orgs.OrganizationApiKey.atype": "f_organizationapikey_atype",
+        "orgs.OrganizationApiKey.org_api_key": "f_organizationapikey_org_api_key",
+        "orgs.OrganizationApiKey.revision_date": "f_organizationapikey_revision_date"
+      },
+      "identity": "rid_orgs_organizationapikey",
+      "links": {
+        "orgs.OrganizationApiKey.org": "ref_organizationapikey_org"
+      },
+      "table": "tbl_orgs_organizationapikey"
+    },
+    "orgs.UsersCollections": {
+      "columns": {
+        "orgs.UsersCollections.hide_passwords": "f_userscollections_hide_passwords",
+        "orgs.UsersCollections.manage": "f_userscollections_manage",
+        "orgs.UsersCollections.read_only": "f_userscollections_read_only"
+      },
+      "identity": "rid_orgs_userscollections",
+      "links": {
+        "orgs.UsersCollections.collection": "ref_userscollections_collection",
+        "orgs.UsersCollections.member": "ref_userscollections_member"
+      },
+      "table": "tbl_orgs_userscollections"
+    },
+    "orgs.UsersOrganizations": {
+      "columns": {
+        "orgs.UsersOrganizations.access_all": "f_usersorganizations_access_all",
+        "orgs.UsersOrganizations.external_id": "f_usersorganizations_external_id",
+        "orgs.UsersOrganizations.invited_by_email": "f_usersorganizations_invited_by_email",
+        "orgs.UsersOrganizations.membership_key": "f_usersorganizations_membership_key",
+        "orgs.UsersOrganizations.membership_status": "f_usersorganizations_membership_status",
+        "orgs.UsersOrganizations.membership_type": "f_usersorganizations_membership_type",
+        "orgs.UsersOrganizations.reset_password_key": "f_usersorganizations_reset_password_key"
+      },
+      "identity": "rid_orgs_usersorganizations",
+      "links": {
+        "orgs.UsersOrganizations.member": "ref_usersorganizations_member",
+        "orgs.UsersOrganizations.org": "ref_usersorganizations_org"
+      },
+      "table": "tbl_orgs_usersorganizations"
+    },
+    "people.Organization": {
+      "columns": {
+        "people.Organization.billing_email": "f_organization_billing_email",
+        "people.Organization.display_name": "f_organization_display_name",
+        "people.Organization.org_private_key": "f_organization_org_private_key",
+        "people.Organization.org_public_key": "f_organization_org_public_key"
+      },
+      "identity": "rid_people_organization",
+      "links": {},
+      "table": "tbl_people_organization"
+    },
+    "people.User": {
+      "columns": {
+        "people.User.akey": "f_user_akey",
+        "people.User.api_key": "f_user_api_key",
+        "people.User.avatar_color": "f_user_avatar_color",
+        "people.User.client_kdf_iter": "f_user_client_kdf_iter",
+        "people.User.client_kdf_memory": "f_user_client_kdf_memory",
+        "people.User.client_kdf_parallelism": "f_user_client_kdf_parallelism",
+        "people.User.client_kdf_type": "f_user_client_kdf_type",
+        "people.User.created_at": "f_user_created_at",
+        "people.User.display_name": "f_user_display_name",
+        "people.User.email": "f_user_email",
+        "people.User.email_new": "f_user_email_new",
+        "people.User.email_new_token": "f_user_email_new_token",
+        "people.User.enabled": "f_user_enabled",
+        "people.User.equivalent_domains": "f_user_equivalent_domains",
+        "people.User.excluded_globals": "f_user_excluded_globals",
+        "people.User.external_id": "f_user_external_id",
+        "people.User.last_verifying_at": "f_user_last_verifying_at",
+        "people.User.login_verify_count": "f_user_login_verify_count",
+        "people.User.password_hash": "f_user_password_hash",
+        "people.User.password_hint": "f_user_password_hint",
+        "people.User.password_iterations": "f_user_password_iterations",
+        "people.User.password_salt": "f_user_password_salt",
+        "people.User.private_key": "f_user_private_key",
+        "people.User.public_key": "f_user_public_key",
+        "people.User.security_stamp": "f_user_security_stamp",
+        "people.User.stamp_exception": "f_user_stamp_exception",
+        "people.User.totp_recover": "f_user_totp_recover",
+        "people.User.totp_secret": "f_user_totp_secret",
+        "people.User.updated_at": "f_user_updated_at",
+        "people.User.verified_at": "f_user_verified_at"
+      },
+      "identity": "rid_people_user",
+      "links": {},
+      "table": "tbl_people_user"
+    },
+    "vault.Archive": {
+      "columns": {
+        "vault.Archive.archived_at": "f_archive_archived_at"
+      },
+      "identity": "rid_vault_archive",
+      "links": {
+        "vault.Archive.cipher": "ref_archive_cipher",
+        "vault.Archive.owner": "ref_archive_owner"
+      },
+      "table": "tbl_vault_archive"
+    },
+    "vault.Attachment": {
+      "columns": {
+        "vault.Attachment.attachment_key": "f_attachment_attachment_key",
+        "vault.Attachment.file_name": "f_attachment_file_name",
+        "vault.Attachment.file_size": "f_attachment_file_size"
+      },
+      "identity": "rid_vault_attachment",
+      "links": {
+        "vault.Attachment.cipher": "ref_attachment_cipher"
+      },
+      "table": "tbl_vault_attachment"
+    },
+    "vault.Cipher": {
+      "columns": {
+        "vault.Cipher.atype": "f_cipher_atype",
+        "vault.Cipher.cipher_data": "f_cipher_cipher_data",
+        "vault.Cipher.cipher_key": "f_cipher_cipher_key",
+        "vault.Cipher.cipher_name": "f_cipher_cipher_name",
+        "vault.Cipher.created_at": "f_cipher_created_at",
+        "vault.Cipher.deleted_at": "f_cipher_deleted_at",
+        "vault.Cipher.fields": "f_cipher_fields",
+        "vault.Cipher.notes": "f_cipher_notes",
+        "vault.Cipher.password_history": "f_cipher_password_history",
+        "vault.Cipher.reprompt": "f_cipher_reprompt",
+        "vault.Cipher.updated_at": "f_cipher_updated_at"
+      },
+      "identity": "rid_vault_cipher",
+      "links": {
+        "vault.Cipher.org": "ref_cipher_org",
+        "vault.Cipher.owner": "ref_cipher_owner"
+      },
+      "table": "tbl_vault_cipher"
+    },
+    "vault.Favorite": {
+      "columns": {},
+      "identity": "rid_vault_favorite",
+      "links": {
+        "vault.Favorite.cipher": "ref_favorite_cipher",
+        "vault.Favorite.owner": "ref_favorite_owner"
+      },
+      "table": "tbl_vault_favorite"
+    },
+    "vault.Folder": {
+      "columns": {
+        "vault.Folder.created_at": "f_folder_created_at",
+        "vault.Folder.folder_name": "f_folder_folder_name",
+        "vault.Folder.updated_at": "f_folder_updated_at"
+      },
+      "identity": "rid_vault_folder",
+      "links": {
+        "vault.Folder.owner": "ref_folder_owner"
+      },
+      "table": "tbl_vault_folder"
+    },
+    "vault.FoldersCiphers": {
+      "columns": {},
+      "identity": "rid_vault_foldersciphers",
+      "links": {
+        "vault.FoldersCiphers.cipher": "ref_foldersciphers_cipher",
+        "vault.FoldersCiphers.folder": "ref_foldersciphers_folder"
+      },
+      "table": "tbl_vault_foldersciphers"
+    },
+    "vault.Send": {
+      "columns": {
+        "vault.Send.access_count": "f_send_access_count",
+        "vault.Send.atype": "f_send_atype",
+        "vault.Send.created_at": "f_send_created_at",
+        "vault.Send.deletion_date": "f_send_deletion_date",
+        "vault.Send.disabled": "f_send_disabled",
+        "vault.Send.expiration_date": "f_send_expiration_date",
+        "vault.Send.hide_email": "f_send_hide_email",
+        "vault.Send.max_access_count": "f_send_max_access_count",
+        "vault.Send.send_data": "f_send_send_data",
+        "vault.Send.send_key": "f_send_send_key",
+        "vault.Send.send_name": "f_send_send_name",
+        "vault.Send.send_notes": "f_send_send_notes",
+        "vault.Send.send_password_hash": "f_send_send_password_hash",
+        "vault.Send.send_password_iter": "f_send_send_password_iter",
+        "vault.Send.send_password_salt": "f_send_send_password_salt",
+        "vault.Send.updated_at": "f_send_updated_at"
+      },
+      "identity": "rid_vault_send",
+      "links": {
+        "vault.Send.org": "ref_send_org",
+        "vault.Send.owner": "ref_send_owner"
+      },
+      "table": "tbl_vault_send"
+    }
+  },
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "VAULTWARDEN"
+}

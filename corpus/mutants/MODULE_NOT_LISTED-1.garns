@@ -1,0 +1,14 @@
+module listed "l" {
+  import ghost (G)
+
+  resource L "l" { lifecycle mutable link g -> G { end restrict } }
+}
+module ghost "g, reached through an import but not listed" { resource G "g" { lifecycle mutable } }
+world W "w" {
+  modules listed
+  durability durable
+  writers governed
+  generated python
+  scope deployment
+  quarantine_retention 3
+}

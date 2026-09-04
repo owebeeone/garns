@@ -1,0 +1,1462 @@
+{
+ "program": {
+  "$": "Program",
+  "aliases": [],
+  "bulks": [],
+  "carriers": [
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "pantry.Jar",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "jars",
+      "key": false,
+      "name": "shelf",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "pantry.Jar.shelf",
+      "scopes": false,
+      "target": "pantry.Shelf"
+     }
+    ],
+    "meaning": "a jar on a shelf; scoped through the shelf",
+    "members": [],
+    "module": "pantry",
+    "name": "Jar",
+    "ordered_within": null,
+    "qid": "pantry.Jar",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "pantry.Jar",
+      "default": null,
+      "filter": false,
+      "intent": "pantry.jar_label",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pantry.Jar",
+      "default": null,
+      "filter": false,
+      "intent": "pantry.grams",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "pantry.Jar",
+      "default": null,
+      "filter": true,
+      "intent": "pantry.state",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@sealed",
+        "@open",
+        "@empty"
+       ],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "tenancy.Kept"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "pantry.Jar.shelf",
+      "many": true,
+      "name": "jars",
+      "source": "pantry.Jar"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "pantry.Shelf",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "keeper",
+      "optional": false,
+      "order": false,
+      "origin": "tenancy.Kept",
+      "qid": "pantry.Shelf.keeper",
+      "scopes": true,
+      "target": "tenancy.Household"
+     }
+    ],
+    "meaning": "a shelf in a household",
+    "members": [],
+    "module": "pantry",
+    "name": "Shelf",
+    "ordered_within": null,
+    "qid": "pantry.Shelf",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "pantry.Shelf",
+      "default": null,
+      "filter": false,
+      "intent": "pantry.shelf_label",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": null,
+    "links": [],
+    "meaning": "the scope root",
+    "members": [],
+    "module": "tenancy",
+    "name": "Household",
+    "ordered_within": null,
+    "qid": "tenancy.Household",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "tenancy.Household",
+      "default": null,
+      "filter": false,
+      "intent": "tenancy.household_code",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "tenancy.Household",
+      "default": null,
+      "filter": false,
+      "intent": "tenancy.settled_on",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "trait",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "tenancy.Kept",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "keeper",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "tenancy.Kept.keeper",
+      "scopes": true,
+      "target": "tenancy.Household"
+     }
+    ],
+    "meaning": "belongs to one household",
+    "members": [],
+    "module": "tenancy",
+    "name": "Kept",
+    "ordered_within": null,
+    "qid": "tenancy.Kept",
+    "scope_via": null,
+    "tightens": [],
+    "uses": []
+   }
+  ],
+  "compounds": [],
+  "deployments": [
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": null,
+     "kind": "memory",
+     "name": null
+    },
+    "meaning": "development on a file",
+    "mode": "readwrite",
+    "name": "LEDGERHOUSE_DEV",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "LEDGERHOUSE"
+   }
+  ],
+  "intents": [
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "grams in the jar",
+    "module": "pantry",
+    "name": "grams",
+    "pattern": null,
+    "qid": "pantry.grams",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Integer",
+     "carrier": null,
+     "class": "integer",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "jar label",
+    "module": "pantry",
+    "name": "jar_label",
+    "pattern": null,
+    "qid": "pantry.jar_label",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "shelf label",
+    "module": "pantry",
+    "name": "shelf_label",
+    "pattern": null,
+    "qid": "pantry.shelf_label",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "jar state",
+    "module": "pantry",
+    "name": "state",
+    "pattern": null,
+    "qid": "pantry.state",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [
+      "@sealed",
+      "@open",
+      "@empty"
+     ],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the household's code",
+    "module": "tenancy",
+    "name": "household_code",
+    "pattern": null,
+    "qid": "tenancy.household_code",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when the household joined",
+    "module": "tenancy",
+    "name": "settled_on",
+    "pattern": null,
+    "qid": "tenancy.settled_on",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   }
+  ],
+  "modules": [
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "households and the trait that scopes rows to one household",
+    "name": "tenancy"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "tenancy.Kept",
+      "local": "Kept",
+      "owner": "tenancy",
+      "source": "Kept"
+     }
+    ],
+    "meaning": "shelves and jars scoped through their shelf",
+    "name": "pantry"
+   }
+  ],
+  "move_homes": [],
+  "newtypes": [],
+  "reads": [
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 100,
+    "meaning": "shelves with a jar heavier than half a kilo",
+    "module": "pantry",
+    "name": "heavy_shelves",
+    "noun": "question",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Quantified",
+     "item": {
+      "$": "Compare",
+      "guard": null,
+      "left": {
+       "$": "PathRef",
+       "root": "pantry.Shelf",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": true,
+         "link": "pantry.Jar.shelf",
+         "many": true,
+         "source": "pantry.Shelf",
+         "target": "pantry.Jar",
+         "text": "jars"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.grams",
+        "type": {
+         "base": "Integer",
+         "carrier": null,
+         "class": "integer",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.grams"
+       },
+       "text": "jars.grams"
+      },
+      "op": ">",
+      "right": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 500
+      }
+     },
+     "kind": "some"
+    },
+    "qid": "pantry.heavy_shelves",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "shelf_label",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Shelf",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Shelf",
+        "intent": "pantry.shelf_label",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Shelf.shelf_label"
+       },
+       "text": "shelf_label"
+      }
+     }
+    ],
+    "subject": "pantry.Shelf",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "floor",
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [
+     {
+      "$": "PathRef",
+      "root": "pantry.Jar",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "pantry.Jar",
+       "intent": "pantry.state",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@sealed",
+         "@open",
+         "@empty"
+        ],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "pantry.Jar.state"
+      },
+      "text": "state"
+     }
+    ],
+    "having": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "StaticAggregate",
+      "distinct": false,
+      "fn": "sum",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.grams",
+        "type": {
+         "base": "Integer",
+         "carrier": null,
+         "class": "integer",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.grams"
+       },
+       "text": "grams"
+      },
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     "op": ">",
+     "right": {
+      "$": "GivenRef",
+      "name": "floor",
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "one-shot report over jars",
+    "module": "pantry",
+    "name": "jar_report",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": true,
+      "key": {
+       "$": "StaticAggregate",
+       "distinct": false,
+       "fn": "sum",
+       "path": {
+        "$": "PathRef",
+        "root": "pantry.Jar",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "pantry.Jar",
+         "intent": "pantry.grams",
+         "type": {
+          "base": "Integer",
+          "carrier": null,
+          "class": "integer",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "pantry.Jar.grams"
+        },
+        "text": "grams"
+       },
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "pantry.Jar",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "pantry.Jar",
+       "intent": "pantry.grams",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "pantry.Jar.grams"
+      },
+      "text": "grams"
+     },
+     "op": ">=",
+     "right": {
+      "$": "GivenRef",
+      "name": "floor",
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "pantry.jar_report",
+    "shape": "grouped",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "state",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.state",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [
+          "@sealed",
+          "@open",
+          "@empty"
+         ],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.state"
+       },
+       "text": "state"
+      }
+     },
+     {
+      "$": "ShowScalar",
+      "column": "total_grams",
+      "expr": {
+       "$": "StaticAggregate",
+       "distinct": false,
+       "fn": "sum",
+       "path": {
+        "$": "PathRef",
+        "root": "pantry.Jar",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "pantry.Jar",
+         "intent": "pantry.grams",
+         "type": {
+          "base": "Integer",
+          "carrier": null,
+          "class": "integer",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "pantry.Jar.grams"
+        },
+        "text": "grams"
+       },
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     },
+     {
+      "$": "ShowScalar",
+      "column": "mean_grams",
+      "expr": {
+       "$": "Call",
+       "args": [
+        {
+         "$": "StaticAggregate",
+         "distinct": false,
+         "fn": "average",
+         "path": {
+          "$": "PathRef",
+          "root": "pantry.Jar",
+          "steps": [],
+          "terminal": {
+           "$": "UseTerminal",
+           "carrier": "pantry.Jar",
+           "intent": "pantry.grams",
+           "type": {
+            "base": "Integer",
+            "carrier": null,
+            "class": "integer",
+            "closed": [],
+            "list_of": false,
+            "nominal": null,
+            "optional": false
+           },
+           "use": "pantry.Jar.grams"
+          },
+          "text": "grams"
+         },
+         "type": {
+          "base": "Decimal",
+          "carrier": null,
+          "class": "decimal",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         }
+        },
+        {
+         "$": "Literal",
+         "type": {
+          "base": "Integer",
+          "carrier": null,
+          "class": "integer",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "value": 1
+        }
+       ],
+       "function": "math.round",
+       "type": {
+        "base": "Decimal",
+        "carrier": null,
+        "class": "decimal",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       }
+      }
+     }
+    ],
+    "subject": "pantry.Jar",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [
+     {
+      "$": "PathRef",
+      "root": "pantry.Jar",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "pantry.Jar",
+       "intent": "pantry.state",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@sealed",
+         "@open",
+         "@empty"
+        ],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "pantry.Jar.state"
+      },
+      "text": "state"
+     }
+    ],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 50,
+    "meaning": "how many jars in each state",
+    "module": "pantry",
+    "name": "jars_by_state",
+    "noun": "question",
+    "orders": [],
+    "page": null,
+    "predicate": null,
+    "qid": "pantry.jars_by_state",
+    "shape": "grouped",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "state",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.state",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [
+          "@sealed",
+          "@open",
+          "@empty"
+         ],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.state"
+       },
+       "text": "state"
+      }
+     },
+     {
+      "$": "ShowCount",
+      "column": "count"
+     }
+    ],
+    "subject": "pantry.Jar",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [
+     "pantry.heavy_shelves"
+    ],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 500,
+    "meaning": "jars whose shelf is heavy",
+    "module": "pantry",
+    "name": "jars_on_heavy_shelves",
+    "noun": "question",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Within",
+     "inner": "pantry.heavy_shelves",
+     "path": {
+      "$": "PathRef",
+      "root": "pantry.Jar",
+      "steps": [
+       {
+        "$": "LinkStep",
+        "inverse": false,
+        "link": "pantry.Jar.shelf",
+        "many": false,
+        "source": "pantry.Jar",
+        "target": "pantry.Shelf",
+        "text": "shelf"
+       }
+      ],
+      "terminal": {
+       "$": "LinkTerminal",
+       "carrier": "pantry.Jar",
+       "link": "pantry.Jar.shelf",
+       "optional": false,
+       "target": "pantry.Shelf"
+      },
+      "text": "shelf"
+     }
+    },
+    "qid": "pantry.jars_on_heavy_shelves",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "jar_label",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.jar_label",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.jar_label"
+       },
+       "text": "jar_label"
+      }
+     }
+    ],
+    "subject": "pantry.Jar",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 500,
+    "meaning": "open jars on a household's shelves",
+    "module": "pantry",
+    "name": "open_jars",
+    "noun": "question",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": true,
+      "key": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.grams",
+        "type": {
+         "base": "Integer",
+         "carrier": null,
+         "class": "integer",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.grams"
+       },
+       "text": "grams"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "pantry.Jar",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "pantry.Jar",
+       "intent": "pantry.state",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [
+         "@sealed",
+         "@open",
+         "@empty"
+        ],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "pantry.Jar.state"
+      },
+      "text": "state"
+     },
+     "op": "=",
+     "right": {
+      "$": "Literal",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [
+        "@sealed",
+        "@open",
+        "@empty"
+       ],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      },
+      "value": "open"
+     }
+    },
+    "qid": "pantry.open_jars",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "jar_label",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.jar_label",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.jar_label"
+       },
+       "text": "jar_label"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "grams",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Jar",
+        "intent": "pantry.grams",
+        "type": {
+         "base": "Integer",
+         "carrier": null,
+         "class": "integer",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Jar.grams"
+       },
+       "text": "grams"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "shelf",
+      "path": {
+       "$": "PathRef",
+       "root": "pantry.Jar",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "pantry.Jar.shelf",
+         "many": false,
+         "source": "pantry.Jar",
+         "target": "pantry.Shelf",
+         "text": "shelf"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "pantry.Shelf",
+        "intent": "pantry.shelf_label",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "pantry.Shelf.shelf_label"
+       },
+       "text": "shelf.shelf_label"
+      }
+     }
+    ],
+    "subject": "pantry.Jar",
+    "unscoped": null,
+    "with_total": false
+   }
+  ],
+  "restores": [],
+  "restricteds": [],
+  "retypes": [],
+  "scope_paths": {
+   "LEDGERHOUSE": {
+    "pantry.Jar": [
+     "pantry.Jar.shelf",
+     "pantry.Shelf.keeper"
+    ],
+    "pantry.Shelf": [
+     "pantry.Shelf.keeper"
+    ],
+    "tenancy.Household": []
+   }
+  },
+  "tightens": [],
+  "tombstones": [],
+  "worlds": [
+   {
+    "$": "World",
+    "capabilities": [],
+    "durability": "durable",
+    "exempt": [
+     "tenancy.Household"
+    ],
+    "generated": [
+     "python",
+     "rust"
+    ],
+    "meaning": "captured pantry store",
+    "modules": [
+     "tenancy",
+     "pantry"
+    ],
+    "name": "LEDGERHOUSE",
+    "quarantine_retention": 2,
+    "requires": "tenancy.Kept",
+    "scope": {
+     "$": "ScopeRoot",
+     "link": "tenancy.Kept.keeper",
+     "root": "tenancy.Household",
+     "trait": "tenancy.Kept"
+    },
+    "writer_source": "pantry_daemon",
+    "writers": "external_captured"
+   }
+  ]
+ },
+ "scope_paths": {
+  "pantry.Jar": [
+   "pantry.Jar.shelf",
+   "pantry.Shelf.keeper"
+  ],
+  "pantry.Shelf": [
+   "pantry.Shelf.keeper"
+  ],
+  "tenancy.Household": []
+ },
+ "storage": {
+  "$": "StorageMapping",
+  "engine": {
+   "$": "EngineTables",
+   "generations": "lh_epochs",
+   "ledger": "lh_journal",
+   "revisions": "lh_ticks"
+  },
+  "relations": {
+   "pantry.Jar": {
+    "$": "RelationMapping",
+    "capture": {
+     "$": "CaptureMapping",
+     "columns": {
+      "pantry.Jar.grams": "mass_v",
+      "pantry.Jar.jar_label": "lbl_v",
+      "pantry.Jar.state": "cond_v"
+     },
+     "identity": "jar_ref",
+     "links": {
+      "pantry.Jar.shelf": "on_shelf_v"
+     },
+     "op": "verb",
+     "revision": "tick",
+     "seq": "trail_seq",
+     "table": "jar_trail"
+    },
+    "carrier": "pantry.Jar",
+    "columns": {
+     "pantry.Jar.grams": "mass_g",
+     "pantry.Jar.jar_label": "lbl",
+     "pantry.Jar.state": "cond"
+    },
+    "identity": "jar_no",
+    "kind": null,
+    "links": {
+     "pantry.Jar.shelf": "on_shelf"
+    },
+    "table": "jar"
+   },
+   "pantry.Shelf": {
+    "$": "RelationMapping",
+    "capture": {
+     "$": "CaptureMapping",
+     "columns": {
+      "pantry.Shelf.shelf_label": "label_v"
+     },
+     "identity": "shelf_ref",
+     "links": {
+      "pantry.Shelf.keeper": "kept_by_v"
+     },
+     "op": "verb",
+     "revision": "tick",
+     "seq": "trail_seq",
+     "table": "shelf_trail"
+    },
+    "carrier": "pantry.Shelf",
+    "columns": {
+     "pantry.Shelf.shelf_label": "label_txt"
+    },
+    "identity": "shelf_no",
+    "kind": null,
+    "links": {
+     "pantry.Shelf.keeper": "kept_by"
+    },
+    "table": "shelf"
+   },
+   "tenancy.Household": {
+    "$": "RelationMapping",
+    "capture": {
+     "$": "CaptureMapping",
+     "columns": {
+      "tenancy.Household.household_code": "code_txt_v",
+      "tenancy.Household.settled_on": "since_v"
+     },
+     "identity": "house_ref",
+     "links": {},
+     "op": "verb",
+     "revision": "tick",
+     "seq": "trail_seq",
+     "table": "house_trail"
+    },
+    "carrier": "tenancy.Household",
+    "columns": {
+     "tenancy.Household.household_code": "code_txt",
+     "tenancy.Household.settled_on": "since"
+    },
+    "identity": "house_no",
+    "kind": null,
+    "links": {},
+    "table": "house"
+   }
+  },
+  "source": "storage-LEDGERHOUSE.json",
+  "world": "LEDGERHOUSE"
+ },
+ "world": {
+  "$": "World",
+  "capabilities": [],
+  "durability": "durable",
+  "exempt": [
+   "tenancy.Household"
+  ],
+  "generated": [
+   "python",
+   "rust"
+  ],
+  "meaning": "captured pantry store",
+  "modules": [
+   "tenancy",
+   "pantry"
+  ],
+  "name": "LEDGERHOUSE",
+  "quarantine_retention": 2,
+  "requires": "tenancy.Kept",
+  "scope": {
+   "$": "ScopeRoot",
+   "link": "tenancy.Kept.keeper",
+   "root": "tenancy.Household",
+   "trait": "tenancy.Kept"
+  },
+  "writer_source": "pantry_daemon",
+  "writers": "external_captured"
+ }
+}

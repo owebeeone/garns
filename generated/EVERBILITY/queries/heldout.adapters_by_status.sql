@@ -1,0 +1,1 @@
+SELECT s0."rid_pms_pmsadapter" AS "$k0", s0."f_pmsadapter_pms_id" AS "pms_id", s0."f_pmsadapter_adapter_status" AS "adapter_status", s0."f_pmsadapter_is_development" AS "is_development", s0."f_pmsadapter_enabled" AS "enabled" FROM "tbl_pms_pmsadapter" AS s0 WHERE (s0."f_pmsadapter_adapter_status" = :status) ORDER BY s0."rid_pms_pmsadapter" ASC

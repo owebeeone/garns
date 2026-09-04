@@ -1,0 +1,5 @@
+module m "wrong argument type" {
+  intent n : Integer "n"
+  resource A "a" { use n }
+  query q of A "q" { show call text.length(n) as l }
+}

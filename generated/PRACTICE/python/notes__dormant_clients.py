@@ -1,0 +1,18 @@
+# Generated Garns surface for notes.dormant_clients (question); the SQL is the lowered plan, unchanged.
+READ = 'notes.dormant_clients'
+NOUN = 'question'
+SQL = 'SELECT s0."rid_clients_client" AS "$k0", s0."f_client_preferred_name" AS "preferred_name" FROM "tbl_clients_client" AS s0 WHERE s0."f_client_archived_at" IS NULL AND s0."ref_client_owner" = :_scope AND ((SELECT COUNT(*) FROM "tbl_notes_note" AS j1 WHERE j1."ref_note_client" = s0."rid_clients_client" AND (j1."f_note_recorded_at" >= :after)) = 0) ORDER BY s0."rid_clients_client" ASC'
+PARAMS = ('after',)
+KEY_COLUMNS = ('$k0',)
+COLUMNS = ('preferred_name',)
+SCOPED = True
+USES_CLOCK = False
+CHILDREN = {
+
+}
+
+
+def rows(connection, params):
+    cursor = connection.execute(SQL, params)
+    names = [d[0] for d in cursor.description]
+    return [dict(zip(names, row)) for row in cursor.fetchall()]

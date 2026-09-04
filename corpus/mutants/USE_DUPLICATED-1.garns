@@ -1,0 +1,8 @@
+module m "dup use" {
+  intent email : Email "e"
+  resource User "u" {
+    use email { key }
+    use email { filter }
+    lifecycle mutable
+  }
+}

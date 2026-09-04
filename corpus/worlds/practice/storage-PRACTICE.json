@@ -1,0 +1,102 @@
+{
+  "engine": {
+    "generations": "garns_generations",
+    "ledger": "garns_ledger",
+    "revisions": "garns_revisions"
+  },
+  "relations": {
+    "clients.Client": {
+      "columns": {
+        "clients.Client.archived_at": "f_client_archived_at",
+        "clients.Client.created_at": "f_client_created_at",
+        "clients.Client.preferred_name": "f_client_preferred_name",
+        "clients.Client.updated_at": "f_client_updated_at"
+      },
+      "identity": "rid_clients_client",
+      "links": {
+        "clients.Client.owner": "ref_client_owner"
+      },
+      "table": "tbl_clients_client"
+    },
+    "clients.Contact": {
+      "columns": {
+        "clients.Contact.created_at": "f_contact_created_at",
+        "clients.Contact.email": "f_contact_email",
+        "clients.Contact.preferred_name": "f_contact_preferred_name",
+        "clients.Contact.relationship": "f_contact_relationship",
+        "clients.Contact.updated_at": "f_contact_updated_at"
+      },
+      "identity": "rid_clients_contact",
+      "links": {
+        "clients.Contact.client": "ref_contact_client"
+      },
+      "table": "tbl_clients_contact"
+    },
+    "documents.Document": {
+      "columns": {
+        "documents.Document.archived_at": "f_document_archived_at",
+        "documents.Document.created_at": "f_document_created_at",
+        "documents.Document.title": "f_document_title",
+        "documents.Document.updated_at": "f_document_updated_at",
+        "documents.Form.template_ref": "f_form_template_ref",
+        "documents.Letter.body": "f_letter_body"
+      },
+      "identity": "rid_documents_document",
+      "kind": "member_of_documents_document",
+      "links": {
+        "documents.Document.client": "ref_document_client",
+        "documents.Document.owner": "ref_document_owner"
+      },
+      "table": "tbl_documents_document"
+    },
+    "labels.ClientLabel": {
+      "columns": {},
+      "identity": "rid_labels_clientlabel",
+      "links": {
+        "labels.ClientLabel.client": "ref_clientlabel_client",
+        "labels.ClientLabel.label": "ref_clientlabel_label"
+      },
+      "table": "tbl_labels_clientlabel"
+    },
+    "labels.Label": {
+      "columns": {
+        "labels.Label.label_name": "f_label_label_name"
+      },
+      "identity": "rid_labels_label",
+      "links": {},
+      "table": "tbl_labels_label"
+    },
+    "notes.Note": {
+      "columns": {
+        "notes.Note.note_body": "f_note_note_body",
+        "notes.Note.recorded_at": "f_note_recorded_at"
+      },
+      "identity": "rid_notes_note",
+      "links": {
+        "notes.Note.client": "ref_note_client"
+      },
+      "table": "tbl_notes_note"
+    },
+    "people.User": {
+      "columns": {
+        "people.User.created_at": "f_user_created_at",
+        "people.User.email": "f_user_email",
+        "people.User.updated_at": "f_user_updated_at"
+      },
+      "identity": "rid_people_user",
+      "links": {},
+      "table": "tbl_people_user"
+    },
+    "workspaces.Workspace": {
+      "columns": {
+        "workspaces.Workspace.display_name": "f_workspace_display_name",
+        "workspaces.Workspace.share": "f_workspace_share"
+      },
+      "identity": "rid_workspaces_workspace",
+      "links": {},
+      "table": "tbl_workspaces_workspace"
+    }
+  },
+  "schema": "garns-v9-5/storage-binding/1",
+  "world": "PRACTICE"
+}

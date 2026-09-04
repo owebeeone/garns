@@ -1,0 +1,8 @@
+module a "owner" {
+  intent nm : Text "n"
+  resource R "root" { use nm { key } lifecycle mutable }
+  trait Owned "o" { link owner -> R { end restrict scopes } }
+  resource A "a" { lifecycle mutable carry Owned }
+  question all_a of A "every a, behind a capability the world never declared" { show identity unscoped practice_audit live bounded 10 }
+}
+world W "w" { modules a durability durable writers governed generated python requires a.Owned exempt a.R scope a.Owned.owner quarantine_retention 3 }

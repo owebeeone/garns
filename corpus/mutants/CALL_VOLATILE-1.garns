@@ -1,0 +1,5 @@
+module m "volatile function" {
+  intent n : Text "n"
+  resource A "a" { use n }
+  query q of A "q" { show n, call clock.now() as t }
+}

@@ -1,0 +1,54 @@
+module people "Users, organisations, and per-user preferences." {
+  import refs (FundingModel, Language, Profession)
+  import traits (Timestamped)
+
+  intent clerk_user_id : Text "the identity provider's user id"
+  intent email : Email "an address that can receive mail"
+  intent in_trial : Boolean "whether the individual is in a trial"
+  intent is_paying : Boolean "whether the individual is paying"
+  intent stripe_customer_id : Text "the billing customer's id at the processor"
+  intent profession_updated : Boolean "whether the user has confirmed a profession"
+  intent is_onboarded : Boolean "whether the user has finished onboarding"
+  intent org_id : Text "stable organisation identifier as shown to the identity provider"
+  intent seats : Integer "how many seats the organisation has bought"
+  intent note_template : Text "the user's default note template"
+  intent report_template : Text "the user's default report template"
+
+  trait Owned "belongs to one user; the tenancy boundary of everything that carries it" {
+    link owner -> User { end restrict scopes }
+  }
+
+  resource User "an everbility practitioner" {
+    use clerk_user_id { key }
+    use email
+    use in_trial { default true }
+    use is_paying { default false }
+    use stripe_customer_id { optional }
+    use profession_updated { default false }
+    use is_onboarded { default false }
+    link profession -> Profession { end restrict default 1 }
+    link language -> Language { end restrict default 1 }
+    link funding_model -> FundingModel { end restrict default 1 }
+    lifecycle mutable
+    carry Timestamped
+  }
+
+  resource Organisation "a practice organisation" {
+    use org_id { key }
+    use in_trial { default false }
+    use is_paying { default false }
+    use seats { default 1 }
+    use stripe_customer_id { optional }
+    link created_by -> User { end restrict key }
+    lifecycle mutable
+    carry Timestamped
+  }
+
+  resource UserPreference "note and report templates for one user" {
+    use note_template { optional }
+    use report_template { optional }
+    link user -> User { end cascade key inverse preferences }
+    lifecycle mutable
+    carry Timestamped
+  }
+}

@@ -1,0 +1,121 @@
+# Held-out census sites as questions, verbs, and aliases over the everbility world.
+# Each declaration is commented with the site's path:line. v9-2: the six sites whose
+# tables lie outside the slice were replaced (corpus/census/heldout-20.json), and a
+# site that is a derived accessor is an alias (constitution amendment A2).
+
+module heldout "held-out census sites denoted over the everbility slice" {
+  import clients (Client)
+  import documents (DocxReferenceDoc)
+  import merge (MergeTag)
+  import people (Organisation, User)
+  import pms (PmsAdapter, PmsApiKey, PmsUserMap)
+  import refs (FundingModel)
+
+  # app/server/routers/reference_docs.py:207
+  alias delete_reference_doc_lookup = DocxReferenceDoc.by
+
+  # app/server/utils/clients.py:144
+  alias aget_client_by_id = Client.by unscoped practice_audit
+
+  # app/server/utils/organisations.py:252
+  alias aget_org_analytics_status = Organisation.by
+
+  # app/server/utils/clients.py:60
+  query aget_personal_clients of Client "a practitioner's clients that belong to no organisation" {
+    where org absent and archived_at absent
+    order first_name
+  }
+
+  # app/server/utils/clients.py:128
+  query aget_client_by_clerk_user_id of Client "client whose owner has this clerk id and is not archived" {
+    given clerk : Text
+    where owner.clerk_user_id = clerk and archived_at absent
+  }
+
+  # app/server/utils/clients.py:494
+  query check_org_client of Client "client belonging to an organisation" {
+    given org : Organisation
+    where org is org
+  }
+
+  # app/server/utils/clients.py:194
+  query adelete_client_by_id of Client "a client with its organisation, before deletion" {
+    given client : Client
+    by client
+    where archived_at absent
+    show first_name, org.org_id
+  }
+
+  # app/server/integrations/pms/pms_db_utils.py:419
+  query org_pms_user_maps of PmsUserMap "maps for one organisation and adapter" {
+    given org : Organisation
+    given adapter : PmsAdapter
+    where org is org and adapter is adapter
+  }
+
+  bulk db_delete_org_pms_user_maps "delete PMS user maps for an organisation" {
+    PmsUserMap.remove over org_pms_user_maps
+  }
+
+  # app/server/integrations/pms/pms_db_utils.py:383
+  alias db_delete_pms_user_map = PmsUserMap.remove
+
+  # app/server/routers/reference_docs.py:225
+  alias delete_reference_doc = DocxReferenceDoc.delete
+
+  # app/server/dependencies.py:369
+  alias check_user_status = User.ensure
+
+  # app/server/utils/clients.py:226
+  alias acreate_client = Client.mint
+
+  # app/server/utils/merge_tags.py:47
+  alias ainsert_merge_tags = MergeTag.mint
+
+  # app/server/integrations/pms/pms_adapter_base.py:412
+  query adapters_by_status of PmsAdapter "adapters in one status" {
+    given status : Text
+    where adapter_status = status
+    unscoped practice_audit
+  }
+
+  bulk upload_document_rowcount "enable or disable every adapter in one status" {
+    given to : Boolean
+    PmsAdapter.change over adapters_by_status
+    set enabled = to
+  }
+
+  # app/server/utils/merge_tags.py:161
+  query tags_for_property of MergeTag "merge tags with one property id" {
+    given property : Text
+    where property_id = property
+  }
+
+  bulk aupdate_tags_value "rename every merge tag of one property" {
+    given to : DisplayName
+    MergeTag.change over tags_for_property
+    set property_name = to
+  }
+
+  # app/server/integrations/pms/pms_api_key_handler.py:346
+  alias store_api_key = PmsApiKey.upsert
+
+  # app/server/integrations/pms/pms_db_utils.py:336
+  alias db_upsert_pms_user_map = PmsUserMap.apply
+
+  # app/server/integrations/pms/pms_metadata.py:38
+  query db_get_available_pms_adapters of PmsAdapter "adapters whose status is available" {
+    where adapter_status = @available
+    unscoped practice_audit
+  }
+
+  # app/server/utils/clients.py:655
+  query celery_get_org_user_db of User "users whose identity is in a given list" {
+    given ids : list_of Text
+    where clerk_user_id in ids
+    unscoped practice_audit
+  }
+
+  # app/server/utils/funding_models.py:8
+  alias aget_all_funding_models = FundingModel.list
+}

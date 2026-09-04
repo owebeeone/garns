@@ -1,0 +1,12 @@
+module pms "owner of one status" {
+  intent status : Text "adapter status" { values @available, @coming_soon }
+}
+module forms "owner of another status" {
+  intent status : Text "form status" { values @draft, @rendered }
+}
+module q "imports both under one local name" {
+  import pms (status)
+  import forms (status)
+  resource Q "q" { use status lifecycle mutable }
+}
+world W "w" { modules pms, forms, q durability durable writers governed generated python scope deployment quarantine_retention 3 }

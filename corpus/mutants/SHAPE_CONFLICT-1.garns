@@ -1,0 +1,5 @@
+module m "one and first together" {
+  intent n : Text "n"
+  resource A "a" { use n }
+  question q of A "q" { show n one first 3 live bounded 10 }
+}

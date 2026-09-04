@@ -1,0 +1,9 @@
+module m "clock term" {
+  intent created_at : Instant "t"
+  resource User "u" { use created_at lifecycle mutable }
+  question q of User "q" {
+    where created_at < ship_clock
+    show created_at
+    live bounded 10
+  }
+}

@@ -1,0 +1,9 @@
+module bad "unenforced is not an end action" {
+  intent key : Id "key"
+  resource Parent "parent" { use key { key } }
+  resource Child "child" {
+    use key { key }
+    link parent -> Parent { end unenforced }
+  }
+}
+

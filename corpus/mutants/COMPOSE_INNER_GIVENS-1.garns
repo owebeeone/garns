@@ -1,0 +1,7 @@
+module m "composed read with givens" {
+  intent n : Integer "n"
+  resource P "p" { use n }
+  resource C "c" { use n link p -> P { end cascade } }
+  question big of P "big" { given floor : Integer where n > floor show identity live bounded 10 }
+  question kids of C "kids" { where p within big show identity live bounded 10 }
+}

@@ -1,0 +1,5 @@
+module m "retire no reason" {
+  intent nickname : DisplayName "informal"
+  resource User "u" { lifecycle mutable }
+  tombstone nickname "" { data quarantine }
+}

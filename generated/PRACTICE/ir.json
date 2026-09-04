@@ -1,0 +1,4281 @@
+{
+ "program": {
+  "$": "Program",
+  "aliases": [],
+  "bulks": [
+   {
+    "$": "Bulk",
+    "carrier": "clients.Contact",
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "to",
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "meaning": "rename one relationship across every contact that carries it",
+    "module": "clients",
+    "name": "rename_relationship",
+    "over": "clients.contacts_with_relationship",
+    "qid": "clients.rename_relationship",
+    "sets": [
+     {
+      "$": "SetTerm",
+      "given": "to",
+      "use": "clients.Contact.relationship"
+     }
+    ],
+    "verb": "change"
+   },
+   {
+    "$": "Bulk",
+    "carrier": "clients.Client",
+    "givens": [],
+    "meaning": "archive every dormant client",
+    "module": "notes",
+    "name": "archive_dormant",
+    "over": "notes.dormant_clients",
+    "qid": "notes.archive_dormant",
+    "sets": [],
+    "verb": "archive"
+   }
+  ],
+  "carriers": [
+   {
+    "$": "Carrier",
+    "archived_by": "clients.archived_at",
+    "breaking": [],
+    "carries": [
+     "people.Owned",
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "clients.Contact.client",
+      "many": true,
+      "name": "contacts",
+      "source": "clients.Contact"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "documents.Document.client",
+      "many": true,
+      "name": "documents",
+      "source": "documents.Document"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "labels.ClientLabel.client",
+      "many": true,
+      "name": "labels",
+      "source": "labels.ClientLabel"
+     },
+     {
+      "$": "InverseEdge",
+      "link": "notes.Note.client",
+      "many": true,
+      "name": "notes",
+      "source": "notes.Note"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "archived_by",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "clients.Client",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "people.Owned",
+      "qid": "clients.Client.owner",
+      "scopes": true,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "a person the practice documents",
+    "members": [],
+    "module": "clients",
+    "name": "Client",
+    "ordered_within": null,
+    "qid": "clients.Client",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": null,
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": null,
+      "filter": true,
+      "intent": "clients.preferred_name",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Client",
+      "default": null,
+      "filter": false,
+      "intent": "clients.archived_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "clients.Contact",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "contacts",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "clients.Contact.client",
+      "scopes": false,
+      "target": "clients.Client"
+     }
+    ],
+    "meaning": "someone related to a client; scoped through its client, so Owned is not restated",
+    "members": [],
+    "module": "clients",
+    "name": "Contact",
+    "ordered_within": null,
+    "qid": "clients.Contact",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "clients.Contact",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Contact",
+      "default": null,
+      "filter": true,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Contact",
+      "default": null,
+      "filter": false,
+      "intent": "clients.preferred_name",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Contact",
+      "default": null,
+      "filter": false,
+      "intent": "people.email",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Email",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "clients.Contact",
+      "default": null,
+      "filter": true,
+      "intent": "clients.relationship",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": "clients.archived_at",
+    "breaking": [],
+    "carries": [
+     "people.Owned",
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": true,
+    "invariants": [],
+    "inverses": [],
+    "kind": "family",
+    "lifecycle": "archived_by",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "documents.Document",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "people.Owned",
+      "qid": "documents.Document.owner",
+      "scopes": true,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "documents.Document",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "documents",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "documents.Document.client",
+      "scopes": false,
+      "target": "clients.Client"
+     }
+    ],
+    "meaning": "something written for a client",
+    "members": [
+     "documents.Form",
+     "documents.Letter"
+    ],
+    "module": "documents",
+    "name": "Document",
+    "ordered_within": null,
+    "qid": "documents.Document",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "documents.Document",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Document",
+      "default": null,
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Document",
+      "default": null,
+      "filter": true,
+      "intent": "documents.title",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Document",
+      "default": null,
+      "filter": false,
+      "intent": "clients.archived_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": "clients.archived_at",
+    "breaking": [],
+    "carries": [
+     "people.Owned",
+     "traits.Timestamped"
+    ],
+    "family": "documents.Document",
+    "history_kept": true,
+    "invariants": [],
+    "inverses": [],
+    "kind": "member",
+    "lifecycle": "archived_by",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "documents.Form",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "people.Owned",
+      "qid": "documents.Form.owner",
+      "scopes": true,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "documents.Form",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "documents",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "documents.Document",
+      "qid": "documents.Form.client",
+      "scopes": false,
+      "target": "clients.Client"
+     }
+    ],
+    "meaning": "a filled-in form",
+    "members": [],
+    "module": "documents",
+    "name": "Form",
+    "ordered_within": null,
+    "qid": "documents.Form",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "documents.Form",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Form",
+      "default": null,
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Form",
+      "default": null,
+      "filter": true,
+      "intent": "documents.title",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "documents.Document",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Form",
+      "default": null,
+      "filter": false,
+      "intent": "clients.archived_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "documents.Document",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Form",
+      "default": null,
+      "filter": false,
+      "intent": "documents.template_ref",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": "clients.archived_at",
+    "breaking": [],
+    "carries": [
+     "people.Owned",
+     "traits.Timestamped"
+    ],
+    "family": "documents.Document",
+    "history_kept": true,
+    "invariants": [],
+    "inverses": [],
+    "kind": "member",
+    "lifecycle": "archived_by",
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "documents.Letter",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "people.Owned",
+      "qid": "documents.Letter.owner",
+      "scopes": true,
+      "target": "people.User"
+     },
+     {
+      "$": "Link",
+      "carrier": "documents.Letter",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "documents",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "documents.Document",
+      "qid": "documents.Letter.client",
+      "scopes": false,
+      "target": "clients.Client"
+     }
+    ],
+    "meaning": "a letter to or about the client",
+    "members": [],
+    "module": "documents",
+    "name": "Letter",
+    "ordered_within": null,
+    "qid": "documents.Letter",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "documents.Letter",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Letter",
+      "default": null,
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Letter",
+      "default": null,
+      "filter": true,
+      "intent": "documents.title",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "documents.Document",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Letter",
+      "default": null,
+      "filter": false,
+      "intent": "clients.archived_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "documents.Document",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "documents.Letter",
+      "default": null,
+      "filter": false,
+      "intent": "documents.body",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "association",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "labels.ClientLabel",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "labels",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "labels.ClientLabel.client",
+      "scopes": false,
+      "target": "clients.Client"
+     },
+     {
+      "$": "Link",
+      "carrier": "labels.ClientLabel",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": "clients",
+      "key": false,
+      "name": "label",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "labels.ClientLabel.label",
+      "scopes": false,
+      "target": "labels.Label"
+     }
+    ],
+    "meaning": "this label applies to this client",
+    "members": [],
+    "module": "labels",
+    "name": "ClientLabel",
+    "ordered_within": null,
+    "qid": "labels.ClientLabel",
+    "scope_via": null,
+    "tightens": [],
+    "uses": []
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [
+     {
+      "$": "InverseEdge",
+      "link": "labels.ClientLabel.label",
+      "many": true,
+      "name": "clients",
+      "source": "labels.ClientLabel"
+     }
+    ],
+    "kind": "resource",
+    "lifecycle": "retirable",
+    "links": [],
+    "meaning": "a tag the practice applies to clients",
+    "members": [],
+    "module": "labels",
+    "name": "Label",
+    "ordered_within": null,
+    "qid": "labels.Label",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "labels.Label",
+      "default": null,
+      "filter": false,
+      "intent": "labels.label_name",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "event",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "notes.Note",
+      "default": null,
+      "enforcement": "cascade",
+      "filter": false,
+      "inverse": "notes",
+      "key": false,
+      "name": "client",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "notes.Note.client",
+      "scopes": false,
+      "target": "clients.Client"
+     }
+    ],
+    "meaning": "a dated note on a client, in the order written",
+    "members": [],
+    "module": "notes",
+    "name": "Note",
+    "ordered_within": "notes.Note.client",
+    "qid": "notes.Note",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "notes.Note",
+      "default": null,
+      "filter": false,
+      "intent": "notes.note_body",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "notes.Note",
+      "default": null,
+      "filter": true,
+      "intent": "notes.recorded_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "trait",
+    "lifecycle": null,
+    "links": [
+     {
+      "$": "Link",
+      "carrier": "people.Owned",
+      "default": null,
+      "enforcement": "restrict",
+      "filter": false,
+      "inverse": null,
+      "key": false,
+      "name": "owner",
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "qid": "people.Owned.owner",
+      "scopes": true,
+      "target": "people.User"
+     }
+    ],
+    "meaning": "belongs to one practitioner; the tenancy boundary of everything that carries it",
+    "members": [],
+    "module": "people",
+    "name": "Owned",
+    "ordered_within": null,
+    "qid": "people.Owned",
+    "scope_via": null,
+    "tightens": [],
+    "uses": []
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [
+     "traits.Timestamped"
+    ],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "retirable",
+    "links": [],
+    "meaning": "a practitioner who can own clients",
+    "members": [],
+    "module": "people",
+    "name": "User",
+    "ordered_within": null,
+    "qid": "people.User",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": null,
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "traits.Timestamped",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "people.User",
+      "default": null,
+      "filter": false,
+      "intent": "people.email",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Email",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": false,
+    "invariants": [],
+    "inverses": [],
+    "kind": "trait",
+    "lifecycle": null,
+    "links": [],
+    "meaning": "carries mint and change instants written by the engine, never by the caller",
+    "members": [],
+    "module": "traits",
+    "name": "Timestamped",
+    "ordered_within": null,
+    "qid": "traits.Timestamped",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "traits.Timestamped",
+      "default": null,
+      "filter": true,
+      "intent": "traits.created_at",
+      "key": false,
+      "optional": false,
+      "order": true,
+      "origin": "own",
+      "repair": null,
+      "stamp": "on_mint",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "traits.Timestamped",
+      "default": null,
+      "filter": false,
+      "intent": "traits.updated_at",
+      "key": false,
+      "optional": true,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": "on_change",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   },
+   {
+    "$": "Carrier",
+    "archived_by": null,
+    "breaking": [],
+    "carries": [],
+    "family": null,
+    "history_kept": true,
+    "invariants": [],
+    "inverses": [],
+    "kind": "resource",
+    "lifecycle": "mutable",
+    "links": [],
+    "meaning": "the named share this practice opens",
+    "members": [],
+    "module": "workspaces",
+    "name": "Workspace",
+    "ordered_within": null,
+    "qid": "workspaces.Workspace",
+    "scope_via": null,
+    "tightens": [],
+    "uses": [
+     {
+      "$": "Use",
+      "carrier": "workspaces.Workspace",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.share",
+      "key": true,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": "workspaces.WorkspaceShare",
+       "optional": false
+      }
+     },
+     {
+      "$": "Use",
+      "carrier": "workspaces.Workspace",
+      "default": null,
+      "filter": false,
+      "intent": "workspaces.display_name",
+      "key": false,
+      "optional": false,
+      "order": false,
+      "origin": "own",
+      "repair": null,
+      "stamp": null,
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ]
+   }
+  ],
+  "compounds": [
+   {
+    "$": "Compound",
+    "meaning": "mint a client and record the intake notes as one transaction",
+    "module": "notes",
+    "name": "intake_client",
+    "qid": "notes.intake_client",
+    "steps": [
+     {
+      "$": "Step",
+      "binds": [],
+      "carrier": "clients.Client",
+      "each": null,
+      "name": "client",
+      "verb": "mint"
+     },
+     {
+      "$": "Step",
+      "binds": [
+       {
+        "$": "Bind",
+        "link": "notes.Note.client",
+        "step": "client"
+       }
+      ],
+      "carrier": "notes.Note",
+      "each": "notes",
+      "name": "notes",
+      "verb": "append"
+     }
+    ]
+   }
+  ],
+  "deployments": [
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": "PROD",
+    "location": {
+     "$": "Location",
+     "default": null,
+     "kind": "env",
+     "name": "DATABASE_URL"
+    },
+    "meaning": "questions only; no verbs are generated for this role",
+    "mode": "readonly",
+    "name": "AUDIT",
+    "pool": 10,
+    "ship": "explicit",
+    "snapshot": "before_ship",
+    "world": "PRACTICE"
+   },
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": "./practice.sqlite",
+     "kind": "env",
+     "name": "PRACTICE_DB"
+    },
+    "meaning": "development: the store follows the file",
+    "mode": "readwrite",
+    "name": "DEV",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "PRACTICE"
+   },
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": null,
+    "location": {
+     "$": "Location",
+     "default": null,
+     "kind": "env",
+     "name": "DATABASE_URL"
+    },
+    "meaning": "production: ship after a reviewed plan; open never migrates",
+    "mode": "readwrite",
+    "name": "PROD",
+    "pool": 10,
+    "ship": "explicit",
+    "snapshot": "before_ship",
+    "world": "PRACTICE"
+   },
+   {
+    "$": "Deployment",
+    "engine": "sqlite",
+    "extends": "DEV",
+    "location": {
+     "$": "Location",
+     "default": null,
+     "kind": "memory",
+     "name": null
+    },
+    "meaning": "the development deployment, in memory",
+    "mode": "readwrite",
+    "name": "TEST",
+    "pool": null,
+    "ship": "on_open",
+    "snapshot": "none",
+    "world": "PRACTICE"
+   }
+  ],
+  "intents": [
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when hidden from default lists",
+    "module": "clients",
+    "name": "archived_at",
+    "pattern": null,
+    "qid": "clients.archived_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": "user_name",
+    "dimension": null,
+    "length": null,
+    "meaning": "the name this person wants in the waiting room",
+    "module": "clients",
+    "name": "preferred_name",
+    "pattern": null,
+    "qid": "clients.preferred_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "how this contact relates to the client",
+    "module": "clients",
+    "name": "relationship",
+    "pattern": null,
+    "qid": "clients.relationship",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "the text of a letter",
+    "module": "documents",
+    "name": "body",
+    "pattern": null,
+    "qid": "documents.body",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "which library template a form was filled from",
+    "module": "documents",
+    "name": "template_ref",
+    "pattern": null,
+    "qid": "documents.template_ref",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "what the document is called",
+    "module": "documents",
+    "name": "title",
+    "pattern": null,
+    "qid": "documents.title",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "a short tag the practice applies to clients",
+    "module": "labels",
+    "name": "label_name",
+    "pattern": null,
+    "qid": "labels.label_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "what was written about the client",
+    "module": "notes",
+    "name": "note_body",
+    "pattern": null,
+    "qid": "notes.note_body",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when the note was written",
+    "module": "notes",
+    "name": "recorded_at",
+    "pattern": null,
+    "qid": "notes.recorded_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "an address that can receive mail",
+    "module": "people",
+    "name": "email",
+    "pattern": null,
+    "qid": "people.email",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Email",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this individual was minted",
+    "module": "traits",
+    "name": "created_at",
+    "pattern": null,
+    "qid": "traits.created_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "when this individual last changed",
+    "module": "traits",
+    "name": "updated_at",
+    "pattern": null,
+    "qid": "traits.updated_at",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Instant",
+     "carrier": null,
+     "class": "instant",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "workspace title as shown in the shell",
+    "module": "workspaces",
+    "name": "display_name",
+    "pattern": null,
+    "qid": "workspaces.display_name",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "DisplayName",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    }
+   },
+   {
+    "$": "Intent",
+    "alias": null,
+    "dimension": null,
+    "length": null,
+    "meaning": "stable workspace identity",
+    "module": "workspaces",
+    "name": "share",
+    "pattern": null,
+    "qid": "workspaces.share",
+    "renamed_from": null,
+    "restore": false,
+    "retired": null,
+    "retype": null,
+    "type": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": "workspaces.WorkspaceShare",
+     "optional": false
+    }
+   }
+  ],
+  "modules": [
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "people.Owned",
+      "local": "Owned",
+      "owner": "people",
+      "source": "Owned"
+     },
+     {
+      "$": "Import",
+      "identity": "people.email",
+      "local": "email",
+      "owner": "people",
+      "source": "email"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.updated_at",
+      "local": "updated_at",
+      "owner": "traits",
+      "source": "updated_at"
+     }
+    ],
+    "meaning": "Clients and their contacts. Links point down the module graph.",
+    "name": "clients"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "clients.Client",
+      "local": "Client",
+      "owner": "clients",
+      "source": "Client"
+     },
+     {
+      "$": "Import",
+      "identity": "clients.archived_at",
+      "local": "archived_at",
+      "owner": "clients",
+      "source": "archived_at"
+     },
+     {
+      "$": "Import",
+      "identity": "people.Owned",
+      "local": "Owned",
+      "owner": "people",
+      "source": "Owned"
+     },
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     }
+    ],
+    "meaning": "A family: one identity space, several member kinds.",
+    "name": "documents"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "clients.Client",
+      "local": "Client",
+      "owner": "clients",
+      "source": "Client"
+     },
+     {
+      "$": "Import",
+      "identity": "clients.Contact",
+      "local": "Contact",
+      "owner": "clients",
+      "source": "Contact"
+     }
+    ],
+    "meaning": "Labels are global tags; the association to clients is scoped through its client end.",
+    "name": "labels"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "clients.Client",
+      "local": "Client",
+      "owner": "clients",
+      "source": "Client"
+     }
+    ],
+    "meaning": "Notes are events on a client, and the questions and verbs that span clients and notes.",
+    "name": "notes"
+   },
+   {
+    "$": "Module",
+    "imports": [
+     {
+      "$": "Import",
+      "identity": "traits.Timestamped",
+      "local": "Timestamped",
+      "owner": "traits",
+      "source": "Timestamped"
+     }
+    ],
+    "meaning": "People: the practitioners, and the tenancy trait every owned resource takes on.",
+    "name": "people"
+   },
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "Traits: characteristics a declaration takes on by listing them among its carriers.",
+    "name": "traits"
+   },
+   {
+    "$": "Module",
+    "imports": [],
+    "meaning": "Workspaces: keyed, global, with kept history.",
+    "name": "workspaces"
+   }
+  ],
+  "move_homes": [],
+  "newtypes": [
+   {
+    "$": "Newtype",
+    "meaning": "stable workspace identity as a typed share token",
+    "module": "workspaces",
+    "name": "WorkspaceShare",
+    "of": {
+     "base": "Text",
+     "carrier": null,
+     "class": "text",
+     "closed": [],
+     "list_of": false,
+     "nominal": null,
+     "optional": false
+    },
+    "qid": "workspaces.WorkspaceShare"
+   }
+  ],
+  "reads": [
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": true,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "every client of every practitioner, archived included; a capability, not a scope",
+    "module": "clients",
+    "name": "all_clients_for_audit",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": null,
+    "qid": "clients.all_clients_for_audit",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "archived_at",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.archived_at",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.archived_at"
+       },
+       "text": "archived_at"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "owner.email",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "clients.Client.owner",
+         "many": false,
+         "source": "clients.Client",
+         "target": "people.User",
+         "text": "owner"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "people.User",
+        "intent": "people.email",
+        "type": {
+         "base": "Email",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "people.User.email"
+       },
+       "text": "owner.email"
+      }
+     }
+    ],
+    "subject": "clients.Client",
+    "unscoped": "practice_audit",
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "q",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": true
+      }
+     },
+     {
+      "$": "Given",
+      "default": null,
+      "name": "creators",
+      "type": {
+       "base": "Email",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": true,
+       "nominal": null,
+       "optional": true
+      }
+     },
+     {
+      "$": "Given",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 1
+      },
+      "name": "page",
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Given",
+      "default": {
+       "$": "Literal",
+       "type": {
+        "base": "Integer",
+        "carrier": null,
+        "class": "integer",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": 25
+      },
+      "name": "limit",
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": {
+     "$": "GivenRef",
+     "name": "limit",
+     "type": {
+      "base": "Integer",
+      "carrier": null,
+      "class": "integer",
+      "closed": [],
+      "list_of": false,
+      "nominal": null,
+      "optional": false
+     }
+    },
+    "live_bound": 10000,
+    "meaning": "the practitioner's clients with their owners, paged, live",
+    "module": "clients",
+    "name": "client_assignments",
+    "noun": "question",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     }
+    ],
+    "page": {
+     "$": "GivenRef",
+     "name": "page",
+     "type": {
+      "base": "Integer",
+      "carrier": null,
+      "class": "integer",
+      "closed": [],
+      "list_of": false,
+      "nominal": null,
+      "optional": false
+     }
+    },
+    "predicate": {
+     "$": "And",
+     "items": [
+      {
+       "$": "Contains",
+       "guard": {
+        "$": "GivenRef",
+        "name": "q",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": true
+        }
+       },
+       "left": {
+        "$": "PathRef",
+        "root": "clients.Client",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "clients.Client",
+         "intent": "clients.preferred_name",
+         "type": {
+          "base": "DisplayName",
+          "carrier": null,
+          "class": "text",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "clients.Client.preferred_name"
+        },
+        "text": "preferred_name"
+       },
+       "right": {
+        "$": "GivenRef",
+        "name": "q",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": true
+        }
+       }
+      },
+      {
+       "$": "In",
+       "guard": {
+        "$": "GivenRef",
+        "name": "creators",
+        "type": {
+         "base": "Email",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": true,
+         "nominal": null,
+         "optional": true
+        }
+       },
+       "left": {
+        "$": "PathRef",
+        "root": "clients.Client",
+        "steps": [
+         {
+          "$": "LinkStep",
+          "inverse": false,
+          "link": "clients.Client.owner",
+          "many": false,
+          "source": "clients.Client",
+          "target": "people.User",
+          "text": "owner"
+         }
+        ],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "people.User",
+         "intent": "people.email",
+         "type": {
+          "base": "Email",
+          "carrier": null,
+          "class": "text",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "people.User.email"
+        },
+        "text": "owner.email"
+       },
+       "right": {
+        "$": "GivenRef",
+        "name": "creators",
+        "type": {
+         "base": "Email",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": true,
+         "nominal": null,
+         "optional": true
+        }
+       }
+      }
+     ]
+    },
+    "qid": "clients.client_assignments",
+    "shape": "windowed",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "owner.email",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "clients.Client.owner",
+         "many": false,
+         "source": "clients.Client",
+         "target": "people.User",
+         "text": "owner"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "people.User",
+        "intent": "people.email",
+        "type": {
+         "base": "Email",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "people.User.email"
+       },
+       "text": "owner.email"
+      }
+     }
+    ],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": true
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "q",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "contacts whose client's name contains the text",
+    "module": "clients",
+    "name": "contacts_named_like",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "PathRef",
+       "root": "clients.Contact",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Contact",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Contact.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Contains",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "clients.Contact",
+      "steps": [
+       {
+        "$": "LinkStep",
+        "inverse": false,
+        "link": "clients.Contact.client",
+        "many": false,
+        "source": "clients.Contact",
+        "target": "clients.Client",
+        "text": "client"
+       }
+      ],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "clients.Client",
+       "intent": "clients.preferred_name",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "clients.Client.preferred_name"
+      },
+      "text": "client.preferred_name"
+     },
+     "right": {
+      "$": "GivenRef",
+      "name": "q",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "clients.contacts_named_like",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Contact",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Contact",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Contact.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "client.preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Contact",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "clients.Contact.client",
+         "many": false,
+         "source": "clients.Contact",
+         "target": "clients.Client",
+         "text": "client"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "client.preferred_name"
+      }
+     }
+    ],
+    "subject": "clients.Contact",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "kind",
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "contacts standing in one relationship to their client",
+    "module": "clients",
+    "name": "contacts_with_relationship",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "clients.Contact",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "clients.Contact",
+       "intent": "clients.relationship",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "clients.Contact.relationship"
+      },
+      "text": "relationship"
+     },
+     "op": "=",
+     "right": {
+      "$": "GivenRef",
+      "name": "kind",
+      "type": {
+       "base": "DisplayName",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "clients.contacts_with_relationship",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Contact",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Contact",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Contact.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "relationship",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Contact",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Contact",
+        "intent": "clients.relationship",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Contact.relationship"
+       },
+       "text": "relationship"
+      }
+     }
+    ],
+    "subject": "clients.Contact",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "client",
+      "type": {
+       "base": "Id",
+       "carrier": "clients.Client",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "every document of a client, of every kind",
+    "module": "documents",
+    "name": "client_documents",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "PathRef",
+       "root": "documents.Document",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "documents.Document",
+        "intent": "documents.title",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "documents.Document.title"
+       },
+       "text": "title"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "Is",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "documents.Document",
+      "steps": [
+       {
+        "$": "LinkStep",
+        "inverse": false,
+        "link": "documents.Document.client",
+        "many": false,
+        "source": "documents.Document",
+        "target": "clients.Client",
+        "text": "client"
+       }
+      ],
+      "terminal": {
+       "$": "LinkTerminal",
+       "carrier": "documents.Document",
+       "link": "documents.Document.client",
+       "optional": false,
+       "target": "clients.Client"
+      },
+      "text": "client"
+     },
+     "right": {
+      "$": "GivenRef",
+      "name": "client",
+      "type": {
+       "base": "Id",
+       "carrier": "clients.Client",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "documents.client_documents",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "title",
+      "path": {
+       "$": "PathRef",
+       "root": "documents.Document",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "documents.Document",
+        "intent": "documents.title",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "documents.Document.title"
+       },
+       "text": "title"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "kind",
+      "path": {
+       "$": "PathRef",
+       "root": "documents.Document",
+       "steps": [],
+       "terminal": {
+        "$": "KindTerminal",
+        "family": "documents.Document"
+       },
+       "text": "kind"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "client.preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "documents.Document",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "documents.Document.client",
+         "many": false,
+         "source": "documents.Document",
+         "target": "clients.Client",
+         "text": "client"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "client.preferred_name"
+      }
+     }
+    ],
+    "subject": "documents.Document",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "q",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "letters whose body contains the text",
+    "module": "documents",
+    "name": "letters_mentioning",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Contains",
+     "guard": null,
+     "left": {
+      "$": "PathRef",
+      "root": "documents.Letter",
+      "steps": [],
+      "terminal": {
+       "$": "UseTerminal",
+       "carrier": "documents.Letter",
+       "intent": "documents.body",
+       "type": {
+        "base": "Text",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "use": "documents.Letter.body"
+      },
+      "text": "body"
+     },
+     "right": {
+      "$": "GivenRef",
+      "name": "q",
+      "type": {
+       "base": "Text",
+       "carrier": null,
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    },
+    "qid": "documents.letters_mentioning",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "title",
+      "path": {
+       "$": "PathRef",
+       "root": "documents.Letter",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "documents.Letter",
+        "intent": "documents.title",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "documents.Letter.title"
+       },
+       "text": "title"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "body",
+      "path": {
+       "$": "PathRef",
+       "root": "documents.Letter",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "documents.Letter",
+        "intent": "documents.body",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "documents.Letter.body"
+       },
+       "text": "body"
+      }
+     }
+    ],
+    "subject": "documents.Letter",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 1000,
+    "meaning": "clients carrying the vip label",
+    "module": "labels",
+    "name": "vip_clients",
+    "noun": "question",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Quantified",
+     "item": {
+      "$": "Compare",
+      "guard": null,
+      "left": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": true,
+         "link": "labels.ClientLabel.client",
+         "many": true,
+         "source": "clients.Client",
+         "target": "labels.ClientLabel",
+         "text": "labels"
+        },
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "labels.ClientLabel.label",
+         "many": false,
+         "source": "labels.ClientLabel",
+         "target": "labels.Label",
+         "text": "label"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "labels.Label",
+        "intent": "labels.label_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "labels.Label.label_name"
+       },
+       "text": "labels.label.label_name"
+      },
+      "op": "=",
+      "right": {
+       "$": "Literal",
+       "type": {
+        "base": "DisplayName",
+        "carrier": null,
+        "class": "text",
+        "closed": [],
+        "list_of": false,
+        "nominal": null,
+        "optional": false
+       },
+       "value": "vip"
+      }
+     },
+     "kind": "some"
+    },
+    "qid": "labels.vip_clients",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     }
+    ],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [
+     "labels.vip_clients"
+    ],
+    "distinct": false,
+    "first": null,
+    "givens": [],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 1000,
+    "meaning": "contacts of vip clients",
+    "module": "labels",
+    "name": "vip_contacts",
+    "noun": "question",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Within",
+     "inner": "labels.vip_clients",
+     "path": {
+      "$": "PathRef",
+      "root": "clients.Contact",
+      "steps": [
+       {
+        "$": "LinkStep",
+        "inverse": false,
+        "link": "clients.Contact.client",
+        "many": false,
+        "source": "clients.Contact",
+        "target": "clients.Client",
+        "text": "client"
+       }
+      ],
+      "terminal": {
+       "$": "LinkTerminal",
+       "carrier": "clients.Contact",
+       "link": "clients.Contact.client",
+       "optional": false,
+       "target": "clients.Client"
+      },
+      "text": "client"
+     }
+    },
+    "qid": "labels.vip_contacts",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Contact",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Contact",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Contact.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "email",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Contact",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Contact",
+        "intent": "people.email",
+        "type": {
+         "base": "Email",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Contact.email"
+       },
+       "text": "email"
+      }
+     }
+    ],
+    "subject": "clients.Contact",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": {
+     "$": "GivenRef",
+     "name": "client",
+     "type": {
+      "base": "Id",
+      "carrier": "clients.Client",
+      "class": "text",
+      "closed": [],
+      "list_of": false,
+      "nominal": null,
+      "optional": false
+     }
+    },
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "client",
+      "type": {
+       "base": "Id",
+       "carrier": "clients.Client",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": true,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "one client with owner, contacts, and the last five notes",
+    "module": "notes",
+    "name": "client_card",
+    "noun": "query",
+    "orders": [],
+    "page": null,
+    "predicate": null,
+    "qid": "notes.client_card",
+    "shape": "optional_single",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "archived_at",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.archived_at",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.archived_at"
+       },
+       "text": "archived_at"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "owner.email",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": false,
+         "link": "clients.Client.owner",
+         "many": false,
+         "source": "clients.Client",
+         "target": "people.User",
+         "text": "owner"
+        }
+       ],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "people.User",
+        "intent": "people.email",
+        "type": {
+         "base": "Email",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "people.User.email"
+       },
+       "text": "owner.email"
+      }
+     },
+     {
+      "$": "ShowNested",
+      "column": "contacts",
+      "items": [
+       {
+        "$": "ShowPath",
+        "column": "preferred_name",
+        "path": {
+         "$": "PathRef",
+         "root": "clients.Contact",
+         "steps": [],
+         "terminal": {
+          "$": "UseTerminal",
+          "carrier": "clients.Contact",
+          "intent": "clients.preferred_name",
+          "type": {
+           "base": "DisplayName",
+           "carrier": null,
+           "class": "text",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          },
+          "use": "clients.Contact.preferred_name"
+         },
+         "text": "preferred_name"
+        }
+       },
+       {
+        "$": "ShowPath",
+        "column": "email",
+        "path": {
+         "$": "PathRef",
+         "root": "clients.Contact",
+         "steps": [],
+         "terminal": {
+          "$": "UseTerminal",
+          "carrier": "clients.Contact",
+          "intent": "people.email",
+          "type": {
+           "base": "Email",
+           "carrier": null,
+           "class": "text",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          },
+          "use": "clients.Contact.email"
+         },
+         "text": "email"
+        }
+       },
+       {
+        "$": "ShowPath",
+        "column": "relationship",
+        "path": {
+         "$": "PathRef",
+         "root": "clients.Contact",
+         "steps": [],
+         "terminal": {
+          "$": "UseTerminal",
+          "carrier": "clients.Contact",
+          "intent": "clients.relationship",
+          "type": {
+           "base": "DisplayName",
+           "carrier": null,
+           "class": "text",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          },
+          "use": "clients.Contact.relationship"
+         },
+         "text": "relationship"
+        }
+       }
+      ],
+      "last": null,
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": true,
+         "link": "clients.Contact.client",
+         "many": true,
+         "source": "clients.Client",
+         "target": "clients.Contact",
+         "text": "contacts"
+        }
+       ],
+       "terminal": {
+        "$": "LinkTerminal",
+        "carrier": "clients.Client",
+        "link": "clients.Contact.client",
+        "optional": true,
+        "target": "clients.Contact"
+       },
+       "text": "contacts"
+      }
+     },
+     {
+      "$": "ShowNested",
+      "column": "notes",
+      "items": [
+       {
+        "$": "ShowPath",
+        "column": "note_body",
+        "path": {
+         "$": "PathRef",
+         "root": "notes.Note",
+         "steps": [],
+         "terminal": {
+          "$": "UseTerminal",
+          "carrier": "notes.Note",
+          "intent": "notes.note_body",
+          "type": {
+           "base": "Text",
+           "carrier": null,
+           "class": "text",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          },
+          "use": "notes.Note.note_body"
+         },
+         "text": "note_body"
+        }
+       },
+       {
+        "$": "ShowPath",
+        "column": "recorded_at",
+        "path": {
+         "$": "PathRef",
+         "root": "notes.Note",
+         "steps": [],
+         "terminal": {
+          "$": "UseTerminal",
+          "carrier": "notes.Note",
+          "intent": "notes.recorded_at",
+          "type": {
+           "base": "Instant",
+           "carrier": null,
+           "class": "instant",
+           "closed": [],
+           "list_of": false,
+           "nominal": null,
+           "optional": false
+          },
+          "use": "notes.Note.recorded_at"
+         },
+         "text": "recorded_at"
+        }
+       }
+      ],
+      "last": 5,
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": true,
+         "link": "notes.Note.client",
+         "many": true,
+         "source": "clients.Client",
+         "target": "notes.Note",
+         "text": "notes"
+        }
+       ],
+       "terminal": {
+        "$": "LinkTerminal",
+        "carrier": "clients.Client",
+        "link": "notes.Note.client",
+        "optional": true,
+        "target": "notes.Note"
+       },
+       "text": "notes"
+      }
+     }
+    ],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "after",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": 1000,
+    "meaning": "clients with no note since an instant",
+    "module": "notes",
+    "name": "dormant_clients",
+    "noun": "question",
+    "orders": [],
+    "page": null,
+    "predicate": {
+     "$": "Compare",
+     "guard": null,
+     "left": {
+      "$": "AggRef",
+      "arg": null,
+      "filter": {
+       "$": "Compare",
+       "guard": null,
+       "left": {
+        "$": "PathRef",
+        "root": "notes.Note",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "notes.Note",
+         "intent": "notes.recorded_at",
+         "type": {
+          "base": "Instant",
+          "carrier": null,
+          "class": "instant",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "notes.Note.recorded_at"
+        },
+        "text": "recorded_at"
+       },
+       "op": ">=",
+       "right": {
+        "$": "GivenRef",
+        "name": "after",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        }
+       }
+      },
+      "fn": "count",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [
+        {
+         "$": "LinkStep",
+         "inverse": true,
+         "link": "notes.Note.client",
+         "many": true,
+         "source": "clients.Client",
+         "target": "notes.Note",
+         "text": "notes"
+        }
+       ],
+       "terminal": {
+        "$": "LinkTerminal",
+        "carrier": "clients.Client",
+        "link": "notes.Note.client",
+        "optional": true,
+        "target": "notes.Note"
+       },
+       "text": "notes"
+      },
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     "op": "=",
+     "right": {
+      "$": "Literal",
+      "type": {
+       "base": "Integer",
+       "carrier": null,
+       "class": "integer",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      },
+      "value": 0
+     }
+    },
+    "qid": "notes.dormant_clients",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "preferred_name",
+      "path": {
+       "$": "PathRef",
+       "root": "clients.Client",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "clients.Client",
+        "intent": "clients.preferred_name",
+        "type": {
+         "base": "DisplayName",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "clients.Client.preferred_name"
+       },
+       "text": "preferred_name"
+      }
+     }
+    ],
+    "subject": "clients.Client",
+    "unscoped": null,
+    "with_total": false
+   },
+   {
+    "$": "Read",
+    "by": null,
+    "composes": [],
+    "distinct": false,
+    "first": null,
+    "givens": [
+     {
+      "$": "Given",
+      "default": null,
+      "name": "client",
+      "type": {
+       "base": "Id",
+       "carrier": "clients.Client",
+       "class": "text",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": false
+      }
+     },
+     {
+      "$": "Given",
+      "default": null,
+      "name": "from",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": true
+      }
+     },
+     {
+      "$": "Given",
+      "default": null,
+      "name": "until",
+      "type": {
+       "base": "Instant",
+       "carrier": null,
+       "class": "instant",
+       "closed": [],
+       "list_of": false,
+       "nominal": null,
+       "optional": true
+      }
+     }
+    ],
+    "group_by": [],
+    "having": null,
+    "including_archived": false,
+    "limit": null,
+    "live_bound": null,
+    "meaning": "a client's notes between two instants",
+    "module": "notes",
+    "name": "notes_in_window",
+    "noun": "query",
+    "orders": [
+     {
+      "$": "OrderTerm",
+      "descending": false,
+      "key": {
+       "$": "PathRef",
+       "root": "notes.Note",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "notes.Note",
+        "intent": "notes.recorded_at",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "notes.Note.recorded_at"
+       },
+       "text": "recorded_at"
+      }
+     }
+    ],
+    "page": null,
+    "predicate": {
+     "$": "And",
+     "items": [
+      {
+       "$": "Is",
+       "guard": null,
+       "left": {
+        "$": "PathRef",
+        "root": "notes.Note",
+        "steps": [
+         {
+          "$": "LinkStep",
+          "inverse": false,
+          "link": "notes.Note.client",
+          "many": false,
+          "source": "notes.Note",
+          "target": "clients.Client",
+          "text": "client"
+         }
+        ],
+        "terminal": {
+         "$": "LinkTerminal",
+         "carrier": "notes.Note",
+         "link": "notes.Note.client",
+         "optional": false,
+         "target": "clients.Client"
+        },
+        "text": "client"
+       },
+       "right": {
+        "$": "GivenRef",
+        "name": "client",
+        "type": {
+         "base": "Id",
+         "carrier": "clients.Client",
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        }
+       }
+      },
+      {
+       "$": "Compare",
+       "guard": {
+        "$": "GivenRef",
+        "name": "from",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": true
+        }
+       },
+       "left": {
+        "$": "PathRef",
+        "root": "notes.Note",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "notes.Note",
+         "intent": "notes.recorded_at",
+         "type": {
+          "base": "Instant",
+          "carrier": null,
+          "class": "instant",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "notes.Note.recorded_at"
+        },
+        "text": "recorded_at"
+       },
+       "op": ">=",
+       "right": {
+        "$": "GivenRef",
+        "name": "from",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": true
+        }
+       }
+      },
+      {
+       "$": "Compare",
+       "guard": {
+        "$": "GivenRef",
+        "name": "until",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": true
+        }
+       },
+       "left": {
+        "$": "PathRef",
+        "root": "notes.Note",
+        "steps": [],
+        "terminal": {
+         "$": "UseTerminal",
+         "carrier": "notes.Note",
+         "intent": "notes.recorded_at",
+         "type": {
+          "base": "Instant",
+          "carrier": null,
+          "class": "instant",
+          "closed": [],
+          "list_of": false,
+          "nominal": null,
+          "optional": false
+         },
+         "use": "notes.Note.recorded_at"
+        },
+        "text": "recorded_at"
+       },
+       "op": "<",
+       "right": {
+        "$": "GivenRef",
+        "name": "until",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": true
+        }
+       }
+      }
+     ]
+    },
+    "qid": "notes.notes_in_window",
+    "shape": "collection",
+    "shows": [
+     {
+      "$": "ShowPath",
+      "column": "note_body",
+      "path": {
+       "$": "PathRef",
+       "root": "notes.Note",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "notes.Note",
+        "intent": "notes.note_body",
+        "type": {
+         "base": "Text",
+         "carrier": null,
+         "class": "text",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "notes.Note.note_body"
+       },
+       "text": "note_body"
+      }
+     },
+     {
+      "$": "ShowPath",
+      "column": "recorded_at",
+      "path": {
+       "$": "PathRef",
+       "root": "notes.Note",
+       "steps": [],
+       "terminal": {
+        "$": "UseTerminal",
+        "carrier": "notes.Note",
+        "intent": "notes.recorded_at",
+        "type": {
+         "base": "Instant",
+         "carrier": null,
+         "class": "instant",
+         "closed": [],
+         "list_of": false,
+         "nominal": null,
+         "optional": false
+        },
+        "use": "notes.Note.recorded_at"
+       },
+       "text": "recorded_at"
+      }
+     }
+    ],
+    "subject": "notes.Note",
+    "unscoped": null,
+    "with_total": false
+   }
+  ],
+  "restores": [],
+  "restricteds": [
+   {
+    "$": "Restricted",
+    "accepts": [
+     "clients.Client.owner"
+    ],
+    "carrier": "clients.Client",
+    "meaning": "move a client to another practitioner; the only way the scope link changes",
+    "module": "clients",
+    "name": "reassign_client",
+    "qid": "clients.reassign_client",
+    "unscoped": "practice_admin",
+    "verb": "change"
+   }
+  ],
+  "retypes": [],
+  "scope_paths": {
+   "PRACTICE": {
+    "clients.Client": [
+     "clients.Client.owner"
+    ],
+    "clients.Contact": [
+     "clients.Contact.client",
+     "clients.Client.owner"
+    ],
+    "documents.Document": [
+     "documents.Document.owner"
+    ],
+    "documents.Form": [
+     "documents.Document.owner"
+    ],
+    "documents.Letter": [
+     "documents.Document.owner"
+    ],
+    "labels.ClientLabel": [
+     "labels.ClientLabel.client",
+     "clients.Client.owner"
+    ],
+    "labels.Label": [],
+    "notes.Note": [
+     "notes.Note.client",
+     "clients.Client.owner"
+    ],
+    "people.User": [],
+    "workspaces.Workspace": []
+   }
+  },
+  "tightens": [],
+  "tombstones": [],
+  "worlds": [
+   {
+    "$": "World",
+    "capabilities": [
+     "practice_admin",
+     "practice_audit"
+    ],
+    "durability": "durable",
+    "exempt": [
+     "labels.Label",
+     "people.User",
+     "workspaces.Workspace"
+    ],
+    "generated": [
+     "python",
+     "rust"
+    ],
+    "meaning": "the practice's store",
+    "modules": [
+     "traits",
+     "people",
+     "clients",
+     "notes",
+     "labels",
+     "documents",
+     "workspaces"
+    ],
+    "name": "PRACTICE",
+    "quarantine_retention": 3,
+    "requires": "people.Owned",
+    "scope": {
+     "$": "ScopeRoot",
+     "link": "people.Owned.owner",
+     "root": "people.User",
+     "trait": "people.Owned"
+    },
+    "writer_source": null,
+    "writers": "governed"
+   }
+  ]
+ },
+ "scope_paths": {
+  "clients.Client": [
+   "clients.Client.owner"
+  ],
+  "clients.Contact": [
+   "clients.Contact.client",
+   "clients.Client.owner"
+  ],
+  "documents.Document": [
+   "documents.Document.owner"
+  ],
+  "documents.Form": [
+   "documents.Document.owner"
+  ],
+  "documents.Letter": [
+   "documents.Document.owner"
+  ],
+  "labels.ClientLabel": [
+   "labels.ClientLabel.client",
+   "clients.Client.owner"
+  ],
+  "labels.Label": [],
+  "notes.Note": [
+   "notes.Note.client",
+   "clients.Client.owner"
+  ],
+  "people.User": [],
+  "workspaces.Workspace": []
+ },
+ "storage": {
+  "$": "StorageMapping",
+  "engine": {
+   "$": "EngineTables",
+   "generations": "garns_generations",
+   "ledger": "garns_ledger",
+   "revisions": "garns_revisions"
+  },
+  "relations": {
+   "clients.Client": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "clients.Client",
+    "columns": {
+     "clients.Client.archived_at": "f_client_archived_at",
+     "clients.Client.created_at": "f_client_created_at",
+     "clients.Client.preferred_name": "f_client_preferred_name",
+     "clients.Client.updated_at": "f_client_updated_at"
+    },
+    "identity": "rid_clients_client",
+    "kind": null,
+    "links": {
+     "clients.Client.owner": "ref_client_owner"
+    },
+    "table": "tbl_clients_client"
+   },
+   "clients.Contact": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "clients.Contact",
+    "columns": {
+     "clients.Contact.created_at": "f_contact_created_at",
+     "clients.Contact.email": "f_contact_email",
+     "clients.Contact.preferred_name": "f_contact_preferred_name",
+     "clients.Contact.relationship": "f_contact_relationship",
+     "clients.Contact.updated_at": "f_contact_updated_at"
+    },
+    "identity": "rid_clients_contact",
+    "kind": null,
+    "links": {
+     "clients.Contact.client": "ref_contact_client"
+    },
+    "table": "tbl_clients_contact"
+   },
+   "documents.Document": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "documents.Document",
+    "columns": {
+     "documents.Document.archived_at": "f_document_archived_at",
+     "documents.Document.created_at": "f_document_created_at",
+     "documents.Document.title": "f_document_title",
+     "documents.Document.updated_at": "f_document_updated_at",
+     "documents.Form.template_ref": "f_form_template_ref",
+     "documents.Letter.body": "f_letter_body"
+    },
+    "identity": "rid_documents_document",
+    "kind": "member_of_documents_document",
+    "links": {
+     "documents.Document.client": "ref_document_client",
+     "documents.Document.owner": "ref_document_owner"
+    },
+    "table": "tbl_documents_document"
+   },
+   "labels.ClientLabel": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "labels.ClientLabel",
+    "columns": {},
+    "identity": "rid_labels_clientlabel",
+    "kind": null,
+    "links": {
+     "labels.ClientLabel.client": "ref_clientlabel_client",
+     "labels.ClientLabel.label": "ref_clientlabel_label"
+    },
+    "table": "tbl_labels_clientlabel"
+   },
+   "labels.Label": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "labels.Label",
+    "columns": {
+     "labels.Label.label_name": "f_label_label_name"
+    },
+    "identity": "rid_labels_label",
+    "kind": null,
+    "links": {},
+    "table": "tbl_labels_label"
+   },
+   "notes.Note": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "notes.Note",
+    "columns": {
+     "notes.Note.note_body": "f_note_note_body",
+     "notes.Note.recorded_at": "f_note_recorded_at"
+    },
+    "identity": "rid_notes_note",
+    "kind": null,
+    "links": {
+     "notes.Note.client": "ref_note_client"
+    },
+    "table": "tbl_notes_note"
+   },
+   "people.User": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "people.User",
+    "columns": {
+     "people.User.created_at": "f_user_created_at",
+     "people.User.email": "f_user_email",
+     "people.User.updated_at": "f_user_updated_at"
+    },
+    "identity": "rid_people_user",
+    "kind": null,
+    "links": {},
+    "table": "tbl_people_user"
+   },
+   "workspaces.Workspace": {
+    "$": "RelationMapping",
+    "capture": null,
+    "carrier": "workspaces.Workspace",
+    "columns": {
+     "workspaces.Workspace.display_name": "f_workspace_display_name",
+     "workspaces.Workspace.share": "f_workspace_share"
+    },
+    "identity": "rid_workspaces_workspace",
+    "kind": null,
+    "links": {},
+    "table": "tbl_workspaces_workspace"
+   }
+  },
+  "source": "storage-PRACTICE.json",
+  "world": "PRACTICE"
+ },
+ "world": {
+  "$": "World",
+  "capabilities": [
+   "practice_admin",
+   "practice_audit"
+  ],
+  "durability": "durable",
+  "exempt": [
+   "labels.Label",
+   "people.User",
+   "workspaces.Workspace"
+  ],
+  "generated": [
+   "python",
+   "rust"
+  ],
+  "meaning": "the practice's store",
+  "modules": [
+   "traits",
+   "people",
+   "clients",
+   "notes",
+   "labels",
+   "documents",
+   "workspaces"
+  ],
+  "name": "PRACTICE",
+  "quarantine_retention": 3,
+  "requires": "people.Owned",
+  "scope": {
+   "$": "ScopeRoot",
+   "link": "people.Owned.owner",
+   "root": "people.User",
+   "trait": "people.Owned"
+  },
+  "writer_source": null,
+  "writers": "governed"
+ }
+}

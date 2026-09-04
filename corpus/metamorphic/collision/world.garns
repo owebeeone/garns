@@ -1,0 +1,19 @@
+world ALPHA "alpha world: scoped by alpha roots" {
+  modules alpha
+  durability durable
+  writers governed
+  generated python, rust
+  requires alpha.Held exempt alpha.Root
+  scope alpha.Held.holder
+  quarantine_retention 3
+}
+
+world BETA "beta world: scoped by beta roots" {
+  modules beta
+  durability durable
+  writers governed
+  generated python, rust
+  requires beta.Held exempt beta.Root
+  scope beta.Held.holder
+  quarantine_retention 3
+}

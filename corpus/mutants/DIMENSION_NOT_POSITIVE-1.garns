@@ -1,0 +1,4 @@
+module m "zero dimension" {
+  intent v : Vector "v" { dimension 0 }
+  resource A "a" { use v }
+}

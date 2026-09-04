@@ -1,0 +1,7 @@
+module a "owner" {
+  trait Owned "o" { }
+}
+module b "imports a whole module" {
+  import a
+  resource B "b" { lifecycle mutable carry Owned }
+}

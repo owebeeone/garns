@@ -1,0 +1,10 @@
+module m "type" {
+  intent n : Text "n"
+  resource User "u" { use n lifecycle mutable }
+  question q of User "q" {
+    given k : Integer
+    where n = k
+    show n
+    live bounded 10
+  }
+}

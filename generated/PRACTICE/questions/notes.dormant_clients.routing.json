@@ -1,0 +1,40 @@
+{
+ "question": "notes.dormant_clients",
+ "routing_keys": [
+  {
+   "carrier": "clients.Client",
+   "field": "*",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.archived_at",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.owner",
+   "partition": "scope"
+  },
+  {
+   "carrier": "clients.Client",
+   "field": "clients.Client.preferred_name",
+   "partition": "scope"
+  },
+  {
+   "carrier": "notes.Note",
+   "field": "*",
+   "partition": "scope"
+  },
+  {
+   "carrier": "notes.Note",
+   "field": "notes.Note.client",
+   "partition": "scope"
+  },
+  {
+   "carrier": "notes.Note",
+   "field": "notes.Note.recorded_at",
+   "partition": "scope"
+  }
+ ]
+}

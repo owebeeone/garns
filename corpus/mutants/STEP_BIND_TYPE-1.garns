@@ -1,0 +1,8 @@
+module m "step type" {
+  resource User "u" { lifecycle mutable }
+  resource Client "c" { lifecycle mutable link owner -> Client { optional end detach } }
+  compound c "c" {
+    step user = User.mint
+    step client = Client.mint bind owner = user
+  }
+}

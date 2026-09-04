@@ -1,0 +1,11 @@
+# Traits: characteristics a declaration takes on by listing them with carry.
+
+module traits "Traits: characteristics a declaration takes on by listing them among its carriers." {
+  intent created_at : Instant "when this individual was minted"
+  intent updated_at : Instant "when this individual last changed"
+
+  trait Timestamped "carries mint and change instants written by the engine, never by the caller" {
+    use created_at { order filter stamp on_mint }
+    use updated_at { optional stamp on_change }
+  }
+}
