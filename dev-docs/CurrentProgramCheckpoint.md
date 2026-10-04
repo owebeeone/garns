@@ -1,11 +1,52 @@
 # Garns v9-6 current program checkpoint
 
-**Status:** relocated byte-exact to garns-wz on 2026-10-04; parked at first handoff; worker-exit candidate built, verified and frozen; reviewers not launched; source acceptance pending  
+**Status:** relocated byte-exact to garns-wz on 2026-10-04; worker-exit implementation review round 1 merged NO-GO (13 bounded blocking roots, no STOP); consolidated correction 1 proposed, awaiting operator authorization; source acceptance pending  
 **Date:** 2026-10-04  
 **Owner:** manager
 
 This is the current execution-state index. Historical reports remain unchanged;
 exact acceptance records below control their respective tuples.
+
+## Worker-exit implementation review round 1 — 2026-10-04
+
+Four fresh reviewers each ran their Prompt-2 against MANIFEST-1 (`7e80ca67…`, 117
+entries). By operator direction they were Claude subagents: Fable for the two full
+reviews and Opus 5.5 for the two originating closures. All four reports are filed
+verbatim and all four are NO-GO:
+
+- `W1A11-WorkerExitImplementation-ReviewCode-1.md`: 8 P2 and 7 P3.
+- `W1A11-WorkerExitImplementation-ReviewState-1.md`: 6 P2 and 3 P3.
+- `W1A11-WorkerExitImplementation-OriginCodeClosure-1.md`: 7 P2 and 3 P3.
+- `W1A11-WorkerExitImplementation-OriginStateClosure-1.md`: 7 P2 and 3 P3.
+
+[RemPlan](W1A11-WorkerExitImplementation-RemPlan.md) merges the verdicts. Its 28 P2
+and 16 P3 IDs collapse into 13 blocking and 6 non-blocking roots. Every reviewer
+classifies every blocker as a bounded source correction inside the accepted design,
+so there is no STOP.
+
+Status of the five stopped roots:
+
+- **Closed on this tuple:** the stale phase proof. It must be re-verified after the
+  correction.
+- **Original counterexamples closed, root still open:** the other four (worker exit,
+  failed FIFO, participant lifecycle, neutral refresh). Each has new counterexamples
+  on the same root.
+
+The manager filed the `tools/check.py` G10 failure (`semantic.py:98`) as IR20, a P3
+outside this lane's write allowlist.
+
+After the reports were filed, the tuple and every guard re-verified. Builder writes
+remain stopped. The implementation correction count is still 0; the proposed
+consolidated patch would be correction 1 of 2.
+
+**Next action:** operator decision on three points:
+
+1. Authorize correction 1 under the RemPlan.
+2. Choose the builder model.
+3. Decide where IR20 is fixed.
+
+This edit changes this checkpoint, so RelocationEvidence's entry for it now differs
+by design, as HandoffEvidence's does.
 
 ## Relocation — 2026-10-04
 
@@ -22,6 +63,8 @@ record also files a pre-existing finding for the reviewers: `tools/check.py` G10
 fails on `src/garns/backends/contracts/semantic.py:98`.
 
 ## Current resume status
+
+_Superseded by review round 1 above; kept as the first-handoff record._
 
 The operator requested stopping at the first clean handoff and saving a
 standalone document. The builder is STOP-WRITES and complete. Manager reproduced
@@ -229,6 +272,11 @@ gate. Its [future project](GarnsExternalWriteCapture-ProjectBrief.md) is not
 launched and does not block v9-6.
 
 ## Package ownership and next action
+
+Current (2026-10-04): review round 1 is complete and merged NO-GO in
+[RemPlan](W1A11-WorkerExitImplementation-RemPlan.md). No builder is active, and
+none is authorized until the operator approves correction 1. The rest of this
+section records the first-handoff state.
 
 The sole 5.6 Sol builder has stopped writes. The current117 source tuple is
 frozen at the operator-requested handoff. Existing20/new3 ownership, archived
