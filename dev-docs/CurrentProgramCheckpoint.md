@@ -1,11 +1,25 @@
 # Garns v9-6 current program checkpoint
 
-**Status:** parked at first handoff; worker-exit candidate built, verified and frozen; reviewers not launched; source acceptance pending  
+**Status:** relocated byte-exact to garns-wz on 2026-10-04; parked at first handoff; worker-exit candidate built, verified and frozen; reviewers not launched; source acceptance pending  
 **Date:** 2026-10-04  
 **Owner:** manager
 
 This is the current execution-state index. Historical reports remain unchanged;
 exact acceptance records below control their respective tuples.
+
+## Relocation — 2026-10-04
+
+This product tree now lives at `/Volumes/projects/limbo/garns-wz/garns` (GWZ member
+`mem_garns` of the garns-wz workspace), imported byte-exact at commit `a4ade29`. The
+datascad copy is left untouched as the historical record. **Resume from
+[GarnsV9-6-Relocation](GarnsV9-6-Relocation.md)**, then the handoff below. Launch
+the reviews with the four `W1A11-WorkerExitImplementation-*-Prompt-2.md` files,
+which differ from Prompt-1 only in the product-root path.
+`W1A11-WorkerExitImplementation-RelocationEvidence.sha256` pins the relocation
+record, the Prompt-2 files, MANIFEST-1, the handoff and this checkpoint; after this
+edit, HandoffEvidence's entry for this checkpoint differs by design. The relocation
+record also files a pre-existing finding for the reviewers: `tools/check.py` G10
+fails on `src/garns/backends/contracts/semantic.py:98`.
 
 ## Current resume status
 
