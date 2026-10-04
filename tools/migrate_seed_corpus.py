@@ -2,7 +2,7 @@
 """Migrate the v9-4 non-numbered corpora into v9-5 worlds.
 
 Every edit is a v9-5 language consequence, listed in corpus/worlds/MIGRATION.md.
-Run from build/B2: ``python tools/migrate_seed_corpus.py``.
+Run from the repository root: ``python tools/migrate_seed_corpus.py``.
 """
 
 from __future__ import annotations

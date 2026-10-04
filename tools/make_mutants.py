@@ -2,7 +2,7 @@
 """Build the v9-5 mutant corpus: migrated seed mutants, new mutants, scenarios.
 
 The expected manifest written here is an authored assertion (code and stage
-per mutant); it is never an input to detection. Run from build/B2.
+per mutant); it is never an input to detection. Run from the repository root.
 """
 
 from __future__ import annotations

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the repository verification gates inherited from the v9-5 exit matrix.
+"""Run every inherited hard gate of the promoted Garns product baseline.
 
 No expected answer, filename, comment, or marker is an input to any detector:
 expectation files are read only to assert against independently observed
@@ -126,19 +126,15 @@ def purge_caches() -> int:
 
 def g0(gate: Gate) -> None:
     purge_caches()
-    gate.check("repository metadata is present", (BUILD / "pyproject.toml").is_file() and (BUILD / "CUT_MANIFEST.json").is_file())
-    root_grammar = (BUILD / "grammar" / "garns.lark").read_bytes()
-    package_grammar = (BUILD / "src" / "garns" / "garns.lark").read_bytes()
-    digest = hashlib.sha256(root_grammar).hexdigest()
-    gate.check("root and packaged grammar are byte-identical", root_grammar == package_grammar, digest)
+    proc = gate.command(PY + [str(BUILD / "tools" / "check_product.py")], cwd=BUILD, env_no_bytecode=True)
+    gate.check("product baseline check passes", proc.returncode == 0, proc.stdout.strip().splitlines()[-1] if proc.stdout else proc.stderr[-200:])
+    baseline = json.loads((BUILD / "BASELINE.json").read_text())
+    mine = hashlib.sha256((BUILD / "grammar" / "garns.lark").read_bytes()).hexdigest()
+    expected = baseline["sha256"]["grammar/garns.lark"]
+    gate.check("product grammar is byte-identical to the ratified grammar", mine == expected, mine)
     for rel in ("corpus/conformance/static/reporting.garns", "corpus/conformance/dynamic/open_orders.garns"):
-        path = BUILD / rel
-        try:
-            parse_path(path)
-        except Exception as exc:
-            gate.check(f"{rel} remains admitted", False, str(exc))
-        else:
-            gate.check(f"{rel} remains admitted", True, hashlib.sha256(path.read_bytes()).hexdigest())
+        observed = hashlib.sha256((BUILD / rel).read_bytes()).hexdigest()
+        gate.check(f"{rel} copied byte-identical", observed == baseline["sha256"][rel], observed)
     gate.evidence.append("grammar/garns.lark")
 
 
@@ -692,10 +688,10 @@ def main() -> int:
     ap.add_argument("--quick", action="store_true")
     args = ap.parse_args()
     started = time.time()
-    tmp = Path(tempfile.mkdtemp(prefix="garns-check-"))
+    tmp = Path(tempfile.mkdtemp(prefix="garns-b2-check-"))
     gates: list[Gate] = []
     matrix = [
-        ("G0", "Repository integrity"), ("G1", "Grammar and corpus"), ("G2", "Static query"), ("G3", "Dynamic question"), ("G4", "Shared lowering"),
+        ("G0", "Promoted baseline"), ("G1", "Grammar and corpus"), ("G2", "Static query"), ("G3", "Dynamic question"), ("G4", "Shared lowering"),
         ("G5", "Schema independence"), ("G6", "Identity/world/evolution"), ("G7", "Live correctness"), ("G8", "Ledger and capture"),
         ("G9", "Evidence honesty"), ("G10", "Forbidden coupling"), ("G11", "Target parity and measures"),
     ]
@@ -715,8 +711,8 @@ def main() -> int:
     for name, _ in matrix:
         gates.append(by_name[name])
     report = {
-        "schema": "garns/gate-report/1",
-        "build": "garns",
+        "schema": "garns/v9-6-w0-gate-report/1",
+        "build": "v9-6-w0-baseline",
         "python": sys.version.split()[0],
         "command": "uv run --offline --with lark python tools/check.py",
         "seconds": round(time.time() - started, 1),

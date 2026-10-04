@@ -1,0 +1,19 @@
+{
+  "schema": "garns/w0-baseline/1",
+  "selected_source": {
+    "path": "../garns-v9-5/build/B2",
+    "files": 569,
+    "tree_sha256": "09591d3f6809b33a7edeffe6f3251075f9486dae517ed633a0a9abd6d3d2247a"
+  },
+  "sha256": {
+    "grammar/garns.lark": "3a453f5ac7998dc6639593a9c01a1f0806b7b5f2b00afc8a8ed56e4db9f3d4e8",
+    "corpus/conformance/static/reporting.garns": "8c64c6b8d7720eee756638ddb25e6f0e36c91fe9847550159ff48630f69f8ed3",
+    "corpus/conformance/dynamic/open_orders.garns": "51e4899d7abf44d8a082cb8d56595b8894dd0dfe85d08b06367788d42e2b9c7f"
+  },
+  "inherited_counts": {
+    "unit_tests": 103,
+    "gate_checks": 128,
+    "mutants": 168,
+    "generated_files_including_index": 173
+  }
+}

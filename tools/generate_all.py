@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Regenerate build/B2/generated/ for every corpus world (delete and regenerate).
+"""Regenerate ``generated/`` for every corpus world (delete and regenerate).
 
 Each world is selected explicitly by name with its storage binding; the index
 records the tree digest per world so a reviewer can compare after deleting
-the directory and running this again. Run from build/B2.
+the directory and running this again. Run from the repository root.
 """
 
 from __future__ import annotations

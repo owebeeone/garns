@@ -1,37 +1,47 @@
 {
- "schema": "garns/gate-report/1",
- "build": "garns",
- "python": "3.12.12",
+ "schema": "garns/v9-6-w0-gate-report/1",
+ "build": "v9-6-w0-baseline",
+ "python": "3.14.3",
  "command": "uv run --offline --with lark python tools/check.py",
- "seconds": 2.4,
+ "seconds": 2.9,
  "gates": [
   {
    "gate": "G0",
-   "requirement": "Repository integrity",
+   "requirement": "Promoted baseline",
    "pass": true,
    "checks": [
     {
-     "label": "repository metadata is present",
+     "label": "product baseline check passes",
      "ok": true,
-     "detail": ""
+     "detail": "PASS W0 product baseline"
     },
     {
-     "label": "root and packaged grammar are byte-identical",
+     "label": "product grammar is byte-identical to the ratified grammar",
      "ok": true,
      "detail": "3a453f5ac7998dc6639593a9c01a1f0806b7b5f2b00afc8a8ed56e4db9f3d4e8"
     },
     {
-     "label": "corpus/conformance/static/reporting.garns remains admitted",
+     "label": "corpus/conformance/static/reporting.garns copied byte-identical",
      "ok": true,
      "detail": "8c64c6b8d7720eee756638ddb25e6f0e36c91fe9847550159ff48630f69f8ed3"
     },
     {
-     "label": "corpus/conformance/dynamic/open_orders.garns remains admitted",
+     "label": "corpus/conformance/dynamic/open_orders.garns copied byte-identical",
      "ok": true,
      "detail": "51e4899d7abf44d8a082cb8d56595b8894dd0dfe85d08b06367788d42e2b9c7f"
     }
    ],
-   "commands": [],
+   "commands": [
+    {
+     "argv": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/Volumes/projects/limbo/datascad/garns-v9-6/tools/check_product.py"
+     ],
+     "exit": 0,
+     "stdout_tail": "PASS product paths\nPASS pinned baseline inputs\nPASS cache hygiene\nPASS shipped path hygiene\nPASS W0 product baseline\n",
+     "stderr_tail": ""
+    }
+   ],
    "evidence": [
     "grammar/garns.lark"
    ]
@@ -780,17 +790,17 @@
       "/Users/owebeeone/.cargo/bin/rustc",
       "-O",
       "-o",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-PRACTICE",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/rs-PRACTICE/rust/main.rs"
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-PRACTICE",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/rs-PRACTICE/rust/main.rs"
      ],
      "exit": 0,
      "stdout_tail": "",
-     "stderr_tail": "he identifier to snake case: `notes_dormant_clients`\n\nwarning: module `notes__notes_in_window` should have a snake case name\n  --> /var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/rs-PRACTICE/rust/main.rs:25:5\n   |\n25 | mod notes__notes_in_window;\n   |     ^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `notes_notes_in_window`\n\nwarning: 11 warnings emitted\n\n"
+     "stderr_tail": "identifier to snake case: `notes_dormant_clients`\n\nwarning: module `notes__notes_in_window` should have a snake case name\n  --> /var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/rs-PRACTICE/rust/main.rs:25:5\n   |\n25 | mod notes__notes_in_window;\n   |     ^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `notes_notes_in_window`\n\nwarning: 11 warnings emitted\n\n"
     },
     {
      "argv": [
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-PRACTICE",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/PRACTICE.sqlite",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-PRACTICE",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/PRACTICE.sqlite",
       "clients.contacts_with_relationship",
       "kind=s:sister",
       "_scope=i:1"
@@ -801,8 +811,8 @@
     },
     {
      "argv": [
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-PRACTICE",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/PRACTICE.sqlite",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-PRACTICE",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/PRACTICE.sqlite",
       "labels.vip_clients",
       "_scope=i:1"
      ],
@@ -812,8 +822,8 @@
     },
     {
      "argv": [
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-PRACTICE",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/PRACTICE.sqlite",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-PRACTICE",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/PRACTICE.sqlite",
       "clients.all_clients_for_audit"
      ],
      "exit": 0,
@@ -822,8 +832,8 @@
     },
     {
      "argv": [
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-PRACTICE",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/PRACTICE.sqlite",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-PRACTICE",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/PRACTICE.sqlite",
       "notes.dormant_clients",
       "after=i:10",
       "_scope=i:1"
@@ -837,17 +847,17 @@
       "/Users/owebeeone/.cargo/bin/rustc",
       "-O",
       "-o",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-SALES",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/rs-SALES/rust/main.rs"
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-SALES",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/rs-SALES/rust/main.rs"
      ],
      "exit": 0,
      "stdout_tail": "",
-     "stderr_tail": "g: module `sales_static__revenue_open_by_customer` should have a snake case name\n  --> /var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/rs-SALES/rust/main.rs:11:5\n   |\n11 | mod sales_static__revenue_open_by_customer;\n   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `sales_static_revenue_open_by_customer`\n\nwarning: 4 warnings emitted\n\n"
+     "stderr_tail": "module `sales_static__revenue_open_by_customer` should have a snake case name\n  --> /var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/rs-SALES/rust/main.rs:11:5\n   |\n11 | mod sales_static__revenue_open_by_customer;\n   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to snake case: `sales_static_revenue_open_by_customer`\n\nwarning: 4 warnings emitted\n\n"
     },
     {
      "argv": [
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-SALES",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/SALES.sqlite",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-SALES",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/SALES.sqlite",
       "sales.open_orders"
      ],
      "exit": 0,
@@ -856,8 +866,8 @@
     },
     {
      "argv": [
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-SALES",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/SALES.sqlite",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-SALES",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/SALES.sqlite",
       "sales_static.revenue_open_by_customer",
       "floor=i:10"
      ],
@@ -867,8 +877,8 @@
     },
     {
      "argv": [
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/runner-SALES",
-      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-check-6vd8z5vh/SALES.sqlite",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/runner-SALES",
+      "/var/folders/02/bn9c9g2x5qj8bb42zb857p7c0000gn/T/garns-b2-check-shwhbsaj/SALES.sqlite",
       "sales_static.open_orders_once"
      ],
      "exit": 0,
