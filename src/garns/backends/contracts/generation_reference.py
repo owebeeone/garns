@@ -36,6 +36,8 @@ class _PermitRecord:
     owner: object
     admission_epoch: int
     binding: BindingIdentity
+    runtime_identity: object
+    join_serial: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,6 +46,8 @@ class _BufferPermitRecord:
     owner: object
     admission_epoch: int
     binding: BindingIdentity
+    runtime_identity: object
+    join_serial: int
 
 
 @dataclass(slots=True)
@@ -52,6 +56,8 @@ class _OpenRecord:
     state: ParticipantState = ParticipantState.UNJOINED
     membership: ParticipantMembership | None = None
     join_serial: int = 0
+    drain_witnessed: bool = False
+    close_witnessed: bool = False
 
 
 @dataclass(slots=True)
@@ -90,6 +96,7 @@ class ReferenceGenerationCoordinator:
         self._attempts: dict[MigrationAttempt, MigrationAttemptRecord] = {}
         self._current_attempt: MigrationAttempt | None = None
         self._no_effect_proofs: dict[MigrationNoEffectProof, MigrationNoEffectRecord] = {}
+        self._lifetime_handshake = False
 
     def prepare_lifetime_open(self, runtime_identity: object) -> LifetimeOpenRecord:
         if runtime_identity is None:
@@ -104,10 +111,19 @@ class ReferenceGenerationCoordinator:
         opened = self._opens.get(open_record)
         if opened is None or opened.state is not ParticipantState.UNJOINED:
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "lifetime open is unavailable")
-        if self.activation is not ActivationState.ACTIVE or self.state is not DeploymentGenerationState.CURRENT:
+        first_open = (
+            self.activation is ActivationState.ACTIVE_UNUSED and self._lifetime_handshake
+        )
+        if not first_open and self.activation is not ActivationState.ACTIVE:
+            raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "runtime cannot join before active open")
+        if self.state is not DeploymentGenerationState.CURRENT:
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "runtime cannot join before active open")
         if self._current_attempt is not None:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "participant topology is frozen")
+        if first_open:
+            # Design §9: the first lifetime open changes ACTIVE_UNUSED to
+            # ACTIVE in the same transaction that issues the membership.
+            self.activation = ActivationState.ACTIVE
         membership = issue_participant()
         self._join_serial += 1
         opened.state = ParticipantState.JOINED
@@ -123,14 +139,47 @@ class ReferenceGenerationCoordinator:
         if type(open_record) is not LifetimeOpenRecord:
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "exact lifetime open record required")
         opened = self._opens.get(open_record)
-        if opened is None or opened.state is not ParticipantState.UNJOINED:
+        if opened is None:
+            raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "unjoined open is unavailable")
+        if opened.state is ParticipantState.LEFT and opened.membership is None:
+            return
+        if opened.state is not ParticipantState.UNJOINED:
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "unjoined open is unavailable")
         opened.state = ParticipantState.LEFT
+
+    def witness_local_drain(self, open_record: LifetimeOpenRecord) -> ParticipantState:
+        """Registry-witnessed local drain/fence; the sole holder of the exact open record presents it."""
+
+        opened = self._open_for_member(open_record)
+        opened.drain_witnessed = True
+        return self._memberships[opened.membership].state
+
+    def witness_local_close(self, open_record: LifetimeOpenRecord) -> ParticipantState:
+        """Registry-witnessed CLOSED outcome: the one transition that can finish a leave.
+
+        Presented only on a CLOSED close outcome.  When no attempt is open and the
+        member retains no permit, the leave finishes here; during a frozen attempt
+        the member stays LEAVE_PENDING and finishes when the attempt closes.
+        """
+
+        opened = self._open_for_member(open_record)
+        if not opened.drain_witnessed:
+            raise ContractRefusal(RefusalCode.LOCAL_RESOURCE_DRAINING, "local close requires the witnessed drain fence")
+        opened.close_witnessed = True
+        membership = opened.membership
+        record = self._memberships[membership]
+        if record.state is ParticipantState.JOINED:
+            record.state = ParticipantState.LEAVE_PENDING
+        if record.state is ParticipantState.LEAVE_PENDING and self._leave_finishable(opened, record):
+            self._finish_leave(membership, record)
+        return record.state
 
     def request_leave(self, membership: ParticipantMembership) -> ParticipantState:
         record = self._membership_record(membership)
         if record.state is ParticipantState.LEAVE_PENDING:
             return record.state
+        if not self._opens[record.open_record].drain_witnessed:
+            raise ContractRefusal(RefusalCode.LOCAL_RESOURCE_DRAINING, "leave requires the runtime's witnessed drain or fence")
         record.state = ParticipantState.LEAVE_PENDING
         return record.state
 
@@ -138,7 +187,10 @@ class ReferenceGenerationCoordinator:
         record = self._membership_record(membership)
         if record.state is not ParticipantState.LEAVE_PENDING:
             raise ContractRefusal(RefusalCode.LEASE_INVALID, "membership is not pending leave")
-        if self._current_attempt is not None or self._runtime_has_obligations(record.runtime_identity):
+        opened = self._opens[record.open_record]
+        if not opened.close_witnessed:
+            raise ContractRefusal(RefusalCode.LEASE_INVALID, "membership retains obligations: local close is not witnessed")
+        if not self._leave_finishable(opened, record):
             raise ContractRefusal(RefusalCode.LEASE_INVALID, "membership retains obligations")
         self._finish_leave(membership, record)
         return ParticipantState.LEFT
@@ -196,11 +248,18 @@ class ReferenceGenerationCoordinator:
         raise TypeError("activation recovery requires exact proof inputs")
 
     def first_lifetime_open(self, protocol: str, epoch: int) -> None:
+        """Record the exact lifetime handshake for the first open.
+
+        This performs no activation edge: `ACTIVE_UNUSED -> ACTIVE` happens only
+        inside the first `join_runtime`, so unused withdrawal stays available
+        until a runtime has actually joined (design §9, overlay §8.1).
+        """
+
         if protocol != "plan_admission_lifetime_v1":
             raise ContractRefusal(RefusalCode.LIFETIME_PROTOCOL_REQUIRED, "missing lifetime capability")
         if type(epoch) is not int or self.activation is not ActivationState.ACTIVE_UNUSED or epoch != self.protocol_epoch:
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "active unused epoch mismatch")
-        self.activation = ActivationState.ACTIVE
+        self._lifetime_handshake = True
 
     def withdraw_unused(self, proof: ActivationUnusedWithdrawalProof) -> None:
         if self.activation is not ActivationState.ACTIVE_UNUSED:
@@ -220,19 +279,27 @@ class ReferenceGenerationCoordinator:
     def refuse_retirement_or_reset(self) -> None:
         raise ContractRefusal(RefusalCode.LIFETIME_PROTOCOL_REQUIRED, "active protocol has no reset or retirement edge")
 
-    def acquire_shared(self, operation: OperationIdentity, owner: object) -> GenerationPermit:
+    def acquire_shared(
+        self, operation: OperationIdentity, owner: object, membership: ParticipantMembership,
+    ) -> GenerationPermit:
         if self.activation is not ActivationState.ACTIVE:
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "lifetime protocol is not active")
         if self.state is not DeploymentGenerationState.CURRENT:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "generation is not admitting work")
         if type(operation) is not OperationIdentity or owner is None:
             raise TypeError("shared permit requires exact operation and owner identities")
+        member = self._joined_member(membership)
+        if operation.runtime_identity is not member.runtime_identity:
+            raise ContractRefusal(RefusalCode.LEASE_INVALID, "operation is not bound to the exact member runtime")
         if operation.deployment != self.deployment or operation.generation != self.binding.generation:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "operation generation mismatch")
         if any(record.operation == operation for record in self._permits.values()):
             raise ValueError("operation already owns a shared permit")
         permit = _issue_generation_permit()
-        self._permits[permit] = _PermitRecord(operation, owner, self.admission_epoch, self.binding)
+        self._permits[permit] = _PermitRecord(
+            operation, owner, self.admission_epoch, self.binding,
+            member.runtime_identity, member.join_serial,
+        )
         return permit
 
     def permit_live(self, permit: GenerationPermit, owner: object, operation: OperationIdentity,
@@ -260,17 +327,23 @@ class ReferenceGenerationCoordinator:
             raise ValueError("generation permit is not owned and live")
         del self._permits[permit]
 
-    def add_buffer(self, envelope: BufferedDelivery, owner: object) -> BufferedDeliveryPermit:
+    def add_buffer(
+        self, envelope: BufferedDelivery, owner: object, membership: ParticipantMembership,
+    ) -> BufferedDeliveryPermit:
         if self.state is not DeploymentGenerationState.CURRENT:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "buffer enqueue is fenced")
         if type(envelope) is not BufferedDelivery or owner is None:
             raise TypeError("buffer permit requires exact envelope and owner identities")
+        member = self._joined_member(membership)
         if envelope.deployment != self.deployment or envelope.generation != self.binding.generation:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "buffer generation mismatch")
         if any(record.envelope is envelope for record in self._buffers.values()):
             raise ValueError("buffer permit already exists")
         permit = _issue_buffer_permit()
-        self._buffers[permit] = _BufferPermitRecord(envelope, owner, self.admission_epoch, self.binding)
+        self._buffers[permit] = _BufferPermitRecord(
+            envelope, owner, self.admission_epoch, self.binding,
+            member.runtime_identity, member.join_serial,
+        )
         return permit
 
     def release_buffer(self, permit: BufferedDeliveryPermit, owner: object) -> None:
@@ -284,6 +357,7 @@ class ReferenceGenerationCoordinator:
     def exchange_buffer_for_shared(
         self, buffer_permit: BufferedDeliveryPermit, buffer_owner: object,
         envelope: BufferedDelivery, operation: OperationIdentity, shared_owner: object,
+        membership: ParticipantMembership,
     ) -> GenerationPermit:
         if type(buffer_permit) is not BufferedDeliveryPermit:
             raise ValueError("buffer permit is not exact")
@@ -294,11 +368,20 @@ class ReferenceGenerationCoordinator:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "buffer handoff is fenced")
         if type(operation) is not OperationIdentity or shared_owner is None:
             raise TypeError("buffer exchange requires exact operation and owner")
+        member = self._joined_member(membership)
+        if (
+            operation.runtime_identity is not member.runtime_identity
+            or buffered.runtime_identity is not member.runtime_identity
+        ):
+            raise ContractRefusal(RefusalCode.LEASE_INVALID, "buffer exchange is not bound to the exact member runtime")
         if operation.deployment != self.deployment or operation.generation != self.binding.generation:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "handoff operation generation mismatch")
         permit = _issue_generation_permit()
         del self._buffers[buffer_permit]
-        self._permits[permit] = _PermitRecord(operation, shared_owner, self.admission_epoch, self.binding)
+        self._permits[permit] = _PermitRecord(
+            operation, shared_owner, self.admission_epoch, self.binding,
+            member.runtime_identity, member.join_serial,
+        )
         return permit
 
     def register_participant(self) -> MigrationParticipant:
@@ -397,7 +480,7 @@ class ReferenceGenerationCoordinator:
         self._current_attempt = None
         self._finish_pending_leaves()
 
-    def begin_migration(self, attempt: MigrationAttempt, requested: BindingIdentity) -> None:
+    def begin_migration(self, attempt: MigrationAttempt, requested: BindingIdentity) -> MigrationRequestIdentity:
         record = self._attempt_record(attempt)
         if (
             self.state is not DeploymentGenerationState.DRAINING_OLD
@@ -415,16 +498,34 @@ class ReferenceGenerationCoordinator:
         record.phase_serial += 1
         record.phase_request = issue_request()
         self.state = DeploymentGenerationState.MIGRATING
+        return record.phase_request
 
     def begin_migration_effect(self) -> None:
         if self.state is not DeploymentGenerationState.MIGRATING or self._requested_binding is None:
             raise ValueError("migration is not active")
-        self._migration_effect_begun = True
         record = self._attempts[self._current_attempt]
+        if record.phase is not AttemptPhase.MIGRATING_PRE_EFFECT or record.effect_begun:
+            raise ContractRefusal(
+                RefusalCode.MIGRATION_INDETERMINATE,
+                "the first migration effect was already recorded for this attempt",
+            )
+        self._migration_effect_begun = True
         record.effect_begun = True
         record.phase = AttemptPhase.EFFECT_BEGUN
         record.phase_serial += 1
         record.phase_request = issue_request()
+
+    def retire_binding(self) -> None:
+        """Explicit refusal of the `CURRENT x NONE -> RETIRED x NONE` product edge.
+
+        Deployment decommissioning needs separate future authority (overlay
+        §12); this reference offers no retirement edge from CURRENT.
+        """
+
+        raise ContractRefusal(
+            RefusalCode.LIFETIME_PROTOCOL_REQUIRED,
+            "binding retirement from CURRENT requires separate decommissioning authority",
+        )
 
     def publish_generation(self, requested: BindingIdentity) -> None:
         if self.state is not DeploymentGenerationState.MIGRATING or not self._migration_effect_begun:
@@ -513,8 +614,32 @@ class ReferenceGenerationCoordinator:
             raise ContractRefusal(RefusalCode.LEASE_INVALID, "membership is not joined")
         return record
 
+    def _joined_member(self, membership: ParticipantMembership) -> _MembershipRecord:
+        record = self._membership_record(membership)
+        if record.state is not ParticipantState.JOINED:
+            raise ContractRefusal(RefusalCode.LEASE_INVALID, "membership no longer admits new work")
+        return record
+
+    def _open_for_member(self, open_record: LifetimeOpenRecord) -> _OpenRecord:
+        if type(open_record) is not LifetimeOpenRecord:
+            raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "exact lifetime open record required")
+        opened = self._opens.get(open_record)
+        if opened is None or opened.membership is None or opened.membership not in self._memberships:
+            raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "lifetime open has no joined membership")
+        return opened
+
     def _runtime_has_obligations(self, runtime_identity: object) -> bool:
-        return any(record.operation.runtime_identity is runtime_identity for record in self._permits.values())
+        return (
+            any(record.runtime_identity is runtime_identity for record in self._permits.values())
+            or any(record.runtime_identity is runtime_identity for record in self._buffers.values())
+        )
+
+    def _leave_finishable(self, opened: _OpenRecord, record: _MembershipRecord) -> bool:
+        return (
+            opened.close_witnessed
+            and self._current_attempt is None
+            and not self._runtime_has_obligations(record.runtime_identity)
+        )
 
     def _finish_leave(self, membership: ParticipantMembership, record: _MembershipRecord) -> None:
         record.state = ParticipantState.LEFT
@@ -524,7 +649,9 @@ class ReferenceGenerationCoordinator:
 
     def _finish_pending_leaves(self) -> None:
         for membership, record in tuple(self._memberships.items()):
-            if record.state is ParticipantState.LEAVE_PENDING and not self._runtime_has_obligations(record.runtime_identity):
+            if record.state is ParticipantState.LEAVE_PENDING and self._leave_finishable(
+                self._opens[record.open_record], record,
+            ):
                 self._finish_leave(membership, record)
 
     @staticmethod
@@ -558,4 +685,5 @@ class ReferenceGenerationCoordinator:
         self._attempted_protocol_epoch = None
         self._attempted_binding = None
         self._activation_fence_digest = None
+        self._lifetime_handshake = False
         self.activation = ActivationState.UNACTIVATED

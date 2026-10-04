@@ -58,13 +58,31 @@ failure preserve one primary exit plus bounded diagnostics and retain the
 generation charge until authoritative quiescence.
 
 Non-delivery publication atomically records visibility, terminal success and
-the one release. Iterator delivery instead uses one specialized success
-settlement that atomically records visibility, settles/folds the FIFO head,
-terminalizes and releases. Generic completion cannot finish a handoff. Every
-precommit non-success retires the registration, invalidates successors, and
-retains the active head's charge until exact worker-and-iterator stop and the
-specialized second settlement. A commit-first outcome cannot later be
-relabeled by close, migration, fence or receiving-task loss.
+the one release, for execution, consistent snapshot, snapshot registration and
+neutral or changed refresh alike. Every such terminal success stands behind one
+publication precondition: every scheduled command slot accepted, no active
+command, the exact runtime continuation owner and a live, current receiver;
+publication with no dispatched command refuses, and generic completion records
+success only as an exact replay of a committed publication. A presentation-only
+mismatch (wrong task or owner) refuses without mutation; genuine invalidation
+(expiry, invalidation, epoch, binding, permit, local fence, queue target)
+moves the lease, its active command and its private result together through
+one containment routine, and a hard fence applies that routine to every
+remaining selected lease. Terminal leases are absorbing. Authoritative queue
+removal creates a cancel exit receipt and, for a delivery, enters the first
+retirement phase in the same mutation; every registry-detected delivery
+non-success begins that phase with a registry-owned cause. Iterator delivery
+instead uses one specialized success settlement that atomically records
+visibility, settles/folds the FIFO head, terminalizes and releases. Generic
+completion cannot finish a handoff. Every precommit non-success retires the
+registration, invalidates successors, and retains the active head's charge
+until exact worker-and-iterator stop and the specialized second settlement; a
+retiring handoff keeps its retirement through revocation and fence. A
+commit-first outcome cannot later be relabeled by close, migration, fence or
+receiving-task loss. At terminalization the command ledger and its
+per-command records are discarded; current candidates, authorizations and exit
+receipts are indexed so lookups do constant work, and no evicted candidate or
+receipt identity survives outside the replay ring.
 
 Deployment participation requires `plan_admission_lifetime_v1`. Activation is
 one-time and requires authoritative operator inventory plus a physical legacy
@@ -77,11 +95,20 @@ no reset, deactivation or protocol-retirement edge after first open.
 
 Runtime construction is `UNJOINED`: it creates no coordinator participant or
 admission authority. An exact lifetime-capable open atomically joins an active
-current binding and issues a sealed `ParticipantMembership`. Final local close
-requests/finalizes leave only after every retained operation, buffer, worker,
-containment and close obligation is gone. A leave requested during migration
-remains in that attempt's frozen set, becomes `LEFT` only after attempt close,
-and is absent from later attempts.
+current binding and issues a sealed `ParticipantMembership`; the first such
+open performs the `ACTIVE_UNUSED` to `ACTIVE` edge, so unused withdrawal stays
+available until a runtime has joined. Admissions, leases, buffer permits and
+buffer exchanges bind that exact membership and refuse once it has left. Leave
+is registry-witnessed: a leave request stands only behind the runtime's
+witnessed drain or fence, and the leave finishes only through the registry's
+witnessed `CLOSED` outcome, after every retained operation, generation or
+buffer permit, worker, containment and close obligation (including unresolved
+A7 identities) is gone. A leave requested during migration remains in that
+attempt's frozen set, reports `CLOSED` locally while still `LEAVE_PENDING`,
+becomes `LEFT` only after attempt close, and is absent from later attempts.
+The formal coordinator seam declares the membership, barrier, permit and
+phase-proof members with exact identity types; a coordinator missing any of
+them does not conform.
 
 Migration alone enters deployment-wide `DRAINING_OLD`. One sealed migration
 attempt freezes the joined participant set. Every participant installs and
@@ -142,8 +169,14 @@ Candidate deterministic contract evidence is in
 the retained initial/correction causal attacks, exact identity and ordinal
 conflicts, worker exit/stop/task-loss ordering, specialized FIFO settlement,
 activation-bracketed membership, bounded neutral lineage and the exact
-migration phase product. The source checks enforce the raw-`Plan` protocol
-boundary and sole mutable owner arrangement.
+migration phase product. Source correction 1 (2026-10-05) adds the closure
+tests of its remediation plan: the publication precondition at every
+prepublication stage, the containment matrix, terminal absorption, cleanup and
+later-slot validation, registry-witnessed leave, refresh disposition, bounded
+retention, replay exactness and the command-edge and migration-product
+enumerations. The source checks enforce the raw-`Plan` protocol boundary, the
+sole mutable owner arrangement, the exact terminalizer and worker-entry sets,
+the single containment routine and the coordinator seam's call shapes.
 
 The historical stopped source and its review rounds remain unchanged evidence.
 This implementation is a candidate only: these tests do not close any finding,

@@ -130,10 +130,10 @@ class ReferenceSnapshotRegistry:
             raise ValueError("initial snapshot candidate is unavailable")
         return record
 
-    def consume_initial(self, record: _InitialRecord) -> None:
-        if record.consumed:
-            raise ValueError("initial snapshot candidate was already consumed")
+    def consume_initial(self, candidate: InitialSnapshotCandidate) -> None:
+        record = self.initial_record(candidate)
         record.consumed = True
+        del self._initial[candidate]
 
     def setup_refresh(
         self, lease: ReadOperationLease, operation: OperationIdentity,

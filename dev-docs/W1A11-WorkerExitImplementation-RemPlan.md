@@ -1,8 +1,11 @@
 # W1A11 worker-exit implementation — consolidated remediation 1
 
-**Status:** manager verdict merge and proposed disposition. The consolidated
-source correction is **not authorized** until the operator says so; builder
-writes remain stopped.  
+**Status:** manager verdict merge and disposition. **Correction 1 authorized by
+the operator on 2026-10-05** ("commit it, then go ahead with correction 1"). The
+plan as filed is commit garns `142c5ed`. The operator did not choose separately
+between the builder model and IR20's placement. The manager therefore applies
+the recommendations given with the plan: one fresh Fable builder, and IR20
+stays out of this correction.  
 **Date:** 2026-10-04  
 **Object:** candidate worker-exit internal contracts/reference implementation at
 the approved filesystem tuple `W1A11-WorkerExitImplementation-MANIFEST-1.sha256`,
@@ -745,10 +748,11 @@ The boundary is unchanged:
 
 ## Next steps
 
-1. Operator decisions:
-   - authorize correction 1 under this plan;
-   - choose the builder's model;
-   - decide where IR20 is fixed.
+1. Operator decisions, settled 2026-10-05:
+   - correction 1 is authorized under this plan;
+   - the builder is one fresh Fable subagent, briefed by
+     `W1A11-WorkerExitImplementation-BuilderPrompt-2.md`;
+   - IR20 is fixed outside correction 1.
 2. Before any write, the manager:
    - preserves MANIFEST-1's exact files plus the manifest under
      `W1A11-WorkerExitImplementation-Revision1/`, so MANIFEST-1 still verifies

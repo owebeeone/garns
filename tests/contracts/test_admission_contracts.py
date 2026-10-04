@@ -72,6 +72,26 @@ def build_fixture(capabilities=frozenset({Capability.QUERY}), **registry_options
     return locals()
 
 
+def run_command(fixture, lease, value="result"):
+    """Drive the default issuer-owned command slot to RESULT_ACCEPTED.
+
+    Design §3 makes every schedule slot required, so no fixture publishes a
+    non-delivery operation without its command.  The default trusted worker
+    provider assigns the receiving task itself, so the task runs the slot.
+    """
+
+    registry = fixture["registry"]
+    authorization = registry.dispatch_worker(lease)
+    registry.dequeue_worker(lease, authorization)
+    registry.worker_issuer.run_effect(authorization, 1)
+    result = registry.setup_reference_worker_result(authorization, value)
+    receipt = registry.worker_exit_success(authorization, result)
+    stop = registry.setup_reference_worker_stop(authorization)
+    registry.observe_worker_stopped(stop)
+    registry.accept_worker_result(receipt)
+    return authorization
+
+
 class AdmissionContractTests(unittest.TestCase):
     def test_handles_are_empty_sealed_and_not_copyable_or_serializable(self) -> None:
         fixture = build_fixture()
@@ -236,11 +256,13 @@ class AdmissionContractTests(unittest.TestCase):
             resource=fixture["connection"], owner=owner,
         )
         registry.run_plan_step(lease, PlanStep.LOWER, owner, registry.issue_consumer("lower"))
+        run_command(fixture, lease)
         product = registry.run_plan_step(
             lease, PlanStep.PUBLICATION, owner, registry.issue_consumer("publication"),
         )
         self.assertEqual(PlanStep.PUBLICATION, product.step)
         self.assertEqual(1, registry.publications)
+        self.assertEqual(LeaseState.SUCCEEDED, registry.lease_state(lease))
         with self.assertRaises(ContractRefusal):
             registry.complete(lease, owner, LeaseState.REFUSED)
         registry.complete(lease, owner, LeaseState.SUCCEEDED)
@@ -254,12 +276,14 @@ class AdmissionContractTests(unittest.TestCase):
             resource=fixture["connection"], owner=owner,
         )
         registry.run_plan_step(lease, PlanStep.LOWER, owner, registry.issue_consumer("lower"))
+        run_command(fixture, lease)
         fixture["now"][0] = 10.0
         with self.assertRaises(ContractRefusal):
             registry.run_plan_step(
                 lease, PlanStep.PUBLICATION, owner, registry.issue_consumer("publish"),
             )
         self.assertEqual(0, registry.publications)
+        self.assertEqual(LeaseState.CONTAINED, registry.lease_state(lease))
 
     def test_owner_transfer_and_terminal_completion_are_compare_and_idempotent(self) -> None:
         fixture = build_fixture()
@@ -274,11 +298,17 @@ class AdmissionContractTests(unittest.TestCase):
         self.assertEqual(LeaseState.RUNNING, registry.lease_state(lease))
         with self.assertRaises(ContractRefusal):
             registry.transfer_owner(lease, owner, object())
-        registry.complete(lease, worker, LeaseState.SUCCEEDED)
-        registry.complete(lease, worker, LeaseState.SUCCEEDED)
+        # Design §6: terminal SUCCEEDED is recorded only by publication, so the
+        # generic completion of unpublished work is REFUSED; replay is idempotent.
+        with self.assertRaises(ContractRefusal) as premature:
+            registry.complete(lease, worker, LeaseState.SUCCEEDED)
+        self.assertEqual(RefusalCode.OPERATION_OUTCOME_CONFLICT, premature.exception.code)
+        self.assertEqual(LeaseState.RUNNING, registry.lease_state(lease))
+        registry.complete(lease, worker, LeaseState.REFUSED)
+        registry.complete(lease, worker, LeaseState.REFUSED)
         self.assertEqual(0, fixture["coordinator"].count())
         with self.assertRaises(ContractRefusal) as caught:
-            registry.complete(lease, worker, LeaseState.REFUSED)
+            registry.complete(lease, worker, LeaseState.SUCCEEDED)
         self.assertEqual(RefusalCode.OPERATION_OUTCOME_CONFLICT, caught.exception.code)
 
     def test_rejected_transfer_is_atomic_and_old_owner_remains_usable(self) -> None:

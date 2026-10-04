@@ -22,6 +22,7 @@ from garns.backends.contracts.values import (
     RefetchRequired, RefreshRecordUnavailable, RefusalCode, RevisionCursor,
     TransactionIdentity,
 )
+from tests.contracts.test_admission_contracts import run_command
 
 
 def make_plan(scope, binding, noun="question", digest="live"):
@@ -98,8 +99,10 @@ def register(fixture, *, peer=False):
     )
     step(fixture, lease, PlanStep.REGISTRATION, "registration")
     step(fixture, lease, PlanStep.ASSEMBLY, "snapshot-assembly")
+    run_command(fixture, lease, ({"initial": True},))
+    # Design §2 row 2: registration publishes, terminalizes and releases in
+    # one mutation; there is no separately callable releasing completion.
     result = registry.register_subscription(lease, owner, candidate)
-    registry.complete(lease, owner, LeaseState.SUCCEEDED)
     return result.registration
 
 
@@ -123,6 +126,7 @@ def publish(fixture, registration, *, peer=False, revision=1):
         RevisionCursor(fixture["scope"], 1, revision),
         ({"status": "open"},), f"advance-{revision}",
     )
+    run_command(fixture, lease, ({"status": "open"},))
     return registry.publish_refresh_buffer(lease, owner, candidate)
 
 
@@ -174,10 +178,10 @@ class LifetimeContractTests(unittest.TestCase):
             resource=fixture["connection_b"], owner=owner,
         )
         registry.transfer_owner(peer, owner, owner)
-        registry.complete(peer, owner, LeaseState.SUCCEEDED)
+        registry.complete(peer, owner, LeaseState.REFUSED)
         self.assertEqual(CloseKnowledge.NONQUIESCENT, registry.close_outcome(fixture["pool_a"]).knowledge)
         registry.transfer_owner(lease, owner, owner)
-        registry.complete(lease, owner, LeaseState.SUCCEEDED)
+        registry.complete(lease, owner, LeaseState.REFUSED)
         self.assertEqual(CloseKnowledge.CLOSED, registry.close_outcome(fixture["pool_a"]).knowledge)
         self.assertEqual(LocalResourceState.LOCAL_OPEN, registry.resource_state(fixture["pool_b"]))
 
@@ -208,6 +212,7 @@ class LifetimeContractTests(unittest.TestCase):
         self.assertEqual({"x": 1}, dict(product.parameters.items()))
         with self.assertRaises(ValueError):
             step(fixture, lease, PlanStep.VALIDATE)
+        run_command(fixture, lease)
         registry.run_plan_step(lease, PlanStep.PUBLICATION, owner, consumer)
         with self.assertRaises((ContractRefusal, ValueError)):
             registry.run_plan_step(lease, PlanStep.PUBLICATION, owner, consumer)
@@ -241,6 +246,7 @@ class LifetimeContractTests(unittest.TestCase):
                     fixture["context"], resource=fixture["connection_a"], owner=owner,
                 )
                 step(fixture, lease, PlanStep.LOWER)
+                run_command(fixture, lease)
                 if attack == "revoke":
                     registry.revoke_generation()
                 elif attack == "expiry":
@@ -264,6 +270,7 @@ class LifetimeContractTests(unittest.TestCase):
             fixture["context"], resource=fixture["connection_a"], owner=owner,
         )
         step(fixture, lease, PlanStep.LOWER)
+        run_command(fixture, lease)
         fixture["coordinator"].begin_drain(fixture["binding"])
         step(fixture, lease, PlanStep.PUBLICATION)
         self.assertEqual(1, registry.publications)
@@ -403,6 +410,7 @@ class LifetimeContractTests(unittest.TestCase):
                 action()
         step(fixture, lease, PlanStep.REGISTRATION)
         step(fixture, lease, PlanStep.ASSEMBLY)
+        run_command(fixture, lease, ({"row": 1},))
         registry.start_close(fixture["queue"], hard=True)
         before = (registry.publications, fixture["coordinator"].count())
         with self.assertRaises(ContractRefusal):
@@ -431,6 +439,7 @@ class LifetimeContractTests(unittest.TestCase):
         self.assertFalse(hasattr(candidate, "__dict__"))
         with self.assertRaises(TypeError):
             copy.copy(candidate)
+        run_command(fixture, lease, ({"row": 1},))
         envelope = registry.publish_refresh_buffer(lease, owner, candidate)
         self.assertIsInstance(envelope, BufferedDelivery)
         with self.assertRaises(ContractRefusal):
@@ -455,6 +464,7 @@ class LifetimeContractTests(unittest.TestCase):
             )
             step(fixture, lease, PlanStep.REGISTRATION)
             step(fixture, lease, PlanStep.ASSEMBLY)
+            run_command(fixture, lease, ({"row": 1},))
             return lease, candidate
 
         first, candidate = prepared()
@@ -463,7 +473,10 @@ class LifetimeContractTests(unittest.TestCase):
         with self.assertRaises(ContractRefusal):
             registry.register_subscription(second, owner, candidate)
         self.assertEqual(before, (registry.publications, fixture["coordinator"].count()))
-        registry.complete(second, owner, LeaseState.REFUSED)
+        # An accepted, unpublished worker-backed operation is abandoned through
+        # ordinary outer containment, never through a generic completion.
+        registry.request_worker_cancel(second)
+        registry.complete_contained(second)
         result = registry.register_subscription(first, owner, candidate)
         self.assertEqual(RevisionCursor(fixture["scope"], 1, 0), result.watermark)
         with self.assertRaises(ContractRefusal):
@@ -576,6 +589,7 @@ class LifetimeContractTests(unittest.TestCase):
                     RevisionCursor(fixture["scope"], 1, 1),
                     RevisionCursor(fixture["scope"], 1, 1), (), "advance",
                 )
+                run_command(fixture, lease, ())
                 if attack == "expiry":
                     fixture["now"][0] = 10.0
                 elif attack == "revocation":

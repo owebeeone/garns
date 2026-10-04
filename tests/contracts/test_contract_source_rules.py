@@ -28,6 +28,29 @@ OWNED_SOURCE = (
 )
 
 
+# Accepted coordinator call shapes (design §9 membership, §11 proof and
+# effect-begun transitions, permits and the frozen-attempt barrier).  The
+# formal seam must declare exactly these members, and every coordinator call
+# site in the registry must be one of them.
+COORDINATOR_ATTRIBUTES = ("deployment", "binding", "state", "admission_epoch")
+COORDINATOR_METHODS = (
+    "prepare_lifetime_open", "join_runtime", "close_unjoined",
+    "witness_local_drain", "witness_local_close", "request_leave",
+    "finalize_leave", "membership_state",
+    "acquire_shared", "release_shared", "add_buffer", "release_buffer",
+    "exchange_buffer_for_shared", "permit_live", "count",
+    "begin_drain", "barrier_allowed", "acknowledge_barrier", "begin_migration",
+    "begin_migration_effect", "observe_request_released", "reopen_no_effect",
+    "no_effect_reopen_complete", "attempt_product", "publish_generation",
+    "mark_indeterminate",
+)
+MEMBERSHIP_AND_PROOF_METHODS = (
+    "join_runtime", "request_leave", "finalize_leave", "close_unjoined",
+    "witness_local_drain", "witness_local_close",
+    "observe_request_released", "reopen_no_effect", "begin_migration_effect",
+)
+
+
 def parsed(name: str) -> ast.Module:
     return ast.parse((CONTRACTS / name).read_text(encoding="utf-8"), filename=name)
 
@@ -78,7 +101,9 @@ class ContractSourceRules(unittest.TestCase):
             "run_worker_effect": ("self", "authorization", "ordinal"),
             "worker_exit_success": ("self", "authorization", "result"),
             "worker_exit_failure": ("self", "authorization", "failure"),
+            "run_worker_cleanup": ("self", "authorization", "step"),
             "request_worker_cancel": ("self", "lease"),
+            "observe_receiving_task_done": ("self", "observation"),
             "observe_worker_stopped": ("self", "receipt"),
             "accept_worker_result": ("self", "receipt"),
         }
@@ -90,10 +115,138 @@ class ContractSourceRules(unittest.TestCase):
                 actual = tuple(argument.arg for argument in node.args.args)
                 self.assertEqual(parameters, actual)
                 self.assertFalse({"callback", "worker", "task", "stop", "proof"} & set(actual))
+        # The exact set of entries that take a worker authorization: nothing
+        # outside this enumeration may accept one (design §12 enumeration).
+        authorization_entries = {
+            node.name for node in owner.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and "authorization" in {argument.arg for argument in node.args.args}
+        }
+        self.assertEqual({
+            "dequeue_worker", "run_worker_effect", "setup_reference_worker_result",
+            "setup_reference_worker_failure", "worker_exit_success", "worker_exit_failure",
+            "run_worker_cleanup", "setup_reference_worker_stop", "worker_command_state",
+            "worker_effect_knowledge", "worker_ordinals", "worker_exit_facts",
+            "worker_cleanup_step", "_command_for", "_worker_context_owner",
+            "_revoke_worker_authorization",
+        }, authorization_entries)
         self.assertEqual(
             ("authorization", "ordinal"),
             tuple(inspect.signature(WorkerAuthorizationIssuer.run_effect).parameters)[1:],
         )
+
+    def test_terminalizers_are_exactly_enumerated_and_gated(self) -> None:
+        tree = parsed("lifetime_reference.py")
+        owner = class_node(tree, "ReferenceLifetimeRegistry")
+
+        def calls(method, attribute):
+            return [
+                node for node in ast.walk(method)
+                if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr == attribute
+            ]
+
+        methods = {
+            node.name: node for node in owner.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        terminalizers = {name for name, method in methods.items() if calls(method, "_terminalize")}
+        self.assertEqual({
+            # generic non-delivery success: all three require the one
+            # publication precondition (IR1, IR2)
+            "run_plan_step", "register_subscription", "_commit_refresh_record",
+            # refresh dispositions (IR11)
+            "settle_contained_refresh", "_dispose_refresh",
+            # specialized delivery settlement (design §8)
+            "settle_delivery_success", "settle_delivery_non_success",
+            # generic completion by owner or containment owner (design §6)
+            "complete", "complete_contained",
+            # authoritative queue removal of a non-delivery (design §4.1)
+            "_contain_lease",
+        }, terminalizers)
+        for name in ("run_plan_step", "register_subscription", "_commit_refresh_record"):
+            with self.subTest(gated=name):
+                source = ast.unparse(methods[name])
+                self.assertTrue(
+                    "_require_publication_ready(" in source or "_publication_ready(" in source,
+                    f"{name} must require the publication precondition",
+                )
+        self.assertIn("_require_publication_ready(", ast.unparse(methods["prepare_delivery_publication"]))
+        for name in ("complete", "complete_contained"):
+            with self.subTest(refuses_handoff=name):
+                self.assertIn("OperationKind.ITERATOR_HANDOFF", ast.unparse(methods[name]))
+        for call in calls(methods["_contain_lease"], "_terminalize"):
+            self.assertNotIn("SUCCEEDED", ast.unparse(call))
+        self.assertEqual([], calls(methods["_dispose_refresh"], "_cancel_or_remove"))
+        self.assertNotIn("_cancel_or_remove", methods)
+
+    def test_containment_writes_live_in_one_routine(self) -> None:
+        tree = parsed("lifetime_reference.py")
+        owner = class_node(tree, "ReferenceLifetimeRegistry")
+        contained_writers, retiring_writers, containment_owner_writers = set(), set(), set()
+        for method in (
+            node for node in owner.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        ):
+            for node in ast.walk(method):
+                if not isinstance(node, ast.Assign):
+                    continue
+                value = ast.unparse(node.value)
+                for target in node.targets:
+                    if not isinstance(target, ast.Attribute):
+                        continue
+                    if target.attr == "state" and value == "LeaseState.CONTAINED":
+                        contained_writers.add(method.name)
+                    if target.attr == "state" and value == "LeaseState.RETIRING_HANDOFF":
+                        retiring_writers.add(method.name)
+                    if target.attr == "owner" and value.endswith(".containment_owner"):
+                        containment_owner_writers.add(method.name)
+        self.assertEqual({"_contain_lease"}, contained_writers)
+        self.assertEqual({"_begin_retirement"}, retiring_writers)
+        self.assertEqual({"_contain_lease", "_begin_retirement"}, containment_owner_writers)
+        # Terminal leases are absorbing and a retiring handoff keeps its label:
+        # the routine's first two statements return before any write.
+        routine = function_node(owner, "_contain_lease")
+        guards = [node for node in routine.body if isinstance(node, ast.If)][:2]
+        self.assertEqual(
+            ["record.state.terminal", "record.delivery_retirement is not None"],
+            [ast.unparse(node.test) for node in guards],
+        )
+        for guard in guards:
+            self.assertEqual(1, len(guard.body))
+            self.assertIsInstance(guard.body[0], ast.Return)
+
+    def test_coordinator_protocol_members_equal_accepted_call_shapes(self) -> None:
+        protocol = class_node(parsed("lifetime.py"), "SharedGenerationCoordinator")
+        methods = {
+            node.name for node in protocol.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        attributes = {
+            node.target.id for node in protocol.body
+            if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+        }
+        self.assertEqual(set(COORDINATOR_METHODS), methods)
+        self.assertEqual(set(COORDINATOR_ATTRIBUTES), attributes)
+        self.assertTrue(set(MEMBERSHIP_AND_PROOF_METHODS) <= methods)
+        begin_migration = function_node(protocol, "begin_migration")
+        self.assertEqual("'MigrationRequestIdentity'", ast.unparse(begin_migration.returns))
+        reference = class_node(parsed("generation_reference.py"), "ReferenceGenerationCoordinator")
+        self.assertEqual("MigrationRequestIdentity", ast.unparse(function_node(reference, "begin_migration").returns))
+        registry_tree = parsed("lifetime_reference.py")
+        call_sites = {
+            node.attr for node in ast.walk(registry_tree)
+            if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Attribute)
+            and isinstance(node.value.value, ast.Name) and node.value.value.id == "self"
+            and node.value.attr == "_coordinator"
+        }
+        self.assertTrue(call_sites, "the registry must call the coordinator through the seam")
+        self.assertEqual(set(), call_sites - methods - attributes, "every coordinator call site is a protocol member")
+        registry = class_node(registry_tree, "ReferenceLifetimeRegistry")
+        init = function_node(registry, "__init__")
+        coordinator_argument = next(argument for argument in init.args.args if argument.arg == "coordinator")
+        self.assertEqual("SharedGenerationCoordinator", ast.unparse(coordinator_argument.annotation))
+        self.assertIn("isinstance(coordinator, SharedGenerationCoordinator)", ast.unparse(init))
 
     def test_worker_facade_has_no_secondary_mutable_ledger(self) -> None:
         tree = parsed("worker_authority.py")
@@ -130,7 +283,7 @@ class ContractSourceRules(unittest.TestCase):
                     and node.func.attr == "release_shared"
                 ):
                     release_sites.append(method.name)
-        self.assertEqual(["_acquire", "_terminalize"], release_sites)
+        self.assertEqual(["_terminalize"], release_sites)
 
     def test_cursor_membership_and_phase_proof_mutations_have_one_owner_each(self) -> None:
         cursor_stores = set()

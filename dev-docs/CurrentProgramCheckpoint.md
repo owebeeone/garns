@@ -1,11 +1,89 @@
 # Garns v9-6 current program checkpoint
 
-**Status:** relocated byte-exact to garns-wz on 2026-10-04; worker-exit implementation review round 1 merged NO-GO (13 bounded blocking roots, no STOP); consolidated correction 1 proposed, awaiting operator authorization; source acceptance pending  
+**Status:** relocated byte-exact to garns-wz on 2026-10-04; correction 1 of 2 closed every round-1 blocker; review round 2 merged NO-GO on three new bounded roots (IR21–IR23, no STOP); correction 2 of 2 (the last) proposed in RemPlan-2, awaiting operator authorization; source acceptance pending  
 **Date:** 2026-10-04  
 **Owner:** manager
 
 This is the current execution-state index. Historical reports remain unchanged;
 exact acceptance records below control their respective tuples.
+
+## Correction 1 and review round 2 — 2026-10-05
+
+**The builder.** One fresh builder ran under BuilderPrompt-2: a Claude subagent on
+`claude-fable-5-1`. It stopped writing and its testimony is filed verbatim as
+[DRAFT-2](W1A11-WorkerExitImplementation-DRAFT-2.md) (`cf10c9f6…`). It changed 13
+of the 23 allowlisted paths and nothing else:
+
+- five contract modules;
+- six contract test modules;
+- A16;
+- the implementation record.
+
+**Manager verification.** [Verification-2](W1A11-WorkerExitImplementation-Verification-2.md)
+records the manager's own reproduction:
+
+- 173 focused tests, 276 full tests and 5 product checks pass on Python 3.11–3.14.
+- Every guard passes, and no bytecode was found.
+- All 225 retained test methods are still present.
+- The failing-before run reproduces: 159 tests fail on the archived round-1 sources
+  and pass on the corrected ones. Every blocking root has a behaviorally failing
+  test, except IR12, whose only failing test fails on a missing observer.
+
+The complete outputs are in VerificationLogs-2.
+
+**MANIFEST-2.** `W1A11-WorkerExitImplementation-MANIFEST-2.sha256`, SHA-256
+`ee441c18da74c30a6afc2fdc6ac1ef07f6e39990fecf113e98f34c1f81200720`, 128 entries. It
+pins MANIFEST-1's path set with the corrected bytes, MANIFEST-1 itself, the round-1
+reports, the RemPlan, BuilderPrompt-2, RemInputs, DRAFT-2 and both verification
+records. The implementation correction count is 1 of 2.
+
+**Review round 2.** All prompts were generated from the canonical template:
+
+| Report | Reviewer | Prompt and SHA-256 |
+|---|---|---|
+| `…-ReviewCode-2.md` | fresh full Code reviewer, Opus 5.5 | `…-ReviewCode-2-Prompt.md`, `d0e3ea5d…` |
+| `…-ReviewState-2.md` | fresh full State reviewer, Opus 5.5 | `…-ReviewState-2-Prompt.md`, `8a9b8bbd…` |
+| `…-ReviewCode-1-Reverdict.md` | the round-1 Code reviewer (Fable), context intact | `…-Reverdict-Prompt.md`, `2c64f44e…` |
+| `…-ReviewState-1-Reverdict.md` | the round-1 State reviewer (Fable), context intact | same |
+| `…-OriginCodeClosure-1-Reverdict.md` | the round-1 originating Code reviewer (Opus), context intact | same |
+| `…-OriginStateClosure-1-Reverdict.md` | the round-1 originating State reviewer (Opus), context intact | same |
+
+The four round-1 reviewers each re-run their own findings. The two closure
+reviewers also re-run the historical roots.
+
+**Round 2 result.** All six reports are filed verbatim and merged in
+[RemPlan-2](W1A11-WorkerExitImplementation-RemPlan-2.md).
+
+| Report | Verdict |
+|---|---|
+| Fresh full Code review | NO-GO |
+| Fresh full State review | NO-GO |
+| Round-1 Code reviewer's re-verdict | GO |
+| Round-1 State reviewer's re-verdict | GO |
+| Originating Code closure's re-verdict | NO-GO |
+| Originating State closure's re-verdict | NO-GO |
+
+- **Round 1 is fully closed.** The reviewers who raised them closed all 28
+  round-1 P2s.
+- **Three new bounded blocking roots:**
+  - IR21: join after local close has begun. Five reviewers found it
+    independently.
+  - IR22: the executor façade's `revoke` reaches containment without
+    authority.
+  - IR23: a cleanup step is claimed only after its action returns.
+- **No architectural root and no STOP.** None of the three needs a design
+  change.
+- **Historical roots.** Failed FIFO, neutral refresh and phase proof are
+  closed. Worker exit and participant lifecycle remain open through IR21–IR23.
+
+**Next action:** operator decision on correction 2, the last the gate allows.
+RemPlan-2 recommends:
+
+- continuing the same Fable builder;
+- fixing the five small P3s that lie on paths the correction already touches;
+- deferring IR27 and IR28 to W3.
+
+If round 3 then reports any new blocking finding, the lane stops for the operator.
 
 ## Worker-exit implementation review round 1 — 2026-10-04
 
@@ -35,18 +113,28 @@ Status of the five stopped roots:
 The manager filed the `tools/check.py` G10 failure (`semantic.py:98`) as IR20, a P3
 outside this lane's write allowlist.
 
-After the reports were filed, the tuple and every guard re-verified. Builder writes
-remain stopped. The implementation correction count is still 0; the proposed
-consolidated patch would be correction 1 of 2.
+After the reports were filed, the tuple and every guard re-verified. The round is
+committed as garns `142c5ed`, root `f3ee7ef`.
 
-**Next action:** operator decision on three points:
+**Correction 1 of 2 — authorized 2026-10-05.** The RemPlan status records the
+decision: one fresh Fable builder, with IR20 kept out of this correction. Before the
+builder wrote anything, the manager did three things:
 
-1. Authorize correction 1 under the RemPlan.
-2. Choose the builder model.
-3. Decide where IR20 is fixed.
+- **Archived MANIFEST-1.** Its exact 117 files and the manifest are preserved under
+  `W1A11-WorkerExitImplementation-Revision1/`. MANIFEST-1 verifies from inside
+  `Revision1/garns`, with `AGENTS_GWZ.md` one level up, because the manifest pins
+  `../AGENTS_GWZ.md`.
+- **Wrote the builder brief.** It is `W1A11-WorkerExitImplementation-BuilderPrompt-2.md`.
+- **Pinned the inputs.** `W1A11-WorkerExitImplementation-RemInputs.sha256` pins the
+  plan, the prompt, the reports and the controls (18 entries).
 
-This edit changes this checkpoint, so RelocationEvidence's entry for it now differs
-by design, as HandoffEvidence's does.
+The builder writes only the brief's 23 allowlisted paths. It then stops writing and
+returns testimony, which is filed as DRAFT-2.
+
+The builder has since stopped; see the correction 1 section above.
+
+The checkpoint changed after the relocation, so RelocationEvidence's entry for it
+now differs by design, as HandoffEvidence's does.
 
 ## Relocation — 2026-10-04
 
@@ -273,10 +361,10 @@ launched and does not block v9-6.
 
 ## Package ownership and next action
 
-Current (2026-10-04): review round 1 is complete and merged NO-GO in
-[RemPlan](W1A11-WorkerExitImplementation-RemPlan.md). No builder is active, and
-none is authorized until the operator approves correction 1. The rest of this
-section records the first-handoff state.
+Current (2026-10-05): no writer is active. Round 2 is merged NO-GO. Correction 2
+of 2 is proposed in [RemPlan-2](W1A11-WorkerExitImplementation-RemPlan-2.md) and
+is not authorized. The MANIFEST-2 tuple stays frozen. The rest of this section
+records the first-handoff state.
 
 The sole 5.6 Sol builder has stopped writes. The current117 source tuple is
 frozen at the operator-requested handoff. Existing20/new3 ownership, archived

@@ -99,6 +99,10 @@ class ReferenceBufferRegistry:
     def __init__(self) -> None:
         self._registrations: dict[SubscriptionRegistration, _RegistrationRecord] = {}
         self._buffers: dict[int, _BufferRecord] = {}
+        # Exact-identity index over every registration's replay ring: it holds
+        # only identities currently inside a ring, so lookups do constant work
+        # and no evicted candidate or receipt identity survives outside a ring.
+        self._replay_index: dict[object, object] = {}
 
     def register(
         self,
@@ -176,7 +180,6 @@ class ReferenceBufferRegistry:
             queued_only >= record.queued_capacity
             or len(record.queued) >= record.changed_capacity
         ):
-            record.state = RegistrationState.RETIRING_REFETCH
             raise ContractRefusal(RefusalCode.REFETCH_REQUIRED, "registration queue capacity exceeded")
         envelope = BufferedDelivery(
             binding.scope,
@@ -201,6 +204,14 @@ class ReferenceBufferRegistry:
             record.next_sequence,
         )
         return envelope
+
+    def discard_candidate(self, envelope: BufferedDelivery) -> None:
+        """Discard a CANDIDATE record whose publication did not commit."""
+
+        record = self._buffer(envelope)
+        if record.state is not BufferState.CANDIDATE:
+            raise ValueError("only an uncommitted candidate can be discarded")
+        del self._buffers[id(envelope)]
 
     def validate_publish(
         self,
@@ -301,28 +312,13 @@ class ReferenceBufferRegistry:
         span = registration.neutral_spans.pop(record.sequence, None)
         if span is not None:
             registration.delivered_through = span
+        del self._buffers[id(envelope)]
 
     def queued_for_resources(self, selected: set[str]) -> tuple[_BufferRecord, ...]:
         return tuple(
             record for record in self._buffers.values()
             if record.state is BufferState.QUEUED and any(name in selected for name in record.queue.path)
         )
-
-    def invalidate(self, record: _BufferRecord) -> BufferedDeliveryPermit:
-        if record.state is not BufferState.QUEUED or record.permit is None:
-            raise ValueError("only a queued buffer can be invalidated")
-        permit = record.permit
-        record.permit = None
-        record.state = BufferState.INVALID
-        registration = self._registration(record.registration)
-        if id(record.envelope) in registration.queued:
-            registration.queued.remove(id(record.envelope))
-        registration.state = (
-            RegistrationState.RETIRING_REFETCH
-            if registration.active is not None
-            else RegistrationState.RETIRED
-        )
-        return permit
 
     def candidate_lineage(
         self, registration: SubscriptionRegistration, admission: AdmittedReadHandle,
@@ -365,8 +361,9 @@ class ReferenceBufferRegistry:
             if queued.state is BufferState.QUEUED and queued.permit is not None:
                 permits.append(queued.permit)
                 queued.permit = None
-                queued.state = BufferState.INVALID
+            del self._buffers[identity]
         registration.queued[:] = registration.queued[:1]
+        self._clear_lineage(registration)
         return tuple(permits)
 
     def settle_handoff_retirement(self, envelope: BufferedDelivery) -> None:
@@ -378,10 +375,10 @@ class ReferenceBufferRegistry:
             or registration.active != id(envelope)
         ):
             raise ContractRefusal(RefusalCode.REFETCH_REQUIRED, "retiring handoff is not current")
-        active.state = BufferState.INVALID
         registration.active = None
         if registration.queued and registration.queued[0] == id(envelope):
             registration.queued.pop(0)
+        del self._buffers[id(envelope)]
         registration.state = RegistrationState.RETIRED
 
     def registration_cursors(
@@ -412,15 +409,14 @@ class ReferenceBufferRegistry:
             if buffered.state is BufferState.QUEUED and buffered.permit is not None:
                 permits.append(buffered.permit)
                 buffered.permit = None
-                buffered.state = BufferState.INVALID
+                del self._buffers[identity]
         if record.active is None:
             record.queued.clear()
             record.state = RegistrationState.RETIRED
         else:
             record.queued[:] = [record.active]
             record.state = RegistrationState.RETIRING_REFETCH
-        record.neutral_spans.clear()
-        record.neutral_replay.clear()
+        self._clear_lineage(record)
         return tuple(permits)
 
     def retire_for_resources(
@@ -463,15 +459,25 @@ class ReferenceBufferRegistry:
             anchor = self._buffers[anchor_identity]
             record.neutral_spans[anchor.sequence] = observed_through
         if len(record.neutral_replay) == record.replay_capacity:
-            record.neutral_replay.pop(0)
+            evicted_candidate, evicted_receipt, _, _ = record.neutral_replay.pop(0)
+            self._replay_index.pop(evicted_candidate, None)
+            self._replay_index.pop(evicted_receipt, None)
         record.neutral_replay.append((candidate, receipt, previous, observed_through))
+        self._replay_index[candidate] = receipt
+        self._replay_index[receipt] = receipt
 
     def replay_neutral(self, identity: object) -> object | None:
-        for record in self._registrations.values():
-            for candidate, receipt, _, _ in record.neutral_replay:
-                if identity is candidate or identity is receipt:
-                    return receipt
-        return None
+        try:
+            return self._replay_index.get(identity)
+        except TypeError:
+            return None
+
+    def _clear_lineage(self, record: _RegistrationRecord) -> None:
+        for candidate, receipt, _, _ in record.neutral_replay:
+            self._replay_index.pop(candidate, None)
+            self._replay_index.pop(receipt, None)
+        record.neutral_spans.clear()
+        record.neutral_replay.clear()
 
     def lineage_sizes(
         self, registration: SubscriptionRegistration,

@@ -41,7 +41,8 @@ def participant(scope, binding, coordinator, name):
     context = authority.issue(TrustedClaims(
         name, name, scope, {Capability.QUERY}, name, 10.0, 1,
     ))
-    registry = ReferenceLifetimeRegistry(authority, object(), coordinator)
+    runtime_identity = object()
+    registry = ReferenceLifetimeRegistry(authority, runtime_identity, coordinator)
     registry.open_lifetime()
     runtime = ResourceIdentity(f"{name}-runtime", ResourceKind.RUNTIME)
     pool = ResourceIdentity(f"{name}-pool", ResourceKind.POOL, (runtime.name,))
@@ -76,7 +77,7 @@ class GenerationContractTests(unittest.TestCase):
             coordinator.begin_migration(attempt, next_binding)
         for item, lease in zip(parts, leases):
             item["registry"].transfer_owner(lease, item["task"], item["task"])
-            item["registry"].complete(lease, item["task"], LeaseState.SUCCEEDED)
+            item["registry"].complete(lease, item["task"], LeaseState.REFUSED)
         for item in parts:
             item["registry"].migration_queue_barrier(attempt)
         coordinator.begin_migration(attempt, next_binding)
@@ -84,9 +85,13 @@ class GenerationContractTests(unittest.TestCase):
 
     def test_generation_permits_are_exact_owned_and_replay_safe(self) -> None:
         scope, binding, coordinator = activated()
+        member = participant(scope, binding, coordinator, "member")
+        membership = member["registry"].membership
         owner = object()
-        operation = OperationIdentity(object(), 1, scope, 1)
-        permit = coordinator.acquire_shared(operation, owner)
+        operation = OperationIdentity(member["runtime_identity"], 1, scope, 1)
+        with self.assertRaises(ContractRefusal):
+            coordinator.acquire_shared(OperationIdentity(object(), 1, scope, 1), owner, membership)
+        permit = coordinator.acquire_shared(operation, owner, membership)
         forged = object.__new__(GenerationPermit)
         other = ReferenceGenerationCoordinator(scope, binding)
         with self.assertRaises(ValueError):
@@ -102,13 +107,14 @@ class GenerationContractTests(unittest.TestCase):
         self.assertEqual(0, coordinator.count())
 
     def test_buffer_envelope_alone_cannot_release_private_permit(self) -> None:
-        scope, _, coordinator = activated()
+        scope, binding, coordinator = activated()
+        member = participant(scope, binding, coordinator, "member")
         owner = object()
         envelope = BufferedDelivery(
             scope, 1, object.__new__(AdmittedReadHandle), "digest", RevisionCursor(scope, 1, 0),
             RevisionCursor(scope, 1, 1), RevisionCursor(scope, 1, 1), (), "advance",
         )
-        permit = coordinator.add_buffer(envelope, owner)
+        permit = coordinator.add_buffer(envelope, owner, member["registry"].membership)
         other = ReferenceGenerationCoordinator(scope, coordinator.binding)
         with self.assertRaises(ValueError):
             coordinator.release_buffer(envelope, owner)  # type: ignore[arg-type]
@@ -166,7 +172,8 @@ class GenerationContractTests(unittest.TestCase):
             coordinator.begin_activation(3)
 
     def test_active_activation_has_no_outgoing_reset_edge(self) -> None:
-        _, _, coordinator = activated()
+        scope, binding, coordinator = activated()
+        participant(scope, binding, coordinator, "member")
         with self.assertRaises(ContractRefusal):
             coordinator.refuse_retirement_or_reset()
         self.assertEqual(ActivationState.ACTIVE, coordinator.activation)
@@ -179,8 +186,10 @@ class GenerationContractTests(unittest.TestCase):
         ):
             with self.subTest(kind=kind):
                 scope, old, coordinator = activated()
+                member = participant(scope, old, coordinator, "member")
                 requested = BindingIdentity(scope, "ir-next", "storage-next", 2)
                 attempt = coordinator.begin_drain(old)
+                member["registry"].migration_queue_barrier(attempt)
                 coordinator.begin_migration(attempt, requested)
                 coordinator.begin_migration_effect()
                 coordinator.mark_indeterminate()
@@ -253,6 +262,7 @@ class GenerationContractTests(unittest.TestCase):
             "plan_admission_lifetime_v1",
         ))
         other.first_lifetime_open("plan_admission_lifetime_v1", 12)
+        participant(scope, binding, other, "other-participant")
         other_attempt = other.begin_drain(binding)
         cross_proof = other.observe_request_released(
             other_attempt, other.attempt_product(other_attempt)[3],
@@ -275,7 +285,9 @@ class GenerationContractTests(unittest.TestCase):
 
     def test_pre_effect_migrating_reopen_and_exact_successor_only(self) -> None:
         scope, binding, coordinator = activated()
+        member = participant(scope, binding, coordinator, "member")
         attempt = coordinator.begin_drain(binding)
+        member["registry"].migration_queue_barrier(attempt)
         for generation in (1, 3):
             with self.assertRaises(ContractRefusal):
                 coordinator.begin_migration(

@@ -61,12 +61,26 @@ class AuthorizingFakeConnection:
         self.capabilities.require(capability)
         self.issuer.validate(context, scope=self.binding.scope, capability=capability)
 
+    def run_default_command(self, lease):
+        """Drive the lease's one required command slot; design §3 forbids
+        publication with no dispatched command."""
+
+        authorization = self.verifier.dispatch_worker(lease)
+        self.verifier.dequeue_worker(lease, authorization)
+        self.verifier.worker_issuer.run_effect(authorization, 1)
+        result = self.verifier.setup_reference_worker_result(authorization, ())
+        receipt = self.verifier.worker_exit_success(authorization, result)
+        stop = self.verifier.setup_reference_worker_stop(authorization)
+        self.verifier.observe_worker_stopped(stop)
+        self.verifier.accept_worker_result(receipt)
+
     async def execute(self, lease, context):
         self.authorize(Capability.QUERY, context)
         owner = self.issuer.capture_task_owner()
         self.verifier.run_plan_step(
             lease, PlanStep.LOWER, owner, self.verifier.issue_consumer("fake-lower"),
         )
+        self.run_default_command(lease)
         self.verifier.run_plan_step(
             lease, PlanStep.PUBLICATION, owner, self.verifier.issue_consumer("fake-publish"),
         )
@@ -86,6 +100,7 @@ class AuthorizingFakeConnection:
             lease, PlanStep.SNAPSHOT_WATERMARK, owner,
             self.verifier.issue_consumer("fake-snapshot"),
         )
+        self.run_default_command(lease)
         self.verifier.run_plan_step(
             lease, PlanStep.PUBLICATION, owner,
             self.verifier.issue_consumer("fake-snapshot-publish"),
