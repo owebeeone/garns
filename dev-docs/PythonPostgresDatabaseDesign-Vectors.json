@@ -1,0 +1,385 @@
+{
+  "schema": "garns.database-design-vectors/1",
+  "vectors": [
+    {
+      "name": "binding-minimal",
+      "kind": "binding",
+      "input": {
+        "schema": "garns.storage/2",
+        "world": "demo.Store",
+        "backend": "postgres",
+        "namespace": {
+          "catalog": "demo",
+          "schema": "app"
+        },
+        "engine_tables": {
+          "generations": "generations",
+          "revisions": "revisions",
+          "ledger": "ledger",
+          "transactions": "transactions",
+          "publication": "publication",
+          "migration_attempts": "migration_attempts",
+          "activation": "activation"
+        },
+        "relations": {
+          "demo.Document": {
+            "table": "documents",
+            "identity": {
+              "column": "document_id",
+              "codec": "bigint-v1"
+            },
+            "kind": null,
+            "columns": {
+              "demo.Document.payload": {
+                "column": "payload",
+                "codec": "json-document-v1",
+                "bounds": {
+                  "max_bytes": 16777216,
+                  "max_depth": 128,
+                  "max_members": 100000
+                }
+              }
+            },
+            "links": {},
+            "constraints": [
+              {
+                "name": "documents_pk",
+                "kind": "primary_key",
+                "fields": [
+                  "demo.Document.identity"
+                ]
+              }
+            ],
+            "indexes": []
+          }
+        }
+      },
+      "normalized": {
+        "schema": "garns.storage/2",
+        "world": "demo.Store",
+        "backend": "postgres",
+        "namespace": {
+          "catalog": "demo",
+          "schema": "app"
+        },
+        "engine_tables": {
+          "generations": "generations",
+          "revisions": "revisions",
+          "ledger": "ledger",
+          "transactions": "transactions",
+          "publication": "publication",
+          "migration_attempts": "migration_attempts",
+          "activation": "activation"
+        },
+        "relations": {
+          "demo.Document": {
+            "table": "documents",
+            "identity": {
+              "column": "document_id",
+              "codec": "bigint-v1"
+            },
+            "kind": null,
+            "columns": {
+              "demo.Document.payload": {
+                "column": "payload",
+                "codec": "json-document-v1",
+                "bounds": {
+                  "max_bytes": 16777216,
+                  "max_depth": 128,
+                  "max_members": 100000
+                }
+              }
+            },
+            "links": {},
+            "constraints": [
+              {
+                "name": "documents_pk",
+                "kind": "primary_key",
+                "fields": [
+                  "demo.Document.identity"
+                ]
+              }
+            ],
+            "indexes": []
+          }
+        }
+      },
+      "canonical_ascii": "{\"backend\":\"postgres\",\"engine_tables\":{\"activation\":\"activation\",\"generations\":\"generations\",\"ledger\":\"ledger\",\"migration_attempts\":\"migration_attempts\",\"publication\":\"publication\",\"revisions\":\"revisions\",\"transactions\":\"transactions\"},\"namespace\":{\"catalog\":\"demo\",\"schema\":\"app\"},\"relations\":{\"demo.Document\":{\"columns\":{\"demo.Document.payload\":{\"bounds\":{\"max_bytes\":16777216,\"max_depth\":128,\"max_members\":100000},\"codec\":\"json-document-v1\",\"column\":\"payload\"}},\"constraints\":[{\"fields\":[\"demo.Document.identity\"],\"kind\":\"primary_key\",\"name\":\"documents_pk\"}],\"identity\":{\"codec\":\"bigint-v1\",\"column\":\"document_id\"},\"indexes\":[],\"kind\":null,\"links\":{},\"table\":\"documents\"}},\"schema\":\"garns.storage/2\",\"world\":\"demo.Store\"}\n",
+      "canonical_hex": "7b226261636b656e64223a22706f737467726573222c22656e67696e655f7461626c6573223a7b2261637469766174696f6e223a2261637469766174696f6e222c2267656e65726174696f6e73223a2267656e65726174696f6e73222c226c6564676572223a226c6564676572222c226d6967726174696f6e5f617474656d707473223a226d6967726174696f6e5f617474656d707473222c227075626c69636174696f6e223a227075626c69636174696f6e222c227265766973696f6e73223a227265766973696f6e73222c227472616e73616374696f6e73223a227472616e73616374696f6e73227d2c226e616d657370616365223a7b22636174616c6f67223a2264656d6f222c22736368656d61223a22617070227d2c2272656c6174696f6e73223a7b2264656d6f2e446f63756d656e74223a7b22636f6c756d6e73223a7b2264656d6f2e446f63756d656e742e7061796c6f6164223a7b22626f756e6473223a7b226d61785f6279746573223a31363737373231362c226d61785f6465707468223a3132382c226d61785f6d656d62657273223a3130303030307d2c22636f646563223a226a736f6e2d646f63756d656e742d7631222c22636f6c756d6e223a227061796c6f6164227d7d2c22636f6e73747261696e7473223a5b7b226669656c6473223a5b2264656d6f2e446f63756d656e742e6964656e74697479225d2c226b696e64223a227072696d6172795f6b6579222c226e616d65223a22646f63756d656e74735f706b227d5d2c226964656e74697479223a7b22636f646563223a22626967696e742d7631222c22636f6c756d6e223a22646f63756d656e745f6964227d2c22696e6465786573223a5b5d2c226b696e64223a6e756c6c2c226c696e6b73223a7b7d2c227461626c65223a22646f63756d656e7473227d7d2c22736368656d61223a226761726e732e73746f726167652f32222c22776f726c64223a2264656d6f2e53746f7265227d0a",
+      "sha256": "343aeaa630dcf5e81bda8a751c927a78ea97fd60a6f142fa1d0064c5eebd4319"
+    },
+    {
+      "name": "payload-empty",
+      "kind": "payload",
+      "input": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": []
+      },
+      "normalized": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": []
+      },
+      "canonical_ascii": "{\"mutations\":[],\"schema\":\"garns.mutation-payload/1\"}\n",
+      "canonical_hex": "7b226d75746174696f6e73223a5b5d2c22736368656d61223a226761726e732e6d75746174696f6e2d7061796c6f61642f31227d0a",
+      "sha256": "eb107bc9288e1f788d8aba407c13d8b99dfeaafc36325ad16622a2f8b2fa7313"
+    },
+    {
+      "name": "payload-omitted",
+      "kind": "payload",
+      "input": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          }
+        ]
+      },
+      "normalized": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          }
+        ]
+      },
+      "canonical_ascii": "{\"mutations\":[{\"carrier\":\"demo.Document\",\"identity\":1,\"kind\":\"insert\",\"values\":{}}],\"schema\":\"garns.mutation-payload/1\"}\n",
+      "canonical_hex": "7b226d75746174696f6e73223a5b7b2263617272696572223a2264656d6f2e446f63756d656e74222c226964656e74697479223a312c226b696e64223a22696e73657274222c2276616c756573223a7b7d7d5d2c22736368656d61223a226761726e732e6d75746174696f6e2d7061796c6f61642f31227d0a",
+      "sha256": "0f6397d45cc0fd331bf44cdfa3a48d37e0420f34f27041a5129ec5b7355a3a93"
+    },
+    {
+      "name": "payload-null",
+      "kind": "payload",
+      "input": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {
+              "demo.Document.payload": [
+                "null"
+              ]
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {
+              "demo.Document.payload": [
+                "null"
+              ]
+            }
+          }
+        ]
+      },
+      "canonical_ascii": "{\"mutations\":[{\"carrier\":\"demo.Document\",\"identity\":1,\"kind\":\"insert\",\"values\":{\"demo.Document.payload\":[\"null\"]}}],\"schema\":\"garns.mutation-payload/1\"}\n",
+      "canonical_hex": "7b226d75746174696f6e73223a5b7b2263617272696572223a2264656d6f2e446f63756d656e74222c226964656e74697479223a312c226b696e64223a22696e73657274222c2276616c756573223a7b2264656d6f2e446f63756d656e742e7061796c6f6164223a5b226e756c6c225d7d7d5d2c22736368656d61223a226761726e732e6d75746174696f6e2d7061796c6f61642f31227d0a",
+      "sha256": "a4cf3e80e885b02777fb6efb7e9afcc646d81070bda044ecf6d98230c9fdb58d"
+    },
+    {
+      "name": "payload-json-null",
+      "kind": "payload",
+      "input": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {
+              "demo.Document.payload": [
+                "bytes",
+                "bnVsbA=="
+              ]
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {
+              "demo.Document.payload": [
+                "bytes",
+                "bnVsbA=="
+              ]
+            }
+          }
+        ]
+      },
+      "canonical_ascii": "{\"mutations\":[{\"carrier\":\"demo.Document\",\"identity\":1,\"kind\":\"insert\",\"values\":{\"demo.Document.payload\":[\"bytes\",\"bnVsbA==\"]}}],\"schema\":\"garns.mutation-payload/1\"}\n",
+      "canonical_hex": "7b226d75746174696f6e73223a5b7b2263617272696572223a2264656d6f2e446f63756d656e74222c226964656e74697479223a312c226b696e64223a22696e73657274222c2276616c756573223a7b2264656d6f2e446f63756d656e742e7061796c6f6164223a5b226279746573222c22626e567362413d3d225d7d7d5d2c22736368656d61223a226761726e732e6d75746174696f6e2d7061796c6f61642f31227d0a",
+      "sha256": "5599af75b16d8456073bb62bb77bdf1c286f528a55c0877cc798d1c5f0420d5d"
+    },
+    {
+      "name": "payload-exact-values",
+      "kind": "payload",
+      "input": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Values",
+            "identity": 1,
+            "values": {
+              "demo.Values.decimal": [
+                "decimal",
+                "1.25"
+              ],
+              "demo.Values.integer": [
+                "int",
+                "9007199254740993"
+              ],
+              "demo.Values.boolean": [
+                "bool",
+                true
+              ],
+              "demo.Values.text": [
+                "text",
+                "value"
+              ],
+              "demo.Values.bytes": [
+                "bytes",
+                "AA=="
+              ]
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Values",
+            "identity": 1,
+            "values": {
+              "demo.Values.decimal": [
+                "decimal",
+                "1.25"
+              ],
+              "demo.Values.integer": [
+                "int",
+                "9007199254740993"
+              ],
+              "demo.Values.boolean": [
+                "bool",
+                true
+              ],
+              "demo.Values.text": [
+                "text",
+                "value"
+              ],
+              "demo.Values.bytes": [
+                "bytes",
+                "AA=="
+              ]
+            }
+          }
+        ]
+      },
+      "canonical_ascii": "{\"mutations\":[{\"carrier\":\"demo.Values\",\"identity\":1,\"kind\":\"insert\",\"values\":{\"demo.Values.boolean\":[\"bool\",true],\"demo.Values.bytes\":[\"bytes\",\"AA==\"],\"demo.Values.decimal\":[\"decimal\",\"1.25\"],\"demo.Values.integer\":[\"int\",\"9007199254740993\"],\"demo.Values.text\":[\"text\",\"value\"]}}],\"schema\":\"garns.mutation-payload/1\"}\n",
+      "canonical_hex": "7b226d75746174696f6e73223a5b7b2263617272696572223a2264656d6f2e56616c756573222c226964656e74697479223a312c226b696e64223a22696e73657274222c2276616c756573223a7b2264656d6f2e56616c7565732e626f6f6c65616e223a5b22626f6f6c222c747275655d2c2264656d6f2e56616c7565732e6279746573223a5b226279746573222c2241413d3d225d2c2264656d6f2e56616c7565732e646563696d616c223a5b22646563696d616c222c22312e3235225d2c2264656d6f2e56616c7565732e696e7465676572223a5b22696e74222c2239303037313939323534373430393933225d2c2264656d6f2e56616c7565732e74657874223a5b2274657874222c2276616c7565225d7d7d5d2c22736368656d61223a226761726e732e6d75746174696f6e2d7061796c6f61642f31227d0a",
+      "sha256": "597ae6c2f879e1d2b6cba1c6231ee1549bdbb85ad951fc4567a50cc7d41278de"
+    },
+    {
+      "name": "payload-order-ab",
+      "kind": "payload",
+      "input": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          },
+          {
+            "kind": "delete",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          }
+        ]
+      },
+      "normalized": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          },
+          {
+            "kind": "delete",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          }
+        ]
+      },
+      "canonical_ascii": "{\"mutations\":[{\"carrier\":\"demo.Document\",\"identity\":1,\"kind\":\"insert\",\"values\":{}},{\"carrier\":\"demo.Document\",\"identity\":1,\"kind\":\"delete\",\"values\":{}}],\"schema\":\"garns.mutation-payload/1\"}\n",
+      "canonical_hex": "7b226d75746174696f6e73223a5b7b2263617272696572223a2264656d6f2e446f63756d656e74222c226964656e74697479223a312c226b696e64223a22696e73657274222c2276616c756573223a7b7d7d2c7b2263617272696572223a2264656d6f2e446f63756d656e74222c226964656e74697479223a312c226b696e64223a2264656c657465222c2276616c756573223a7b7d7d5d2c22736368656d61223a226761726e732e6d75746174696f6e2d7061796c6f61642f31227d0a",
+      "sha256": "f76205ecdd41256ce74a3a1464d2b9e2c57cba0458afdb9cda97436097b6350a"
+    },
+    {
+      "name": "payload-order-ba",
+      "kind": "payload",
+      "input": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "delete",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          },
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          }
+        ]
+      },
+      "normalized": {
+        "schema": "garns.mutation-payload/1",
+        "mutations": [
+          {
+            "kind": "delete",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          },
+          {
+            "kind": "insert",
+            "carrier": "demo.Document",
+            "identity": 1,
+            "values": {}
+          }
+        ]
+      },
+      "canonical_ascii": "{\"mutations\":[{\"carrier\":\"demo.Document\",\"identity\":1,\"kind\":\"delete\",\"values\":{}},{\"carrier\":\"demo.Document\",\"identity\":1,\"kind\":\"insert\",\"values\":{}}],\"schema\":\"garns.mutation-payload/1\"}\n",
+      "canonical_hex": "7b226d75746174696f6e73223a5b7b2263617272696572223a2264656d6f2e446f63756d656e74222c226964656e74697479223a312c226b696e64223a2264656c657465222c2276616c756573223a7b7d7d2c7b2263617272696572223a2264656d6f2e446f63756d656e74222c226964656e74697479223a312c226b696e64223a22696e73657274222c2276616c756573223a7b7d7d5d2c22736368656d61223a226761726e732e6d75746174696f6e2d7061796c6f61642f31227d0a",
+      "sha256": "1006a51785503601339b21f715b24483decde3ab15c45486f8a68854e80934d8"
+    }
+  ]
+}

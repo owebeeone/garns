@@ -20,7 +20,11 @@ There is no synchronous database API and no general raw-SQL entry point.
 Host configuration and trusted contexts come from the host integration, not
 user request dictionaries. Credentials never appear in prepared artifacts.
 Configuration defaults: pool 1-10 connections; acquire 10 seconds, statement
-30, commit 30, cleanup 10, shutdown 30, migration lock 30. All limits are finite
+30, commit 30, cleanup 10, shutdown 30, migration lock 30, total operation 120.
+The total starts before acquisition. For a transaction it includes caller idle
+time and all calls through commit; calls do not restart it. Expiry prevents new
+effects and starts bounded cleanup but cannot invent a known rollback.
+All limits are finite
 and overridable by trusted configuration. Operation deadlines cap attempts;
 cleanup has its separate bounded budget.
 
@@ -32,8 +36,11 @@ and generation but does not install or repair them. Execute a qualified read:
 The result is detached typed data, not a cursor or connection.
 
 For a write, begin with a caller-supplied stable qualified transaction identity:
-`tx = await runtime.begin(identity, context=context)`.
-Call `await tx.mutate(mutation)` for typed insert/update/delete operations.
+Build the complete immutable ordered insert/update/delete mutation batch locally,
+with explicit identities. Call
+`tx = await runtime.begin(identity, mutations, context=context)`.
+Call `await tx.apply()` to apply that fixed batch. No append or arbitrary SQL
+is allowed after begin; generated defaults/stamps do not change caller intent.
 Call `await tx.commit()` explicitly and inspect its outcome; merely reaching
 the end of a Python block does not commit. On failure before commit, request
 `await tx.rollback()` and inspect that outcome too. A context manager does not
@@ -50,8 +57,9 @@ retain the obligation for later recovery. Do not resend under a new identity.
 Repeating the same committed identity and payload returns the old result;
 a different payload under that identity refuses.
 
-Automatic transaction retry is off by default (one attempt). Future explicitly
-retry-safe whole-transaction callbacks can request up to three total attempts;
+Automatic transaction retry is off by default (one attempt). The initial API
+exposes no retry callback. Future explicitly retry-safe whole-transaction callbacks
+can request up to three total attempts;
 statement/commit retries are never enabled individually. Such callbacks cannot
 make an external file write or network call atomic with a database transaction.
 
@@ -70,8 +78,17 @@ Migration serializes and drains the whole deployment; it is not an ordinary
 runtime close. Unsupported or destructive transformations refuse before effect.
 If a metadata-only change is supported, it publishes the next generation without
 pretending data effects occurred. Accounted data changes need their classified
-transaction path. There is no automatic reverse migration or data-loss undo:
-request rollback before commit; after commit, an explicit compensating governed
+transaction path. If migrate is cancelled or loses acknowledgement, keep its
+request and attempt reference (available to privileged inspection). Open a new
+recovery Provisioner if needed and call
+`await provisioner.recover_migration(request, attempt, context=context)`.
+This remains available while ordinary work is fenced; it does not repeat SQL.
+It returns SUCCESSOR_CONFIRMED, NO_EFFECT_CONFIRMED or INDETERMINATE. Only exact
+backend/coordinator evidence clears the fence; an absent row does not.
+There is no public migration rollback handle. Cancellation requests internal
+rollback; recovery establishes whether that actually completed.
+There is no automatic reverse migration or data-loss undo: for ordinary writes,
+request transaction rollback before commit; after commit, an explicit compensating governed
 transaction is a new recorded operation. Uninstall/drop is an administrator
 operation, not an accidental mirror of `ship`.
 

@@ -54,8 +54,8 @@ Proposed public names, to be frozen only after Surface review:
 |---|---|
 | `await Runtime.open(prepared, host=host_config)` | opens owned pool; no implicit schema creation; all configuration validated |
 | `await runtime.execute(read_qid, parameters, context=trusted_context)` | qualified admitted read, detached typed result, whole-operation lease |
-| `await runtime.begin(identity, context=trusted_context)` | task-owned transaction; nesting/child-task/concurrent use refuse |
-| `await tx.mutate(mutation)` | typed governed mutation, with original trusted context retained privately |
+| `await runtime.begin(identity, mutations, context=trusted_context)` | immutable ordered mutation batch fixed before acquire/effect; task-owned transaction |
+| `await tx.apply()` | applies the prepared batch once, or returns its prior committed receipt; no arbitrary statement additions |
 | `await tx.commit()` / `await tx.rollback()` | explicit terminal knowledge outcome; idempotent only for compatible terminal action |
 | `await runtime.reconcile(identity, context=trusted_context)` | authoritative identity-bound commit knowledge, never retry-by-absence |
 | `await runtime.aclose()` | typed close outcome, idempotent; unresolved ownership retained |
@@ -63,6 +63,7 @@ Proposed public names, to be frozen only after Surface review:
 | `await provisioner.inspect(context=trusted_context)` | typed schema snapshot with structural digest |
 | `await provisioner.ship(context=trusted_context)` | new or exactly matching owned deployment only |
 | `await provisioner.migrate(request, context=trusted_context)` | locked classified migration, explicit expected generation |
+| `await provisioner.recover_migration(request, attempt, context=trusted_context)` | privileged request-bound recovery, legal while execution remains fenced |
 | `await provisioner.aclose()` | same close knowledge contract as runtime |
 
 The trusted host constructs contexts through the accepted runtime registry;
@@ -80,14 +81,28 @@ semantics. External adapters may project this API into other contracts later.
 
 Configuration defaults are pool min 1/max 10, acquire 10s, statement 30s,
 commit 30s, cleanup 10s, shutdown 30s, migration lock 30s. Values are finite and
-positive; reject booleans and NaN. An operation absolute monotonic deadline
-bounds all attempts; per-phase limits cannot extend it. Cleanup has its separate
+positive; reject booleans and NaN. The trusted-host field `operation_seconds`
+defaults to 120s. At entry to execute, begin, ship, migrate or recover_migration,
+capture `deadline = monotonic_now + operation_seconds`, before pool acquisition.
+The begin deadline covers the complete explicit transaction, including caller
+idle time, apply, commit and all retry attempts; no method renews it. A single
+read/provision/recovery invocation has its own deadline. Every effect token and
+phase deadline is bounded by that absolute deadline. Cleanup has its separate
 finite budget. Cancellation requests interruption then bounded cleanup, retaining
 the accepted distinction between nonquiescence and uncertain transaction truth.
 Transaction retry defaults to one attempt; explicitly retry-safe transaction
 functions may request up to three total attempts, bounded by the same operation
 deadline. Only known-aborted serialization/deadlock failures qualify. Arbitrary
 filesystem/network side effects in a retried body are not made atomic by GARNS.
+
+At transaction expiry, a supervised runtime task revokes new effect/commit
+authorization and starts bounded cleanup even if the caller is idle. Accepted
+effects retain ownership until settled. Before commit request, rollback is
+requested and only confirmed abort yields KNOWN_ABORTED; otherwise retain
+INDETERMINATE. After commit request, expiry never converts uncertainty into
+abort. A timeline with acquire at t=0..10, apply at t=20..40, idle to t=119 and
+commit at t=119 is bounded by t=120, not t=149. Cleanup may run to t=130; only
+authoritative evidence can retire its obligation after that budget expires.
 
 No implicit finalizer, automatic success commit on context-manager exit, forced
 rollback inference, or nested/savepoint public API is introduced. The first
@@ -97,8 +112,10 @@ visible. Follow-up convenience syntax requires separate review.
 ## 4. Storage binding profile and codec decisions
 
 Use a new explicit storage binding version `garns.storage/2`. The implementation
-must retain the existing legacy reader separately; absent version means legacy,
-never silently upgraded. Version 2 names engine, catalog/schema, every table,
+must retain the existing legacy reader separately: `schema` is the required
+discriminator, and the legacy value remains `garns-v9-5/storage-binding/1`.
+Missing or unknown `schema` refuses, matching the current reader; never silently
+upgrade. Version 2 names engine, catalog/schema, every table,
 column, constraint/index object, and per-column codec. Unknown keys and codecs
 refuse. New physical mapping participates in storage digest, admission and
 generation identity; the same resolved program does not imply the same storage.
@@ -142,9 +159,9 @@ Unsupported operators refuse before lowering. Vector/list-valued storage is
 refused in the initial PostgreSQL profile unless W2's element contract and an
 explicit codec are implemented and independently verified.
 
-Exact decimals require a versioned value encoding at the W2/W1 artifact/result
-boundary where the inherited format cannot carry Decimal. Implementation must
-first produce a focused additive contract amendment with golden vectors; do not
+Exact decimals use the tagged value encoding specified in section 6 at the
+mutation/ledger boundary. An additive artifact/result contract amendment must
+adopt that representation where the inherited format cannot carry Decimal; do not
 pass Decimal through an existing float encoder or declare parity with legacy
 SQLite REAL. A candidate cannot enable this profile until that amendment is
 accepted. The existing W2 plan format is not modified by this design alone.
@@ -154,6 +171,78 @@ as validated canonical TEXT; decimal stored as canonical TEXT) or refuse the
 profile. Decimal numeric predicates/order/aggregates refuse on SQLite until an
 exact matching implementation exists. Legacy SQLite behavior is not renamed
 as exact behavior. Capability negotiation precedes statement effects.
+
+### 4.1 Closed binding-v2 document
+
+The top-level object has exactly `schema`, `world`, `backend`, `namespace`,
+`engine_tables`, `relations`; all are required. `schema` is `garns.storage/2`,
+backend is postgres or sqlite, world is qualified, namespace has exactly
+`catalog` and `schema` (nonempty strings). Every identifier is an authored plain
+ASCII SQL identifier matching the legacy identifier rule, at most 63 UTF-8
+bytes; quoting is still mandatory. No dot, NUL, SQL fragment or truncation.
+SQLite retains the authored namespace in provenance but refuses a namespace
+that its adapter cannot map explicitly; it never claims PostgreSQL catalogs.
+
+`engine_tables` has exactly `generations`, `revisions`, `ledger`, `transactions`,
+`publication`, `migration_attempts`, `activation`. Each value is a table-name
+string; all names are distinct from relations. System columns/constraints are
+the fixed engine format `garns.engine/1`, owned by the backend implementation,
+not inferred from application names. A schema snapshot includes this format.
+No author-defined SQL or renamed system column is permitted in version 2.
+
+`relations` maps exact storable carrier qids (family, not its member aliases)
+to objects with exactly `table`, `identity`, `kind`, `columns`, `links`,
+`constraints`, `indexes`. All keys are required; empty collections are explicit.
+Identity has exactly `column`, `codec` (bigint-v1). Kind is null outside families
+or an authored discriminator column; all resolved family constructors have
+closed TEXT values. Columns maps the legacy expected qualified use keys to
+objects with exactly `column`, `codec`, `bounds`; links maps expected link keys
+to `column`/`codec` objects (bigint-v1). Missing/extra mappings refuse.
+
+Codec identifiers are exactly bigint-v1, bool-v1, text-v1, instant-v1,
+decimal-v1, bytes-v1 and json-document-v1. Bounds is null except JSON, where it
+has exactly max_bytes, max_depth, max_members, all required exact positive ints
+within the section-4 ceilings. To request defaults, supply 16777216,128,100000;
+there are no reader-invented missing keys. Schema version 2 admits nullable
+columns only where resolved semantics is optional; nullability is not editable
+as a physical override. Non-nullable family-member columns use their resolved
+discriminator guard, not an unconditional NOT NULL that rejects other members.
+
+Constraints is an array of objects with exactly name, kind, fields. Kind is
+primary_key, unique, foreign_key or check. Fields is the ordered semantic field
+identity list; identity uses the carrier qid plus `.identity`, discriminator
+uses `.kind`. Resolver emits a closed required constraint inventory from the
+IR: primary identity, one unique for the complete authored key group, a foreign
+key for every enforced link, and one check per closed-set/range/discriminator
+rule. Match by (kind,fields), never human label; duplicate matches refuse.
+Foreign-key destination/action and check meaning come only from resolved IR,
+not a binding SQL string. `unenforced` links require no foreign key. Composite
+natural-key order is the authored source order. NOT NULL uses column metadata,
+not a named constraint record. A semantic check with no implemented closed
+rule (including arbitrary invariant expressions) refuses before ship.
+
+Indexes is an array of exactly name, fields, method; method is btree. Fields
+is a nonempty ordered list of mapped use/link identities. Constraint/index
+names are unique within their PostgreSQL collision domain; primary/unique
+backing index names share the index/table namespace. Other constraints share
+the owning relation namespace. Validate the complete name inventory before DDL.
+
+Normalization validates against resolved IR, converts no value types, sorts
+constraints by (kind,fields,name), indexes by name, and recursively sorts object
+keys; semantic fields within arrays retain order. The storage digest is SHA-256
+of that normalized object encoded as ASCII compact JSON with ensure_ascii=True
+and a final LF. Duplicate JSON keys and unknown fields refuse before normalization.
+All namespace, names, codecs and bounds participate. No file path participates.
+
+A complete minimal binding appears in the vector file: world demo.Store,
+carrier demo.Document with mandatory payload:Opaque, no key fields or links.
+The identity and payload fields, seven distinct engine tables, primary-key
+constraint, null discriminator and empty indexes are all explicitly authored.
+The input and normalized object are identical; the expected digest is recorded.
+Changing whitespace/key order leaves digest unchanged; changing bounds or names
+changes it. Version-1 input is dispatched to its reader only; missing/unknown
+schema, any extra/missing field, colliding name, unsupported codec, missing
+required constraint or excessive bound refuses before effect.
 
 ## 5. Schema, constraints and lowering
 
@@ -202,13 +291,60 @@ Identity/digest uniqueness returns the original committed outcome; another
 payload under that identity refuses. Durable identity records outlive generation
 changes and ledger retention. Missing reconciliation row is not proof of abort.
 
-A callback-based retry API, when implemented, retains the original identity and
-requires deterministic effective mutation payload across known-aborted retries.
-A payload mismatch refuses rather than writing under a reused identity. Planned
-mutation payload and actual recorded effects must be distinguished so stamped
-or backend-induced values do not silently change the idempotency comparison.
-The future execution brief must specify that canonical encoding before enabling
-callback retries; default one-attempt explicit transactions are not affected.
+Every transaction, including one-attempt explicit transactions, uses
+`garns.mutation-payload/1`. The complete immutable ordered batch is supplied at
+begin before acquisition or effects. Arbitrary mutation append is not public;
+build batches locally without I/O. The envelope is exactly
+`{"schema":"garns.mutation-payload/1","mutations":[...]}`. Each mutation has
+exact keys `kind`, `carrier`, `identity`, `values`; kind is insert/update/delete,
+carrier is qualified, identity is an explicit bigint (including inserts), and
+values maps qualified use/link identities to tagged atoms. Delete values is
+empty. Unknown/missing keys refuse. Mutation order is significant; values keys
+sort by Unicode code point. Omitted values are absent, not encoded as null.
+
+Atoms are closed arrays: `["null"]`, `["bool",true|false]`,
+`["int",SIGNED_DECIMAL_STRING]`, `["text",STRING]`,
+`["decimal",CANONICAL_EXACT_DECIMAL_STRING]`, `["bytes",PADDED_BASE64]`.
+Integers use no leading zero or plus; zero has no minus. Decimal spelling uses
+the exact non-exponent rule in section 4. Bytes use RFC 4648 standard padded
+base64 with no whitespace. Semantic type/binding validation selects the tag:
+Instant/link identities use int, closed sets/newtypes their base tag. Unknown
+tags, float, nonfinite Decimal, mutable bytearray, tuple/list/map values and
+unsupported scalar types refuse for this initial scalar profile. JSON documents
+are opaque bytes canonicalized by their codec before the bytes atom is created.
+
+Payload bytes are ASCII JSON: sorted object keys, compact separators, Python
+`ensure_ascii=True` escaping (surrogate-pair escapes for valid non-BMP scalars),
+no slash escape, lowercase hexadecimal control escapes, plus one final LF.
+SHA-256 of exactly these bytes is the payload digest. The durable identity row
+stores encoding version, digest and normalized payload bytes plus original
+artifact provenance. Exact byte comparison protects against digest mismatch or
+unknown encodings; unsupported historical encoding remains reconcilable via its
+durable outcome but cannot be replay-executed through a new encoder.
+
+Generated default/stamp values and induced cascade effects are excluded from
+the caller-intent payload; they are fully recorded in typed ledger effects.
+User-supplied overrides, including explicit NULL, remain in the intent. A
+duplicate same identity resolves against retained original payload/provenance
+before evaluating new defaults/stamps or performing DML. It returns the original
+outcome; different intent refuses. No implicit identity allocation is offered,
+so a retry cannot generate a new insert identity. New-generation validation does
+not erase or reinterpret retained identity records.
+
+At begin, validate/normalize the batch and retain it; database-side serialization
+of a qualified identity prevents simultaneous owners. Before any batch effect,
+look up durable identity; compare original intent, return prior outcome or
+refuse conflict. If no final record but the original operation might still be
+active, containment/reconciliation takes precedence; it does not authorize
+another owner. Apply cannot partially authorize a different batch. Commit seals
+the already fixed digest alongside effects. A retry-safe callback, if later
+enabled, must produce this batch before effects on every attempt and compare
+bytes to the first batch; mismatch refuses. The first slice does not expose that
+callback API, even though A7's whole-transaction retry ownership remains fixed.
+
+Exact vectors and expected digests are filed in
+`PythonPostgresDatabaseDesign-Vectors.json`. They cover empty batch, omitted
+versus NULL, numeric/opaque atoms, ordering, and exact storage binding bytes.
 
 Cancellation/lost acknowledgement after commit request preserves INDETERMINATE.
 Reconcile on an independently acquired connection after original ownership is
@@ -232,6 +368,49 @@ runtime close does not perform a deployment-wide drain. New-generation admission
 starts only after atomic generation publication. Unsupported migration classes
 refuse before execution. Transactional PostgreSQL DDL can be supported only
 with the required effect accounting; no success receipt merely from DDL return.
+
+Migration recovery is a privileged control-plane operation, not ordinary
+runtime admission. Before effects, persist a migration attempt descriptor in
+the engine's migration_attempts table: request digest, expected old and exact
+requested new binding digests, attempt serial and deployment/activation epoch.
+The descriptor is written under the deployment advisory lock and validated
+against the coordinator's sealed attempt; it grants no caller authority.
+Request/attempt references are returned or recoverable by privileged inspect
+even if the initial migrate await was cancelled. Identifiers are references,
+never caller-supplied evidence proofs or serialized worker keys.
+
+`recover_migration` opens an independently owned privileged connection under
+the same finite lock, authenticates current recovery capability and restores
+coordinator state from durable request/attempt evidence plus authoritative
+participant inventory. It is legal while ordinary execute/begin/open admission
+is fenced. It does not repeat migration SQL. Close/restart retains the durable
+descriptor and fence; an unverified participant stop never counts as drain.
+The backend/coordinator privately constructs exact phase/serial/successor-bound
+proofs; the caller cannot submit a proof digest to reopen a deployment.
+
+Its result is exactly SUCCESSOR_CONFIRMED (requested binding and generation
+publication durably proven), NO_EFFECT_CONFIRMED (old binding fully restored,
+all effects authoritatively aborted and original workers quiescent, new admission
+epoch), or INDETERMINATE (retain fence/ownership and reference). Invalid authority,
+wrong request/attempt, unknown phase or stale epoch yields a typed refusal and
+no state change. Table absence or schema inspection alone is not abort proof.
+No binding-non-reuse/retirement resolution is enabled in this initial profile.
+Transaction reconciliation alone cannot settle migration coordination.
+
+Metadata-only recovery reads its atomic generation/proof record, not a data
+revision that A12 forbids. Accounted migration recovery requires exact generation,
+transaction identity/payload digest and complete effects. After effects but
+without authoritative commit/abort evidence it stays INDETERMINATE. A before-
+effects cancellation can reopen only with the accepted no-effect phase proof
+and barrier acknowledgements. Ack loss after atomic publication returns
+SUCCESSOR_CONFIRMED after matching the exact descriptor; never executes twice.
+
+There is no public migration rollback method: cancelling migrate requests
+bounded interruption/rollback internally, without claiming it succeeded.
+The host must then recover_migration, not call runtime rollback or start a new
+attempt. Closing the Provisioner preserves recovery references for a newly
+opened recovery Provisioner; normal provisioner open does not require ordinary
+data admission or accidentally clear an indeterminate fence.
 
 Runtime/migration credentials stay in the trusted host; request principals
 cannot read or borrow them. Read-only researcher roles may inspect designated
