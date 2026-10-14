@@ -5,7 +5,7 @@ import inspect
 from pathlib import Path
 import unittest
 
-from garns.backends.contracts.lifetime_reference import ReferenceLifetimeRegistry
+from garns.backends.contracts.lifetime_reference import ReferenceLifetimeRegistry  # noqa: F401
 from garns.backends.contracts.worker_authority import WorkerAuthorizationIssuer
 
 
@@ -42,13 +42,41 @@ COORDINATOR_METHODS = (
     "begin_drain", "barrier_allowed", "acknowledge_barrier", "begin_migration",
     "begin_migration_effect", "observe_request_released", "reopen_no_effect",
     "no_effect_reopen_complete", "attempt_product", "publish_generation",
-    "mark_indeterminate",
+    "mark_indeterminate", "recover_migration",
 )
 MEMBERSHIP_AND_PROOF_METHODS = (
     "join_runtime", "request_leave", "finalize_leave", "close_unjoined",
     "witness_local_drain", "witness_local_close",
     "observe_request_released", "reopen_no_effect", "begin_migration_effect",
+    "recover_migration",
 )
+# Every public registry entry that can reach the containment routine must
+# validate one of these before any mutation: the live receiver, the exact
+# assigned worker, a trusted registry-owned observation or cause record, or a
+# trusted barrier/fence/invalidation event (design §5.2 three trusted sources,
+# §7 row 1).  Markers are checked in the method or in the private helpers it
+# calls directly.
+AUTHORITY_MARKERS = {
+    "receiver": (
+        "self._lease_for_owner(", "self._owner_matches(", "self._presentation_current(",
+        "self._require_publication_ready(", "self._authority.is_current_task(record.receiving_task)",
+    ),
+    "worker": ("self._validate_worker_barriers(", "self._authority.is_current_task(command.worker)"),
+    "observation": ("self._observations.get(", "self._exit_receipts.get(", "self._failures.get("),
+    "barrier": ("self._coordinator.barrier_allowed(", "self._descendant_names(", "self._registry_epoch += 1"),
+}
+CONTAINMENT_ENTRIES = {
+    "run_plan_step": "receiver", "issue_derived_command": "receiver", "run_derived_command": "receiver",
+    "dispatch_worker": "receiver", "request_worker_cancel": "receiver", "accept_worker_result": "receiver",
+    "setup_reference_initial_snapshot": "receiver", "register_subscription": "receiver",
+    "setup_reference_refresh_candidate": "receiver", "publish_refresh_buffer": "receiver",
+    "commit_refresh": "receiver", "prepare_delivery_publication": "receiver",
+    "settle_delivery_success": "receiver",
+    "dequeue_worker": "worker", "run_worker_effect": "worker", "worker_exit_success": "worker",
+    "worker_exit_failure": "worker", "run_worker_cleanup": "worker",
+    "observe_receiving_task_done": "observation", "begin_delivery_non_success": "observation",
+    "start_close": "barrier", "migration_queue_barrier": "barrier", "revoke_generation": "barrier",
+}
 
 
 def parsed(name: str) -> ast.Module:
@@ -128,8 +156,53 @@ class ContractSourceRules(unittest.TestCase):
             "run_worker_cleanup", "setup_reference_worker_stop", "worker_command_state",
             "worker_effect_knowledge", "worker_ordinals", "worker_exit_facts",
             "worker_cleanup_step", "_command_for", "_worker_context_owner",
-            "_revoke_worker_authorization",
         }, authorization_entries)
+        # IR22: the executor facade offers no cancellation route.
+        self.assertFalse(hasattr(WorkerAuthorizationIssuer, "revoke"))
+        self.assertEqual(
+            ("run_effect", "context_owner"),
+            tuple(name for name in vars(WorkerAuthorizationIssuer) if not name.startswith("_")),
+        )
+        self.assertNotIn("_revoke_worker_authorization", {
+            node.name for node in owner.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        })
+
+    def test_public_containment_entries_validate_authority_first(self) -> None:
+        tree = parsed("lifetime_reference.py")
+        owner = class_node(tree, "ReferenceLifetimeRegistry")
+        methods = {
+            node.name: node for node in owner.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+
+        def callees(method):
+            return {
+                node.func.attr for node in ast.walk(method)
+                if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and isinstance(node.func.value, ast.Name) and node.func.value.id == "self"
+                and node.func.attr in methods
+            }
+
+        graph = {name: callees(method) for name, method in methods.items()}
+        reaching = {"_contain_lease"}
+        changed = True
+        while changed:
+            changed = False
+            for name, called in graph.items():
+                if name not in reaching and called & reaching:
+                    reaching.add(name)
+                    changed = True
+        public = {name for name in reaching if not name.startswith("_")}
+        self.assertEqual(set(CONTAINMENT_ENTRIES), public)
+        for name, authority in CONTAINMENT_ENTRIES.items():
+            with self.subTest(entry=name, authority=authority):
+                sources = [ast.unparse(methods[name])]
+                sources.extend(ast.unparse(methods[helper]) for helper in graph[name] if helper.startswith("_"))
+                text = "\n".join(sources)
+                self.assertTrue(
+                    any(marker in text for marker in AUTHORITY_MARKERS[authority]),
+                    f"{name} must validate a {authority} before reaching containment",
+                )
         self.assertEqual(
             ("authorization", "ordinal"),
             tuple(inspect.signature(WorkerAuthorizationIssuer.run_effect).parameters)[1:],

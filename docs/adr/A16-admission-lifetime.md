@@ -49,9 +49,16 @@ reservation, exit, containment, result acceptance and terminal release.
 `WorkerAuthorizationIssuer` is only a stateless façade. Dispatch obtains the
 assigned worker and closed effect schedule from fixed trusted setup providers;
 ordinary invocation supplies no callback, worker/task identity, stop flag or
-containment proof. Each effect ordinal is reserved and removed before the
-fixed action begins; nested reservation refuses, and any raised
-`BaseException` contains the command and revokes every unused ordinal. Success
+containment proof, and the executor façade exposes only effect execution and
+the context owner, never a cancellation route: cancellation has exactly three
+trusted sources (the live receiver, an issuer-internal fence, expiry or close
+event, and the exact receiving-task lifecycle observation). Each effect ordinal
+is reserved and removed before the fixed action begins; nested reservation
+refuses, and any raised `BaseException` contains the command and revokes every
+unused ordinal. Each finite cleanup step is claimed atomically with its
+validation before its fixed action runs, a claimed step is consumed whether the
+action returns or raises, a re-entrant cleanup call refuses while the action is
+on the stack, and no effect may be reserved once cleanup has begun. Success
 remains private until an exact executor-issued stop observation and exact
 receiving-task acceptance. Task loss, failure, cancellation and cleanup
 failure preserve one primary exit plus bounded diagnostics and retain the
@@ -98,17 +105,22 @@ admission authority. An exact lifetime-capable open atomically joins an active
 current binding and issues a sealed `ParticipantMembership`; the first such
 open performs the `ACTIVE_UNUSED` to `ACTIVE` edge, so unused withdrawal stays
 available until a runtime has joined. Admissions, leases, buffer permits and
-buffer exchanges bind that exact membership and refuse once it has left. Leave
-is registry-witnessed: a leave request stands only behind the runtime's
-witnessed drain or fence, and the leave finishes only through the registry's
-witnessed `CLOSED` outcome, after every retained operation, generation or
-buffer permit, worker, containment and close obligation (including unresolved
-A7 identities) is gone. A leave requested during migration remains in that
+buffer exchanges bind that exact membership and refuse once it has left. Join
+and admission also refuse once the runtime resource has left `LOCAL_OPEN` or a
+runtime close has begun, so a never-joined closing registry proceeds only
+`UNJOINED` to `LEFT`. Leave is registry-witnessed: a leave request stands only
+behind the runtime's witnessed drain or fence, and the leave finishes only
+through the registry's witnessed `CLOSED` outcome, after every retained
+operation, generation or buffer permit, worker, containment and close
+obligation (including unresolved A7 identities) is gone; the witness is
+established before any local close mutation, so a refused close leaves
+resources, admissions and membership unchanged, and a repeated close never
+relabels a retired or revoked admission. A leave requested during migration remains in that
 attempt's frozen set, reports `CLOSED` locally while still `LEAVE_PENDING`,
 becomes `LEFT` only after attempt close, and is absent from later attempts.
-The formal coordinator seam declares the membership, barrier, permit and
-phase-proof members with exact identity types; a coordinator missing any of
-them does not conform.
+The formal coordinator seam declares the membership, barrier, permit,
+phase-proof and indeterminate-recovery members with exact identity types; a
+coordinator missing any of them does not conform.
 
 Migration alone enters deployment-wide `DRAINING_OLD`. One sealed migration
 attempt freezes the joined participant set. Every participant installs and
@@ -174,9 +186,13 @@ tests of its remediation plan: the publication precondition at every
 prepublication stage, the containment matrix, terminal absorption, cleanup and
 later-slot validation, registry-witnessed leave, refresh disposition, bounded
 retention, replay exactness and the command-edge and migration-product
-enumerations. The source checks enforce the raw-`Plan` protocol boundary, the
-sole mutable owner arrangement, the exact terminalizer and worker-entry sets,
-the single containment routine and the coordinator seam's call shapes.
+enumerations. Source correction 2 (2026-10-05, the last allowed) adds the
+join-after-close, façade-route, cleanup-claim, terminal-tombstone and
+late-return-authority closure tests. The source checks enforce the raw-`Plan`
+protocol boundary, the sole mutable owner arrangement, the exact terminalizer
+and worker-entry sets, the single containment routine, the authority each
+public containment entry validates first, and the coordinator seam's call
+shapes.
 
 The historical stopped source and its review rounds remain unchanged evidence.
 This implementation is a candidate only: these tests do not close any finding,

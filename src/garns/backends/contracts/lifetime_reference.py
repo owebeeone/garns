@@ -124,6 +124,7 @@ class _LeaseRecord:
     lifecycle_exit: WorkerExitReceipt | None = None
     delivery_cause: object | None = None
     issued_failures: set[ClosedWorkerFailure] = field(default_factory=set)
+    initial_candidate: InitialSnapshotCandidate | None = None
 
 
 @dataclass(slots=True)
@@ -150,6 +151,8 @@ class _WorkerCommandRecord:
     cancel_diagnostic: bool = False
     late_return_diagnostic: bool = False
     next_cleanup_step: int = 1
+    cleanup_begun: bool = False
+    cleanup_in_progress: bool = False
     issued_results: set[ClosedWorkerResult] = field(default_factory=set)
     issued_failures: set[ClosedWorkerFailure] = field(default_factory=set)
     issued_stops: set[WorkerStopReceipt] = field(default_factory=set)
@@ -240,13 +243,17 @@ class ReferenceLifetimeRegistry:
         self._retirements: dict[DeliveryRetirementReceipt, _LeaseRecord] = {}
         self._handoff_leases: dict[int, _LeaseRecord] = {}
         self._workers = WorkerAuthorizationIssuer(
-            self.run_worker_effect, self._worker_context_owner, self._revoke_worker_authorization,
+            self.run_worker_effect, self._worker_context_owner,
         )
+        self._runtime_close_begun = False
         self.publications = 0
 
     def open_lifetime(self) -> ParticipantMembership:
         if self._membership is not None:
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "runtime membership already joined")
+        # Design §9: join validates the local open resource; once a runtime
+        # close has begun, a never-joined registry proceeds only UNJOINED -> LEFT.
+        self._require_runtime_open("later join refuses once the runtime close has begun")
         self._membership = self._coordinator.join_runtime(self._open_record)
         self._migration_participant = self._membership
         return self._membership
@@ -295,6 +302,7 @@ class ReferenceLifetimeRegistry:
             raise TypeError("admission requires exact plan and binding values")
         if not self._membership_admits():
             raise ContractRefusal(RefusalCode.ACTIVATION_REQUIRED, "runtime has not joined the active lifetime")
+        self._require_runtime_open("admission requires an open runtime")
         if binding != self._coordinator.binding or self._coordinator.state is not DeploymentGenerationState.CURRENT:
             raise ContractRefusal(RefusalCode.GENERATION_MISMATCH, "admission binding is not current")
         binding.validate_plan(plan)
@@ -313,6 +321,28 @@ class ReferenceLifetimeRegistry:
             self._membership is not None
             and self._coordinator.membership_state(self._membership) is ParticipantState.JOINED
         )
+
+    def _require_runtime_open(self, detail: str) -> None:
+        """Refuse once a runtime close has begun or a runtime resource left LOCAL_OPEN."""
+
+        if self._runtime_close_begun:
+            raise ContractRefusal(RefusalCode.LOCAL_RESOURCE_DRAINING, detail)
+        for record in self._resources.values():
+            if record.identity.kind is ResourceKind.RUNTIME and record.state is not LocalResourceState.LOCAL_OPEN:
+                code = (
+                    RefusalCode.LOCAL_RESOURCE_DRAINING
+                    if record.state is LocalResourceState.LOCAL_DRAINING
+                    else RefusalCode.LOCAL_RESOURCE_FENCED
+                )
+                raise ContractRefusal(code, detail)
+
+    def admission_state(self, handle: AdmittedReadHandle) -> AdmissionState:
+        """Closed observation of an admission record's state label."""
+
+        record = self._admissions.get(handle) if type(handle) is AdmittedReadHandle else None
+        if record is None:
+            raise ContractRefusal(RefusalCode.PLAN_ADMISSION_REQUIRED, "exact admitted handle is required")
+        return record.state
 
     def acquire(self, handle: AdmittedReadHandle, operation_kind: OperationKind,
                 parameters: ParameterValues, context: TrustedContext, *,
@@ -555,6 +585,10 @@ class ReferenceLifetimeRegistry:
         record, command = self._command_for(authorization)
         if command.state is not WorkerCommandState.RUNNING_IDLE or command.active_reservation is not None:
             raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "command cannot reserve another effect")
+        if command.cleanup_begun:
+            # Design §5.3: the body precedes the finite cleanup schedule; no
+            # effect may be reserved once cleanup has begun.
+            raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "effects cannot be reserved once cleanup has begun")
         if type(ordinal) is not int or ordinal not in command.remaining_ordinals:
             code = (
                 RefusalCode.EFFECT_ORDINAL_REUSED
@@ -615,8 +649,11 @@ class ReferenceLifetimeRegistry:
         if command.exit_receipt is not None:
             if command.exit_kind is WorkerExitKind.SUCCESS and command.result is result:
                 return command.exit_receipt
-            # Design §4.1: a late worker return after containment is only a
-            # closed diagnostic on that containment record.
+            # Design §7 row 1: a non-worker presentation refuses before any
+            # record is written; design §4.1: only a late *worker* return after
+            # containment is recorded as the closed diagnostic.
+            if not self._authority.is_current_task(command.worker):
+                raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "assigned worker is not current")
             if command.exit_kind is not WorkerExitKind.SUCCESS:
                 command.late_return_diagnostic = True
             raise ContractRefusal(RefusalCode.OPERATION_OUTCOME_CONFLICT, "worker exit already committed")
@@ -624,7 +661,7 @@ class ReferenceLifetimeRegistry:
             raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "command is not idle for success")
         if not set(command.spec.required_effects).issubset(command.completed_ordinals):
             raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "required effects are incomplete")
-        if command.next_cleanup_step <= command.spec.cleanup_steps:
+        if command.cleanup_in_progress or command.next_cleanup_step <= command.spec.cleanup_steps:
             raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "trusted cleanup schedule is incomplete")
         self._validate_worker_barriers(record, command)
         command.remaining_ordinals.clear()
@@ -667,6 +704,10 @@ class ReferenceLifetimeRegistry:
             raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "command is not active")
         if not self._authority.is_current_task(command.worker):
             raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "assigned worker is not current")
+        if command.cleanup_in_progress:
+            # Design §4.2: a re-entrant call observes the in-progress action
+            # and refuses without consuming anything.
+            raise ContractRefusal(RefusalCode.WORKER_AUTHORITY_INVALID, "a cleanup action is already on this command's stack")
         if (
             type(step) is not int
             or step != command.next_cleanup_step
@@ -686,6 +727,12 @@ class ReferenceLifetimeRegistry:
         action = self._cleanup_provider(command.spec.label, step)
         if not callable(action):
             raise ValueError("trusted cleanup provider did not return a fixed action")
+        # Design §5.3: the step is claimed atomically with its validation,
+        # before the fixed action runs; a claimed step counts as consumed
+        # whether the action returns or raises.
+        command.next_cleanup_step += 1
+        command.cleanup_begun = True
+        command.cleanup_in_progress = True
         try:
             action()
         except BaseException:
@@ -698,7 +745,7 @@ class ReferenceLifetimeRegistry:
                 command.cleanup_diagnostics.append(self._issue_failure(record, command))
             raise
         finally:
-            command.next_cleanup_step += 1
+            command.cleanup_in_progress = False
 
     def request_worker_cancel(self, lease: ReadOperationLease) -> WorkerExitReceipt | None:
         record = self._lease_record(lease, allow_terminal=True)
@@ -948,11 +995,17 @@ class ReferenceLifetimeRegistry:
         self._validate_queue_target(record, subscription_record, queue_record)
         self._validate_barriers(record)
         admission = self._admissions[record.admission]
-        return self._snapshots.setup_initial(
+        candidate = self._snapshots.setup_initial(
             lease, record.operation, record.admission, record.parameters,
             record.binding, admission.plan.root.canonical_digest,
             subscription_record.identity, queue_record.identity, frozen_rows, watermark,
         )
+        # One current initial candidate per operation; it dies with the
+        # operation when unconsumed (design §10's current-field rule, IR26).
+        if record.initial_candidate is not None:
+            self._snapshots.discard_initial(record.initial_candidate)
+        record.initial_candidate = candidate
+        return candidate
 
     def register_subscription(
         self, lease: ReadOperationLease, owner: object,
@@ -1002,6 +1055,7 @@ class ReferenceLifetimeRegistry:
         record.completed_steps.add(PlanStep.PUBLICATION)
         self.publications += 1
         self._snapshots.consume_initial(candidate)
+        record.initial_candidate = None
         self._terminalize(record, LeaseState.SUCCEEDED)
         return InitialSnapshotPublication(snapshot.rows, snapshot.watermark, registration)
 
@@ -1413,6 +1467,12 @@ class ReferenceLifetimeRegistry:
         self, retirement: DeliveryRetirementReceipt,
     ) -> DeliveryStopObservation:
         record = self._delivery_record(retirement)
+        if record.state.terminal:
+            # A late stop setup on a settled retirement replays the recorded
+            # observation or refuses; it never reaches the discarded ledger.
+            if record.delivery_stop is not None:
+                return record.delivery_stop
+            raise ContractRefusal(RefusalCode.LEASE_INVALID, "delivery retirement is already settled")
         if record.active_command_serial is not None:
             command = record.command_ledger[record.active_command_serial - 1]
             if command.state not in {
@@ -1500,8 +1560,14 @@ class ReferenceLifetimeRegistry:
                 self._queues[queue] = QueueState.CLOSED
         self._invalidate_buffers(selected)
         if resource.kind is ResourceKind.RUNTIME:
+            self._runtime_close_begun = True
             for admission in self._admissions.values():
-                admission.state = AdmissionState.REVOKED if hard else AdmissionState.DRAINING
+                # Legal record edges only (overlay §3.1): ADMITTED -> DRAINING or
+                # REVOKED, DRAINING -> REVOKED; RETIRED and REVOKED never relabel.
+                if admission.state is AdmissionState.ADMITTED:
+                    admission.state = AdmissionState.REVOKED if hard else AdmissionState.DRAINING
+                elif hard and admission.state is AdmissionState.DRAINING:
+                    admission.state = AdmissionState.REVOKED
             if (
                 self._membership is not None
                 and self._coordinator.membership_state(self._membership) is ParticipantState.JOINED
@@ -1532,15 +1598,17 @@ class ReferenceLifetimeRegistry:
             return CloseOutcome(CloseKnowledge.NONQUIESCENT, unresolved, operations)
         if unresolved:
             return CloseOutcome(CloseKnowledge.UNRESOLVED, unresolved)
+        # Validate before the first local mutation (overlay §4, A16): every
+        # local transition must be legal and every coordinator precondition
+        # must hold; a refusal below leaves resources, admissions and
+        # membership unchanged.
         for name in selected:
             record = self._resources[name]
             if record.charges:
                 raise ValueError("a parent cannot close while a descendant remains charged")
-            if record.state is not LocalResourceState.LOCAL_CLOSED:
-                record.state = transition_local(record.state, LocalResourceState.LOCAL_CLOSED)
+            if record.state is LocalResourceState.LOCAL_OPEN:
+                raise ValueError("a descendant reopened after the close barrier")
         if resource.kind is ResourceKind.RUNTIME:
-            for admission in self._admissions.values():
-                admission.state = AdmissionState.RETIRED
             if self._membership is None:
                 self._coordinator.close_unjoined(self._open_record)
             else:
@@ -1548,6 +1616,13 @@ class ReferenceLifetimeRegistry:
                 # coordinator finishes the leave now or, during a frozen
                 # attempt, when that attempt closes.
                 self._coordinator.witness_local_close(self._open_record)
+        for name in selected:
+            record = self._resources[name]
+            if record.state is not LocalResourceState.LOCAL_CLOSED:
+                record.state = transition_local(record.state, LocalResourceState.LOCAL_CLOSED)
+        if resource.kind is ResourceKind.RUNTIME:
+            for admission in self._admissions.values():
+                admission.state = AdmissionState.RETIRED
         return CloseOutcome(CloseKnowledge.CLOSED)
 
     def migration_queue_barrier(self, attempt: MigrationAttempt) -> int:
@@ -1896,20 +1971,6 @@ class ReferenceLifetimeRegistry:
         record.owner = record.containment_owner
         self._retirements[retirement] = record
 
-    def _revoke_worker_authorization(self, authorization: WorkerCommandAuthorization) -> None:
-        try:
-            record, command = self._command_for(authorization)
-        except ContractRefusal:
-            return
-        if record.active_command_serial == command.serial and command.state in {
-            WorkerCommandState.QUEUED,
-            WorkerCommandState.RUNNING_IDLE,
-            WorkerCommandState.EFFECT_IN_FLIGHT,
-            WorkerCommandState.SUCCESS_PENDING,
-            WorkerCommandState.QUIESCENT_SUCCESS,
-        }:
-            self._contain_lease(record, WorkerExitKind.CANCEL)
-
     def _terminalize(self, record: _LeaseRecord, outcome: LeaseState) -> None:
         if record.completion is not None:
             if record.completion is not outcome:
@@ -1942,10 +2003,14 @@ class ReferenceLifetimeRegistry:
             self._failures.pop(failure, None)
         record.issued_failures.clear()
         record.command_ledger = []
+        record.active_command_serial = None
         record.command = None
         record.worker = None
         record.authorization = None
         self._drop_refresh_candidate(record)
+        if record.initial_candidate is not None:
+            self._snapshots.discard_initial(record.initial_candidate)
+            record.initial_candidate = None
         if record.handoff_envelope is not None:
             self._handoff_leases.pop(id(record.handoff_envelope), None)
             record.handoff_envelope = None

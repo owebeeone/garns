@@ -135,6 +135,11 @@ class ReferenceSnapshotRegistry:
         record.consumed = True
         del self._initial[candidate]
 
+    def discard_initial(self, candidate: InitialSnapshotCandidate) -> None:
+        """Drop an unconsumed initial candidate whose operation became terminal."""
+
+        self._initial.pop(candidate, None)
+
     def setup_refresh(
         self, lease: ReadOperationLease, operation: OperationIdentity,
         admission: AdmittedReadHandle, parameters: ParameterValues,

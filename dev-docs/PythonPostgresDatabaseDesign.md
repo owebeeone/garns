@@ -150,7 +150,16 @@ documented server numeric/JSONB limits, independently tested at boundary values.
 Canonical JSON is versioned: keys sort by Unicode code point, no Unicode
 normalization, arrays retain order, decimals use exact non-exponent spelling
 with fractional trailing zeroes removed and negative zero encoded as zero;
-strings use UTF-8 with standard JSON quote/control escapes. Reject values whose
+Strings use literal UTF-8 for every admitted scalar except double quote,
+backslash and U+0001..U+001F. Encode quote as `\"`, backslash as `\\`, and
+backspace/tab/newline/form-feed/carriage-return as `\b`, `\t`, `\n`, `\f`, `\r`.
+Other control characters use exactly lowercase `\u00xx`. U+0000 is refused,
+as are surrogate scalars. Never escape solidus, non-ASCII, U+2028/U+2029 or a
+valid non-BMP scalar. Object/array separators are comma and colon without spaces;
+the canonical JSON document has no BOM, leading/trailing whitespace or final LF.
+The identical serializer governs caller-input normalization and JSONB text
+retrieval. Outer payload/binding encodings retain their separately specified
+ASCII escaping and final LF. Reject values whose
 canonical expansion exceeds the output bound before allocating that expansion.
 
 Opaque remains presence-only in semantic queries. A JSON document binding does

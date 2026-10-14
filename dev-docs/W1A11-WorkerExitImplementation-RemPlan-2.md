@@ -1,8 +1,14 @@
 # W1A11 worker-exit implementation — consolidated remediation 2
 
-**Status:** manager verdict merge for review round 2, and proposed disposition.
-**Correction 2 is not authorized.** It is the last correction the implementation
-gate allows. Source writes stay stopped until the operator decides.  
+**Status:** manager verdict merge for review round 2, and disposition.
+**Correction 2 of 2, the last the gate allows, was authorized by the operator on
+2026-10-05** ("4-yes now, 1,2,3yes go"). The plan as filed is commit garns
+`f5634ca`. The operator confirmed three things:
+- continue the same Fable builder with its context intact;
+- fix IR24, IR25, IR26, IR29 and IR30 in this correction;
+- defer IR27 and IR28 to W3.
+
+IR20 stays outside.  
 **Date:** 2026-10-05  
 **Object reviewed:** the corrected candidate after correction 1, MANIFEST-2
 `ee441c18da74c30a6afc2fdc6ac1ef07f6e39990fecf113e98f34c1f81200720` (128 entries).
@@ -284,13 +290,11 @@ The three blockers are small and local:
 
 ## Next steps
 
-1. **Operator decisions:**
-   - Authorize correction 2, the last allowed.
-   - Choose the builder. The recommendation is to continue the same Fable
-     builder with its context intact under a new pinned BuilderPrompt-3, as the
-     lane's precedent has one builder own consecutive corrections. A fresh Fable
-     builder is the alternative.
-   - Confirm the P3 split above.
+1. **Operator decisions, settled 2026-10-05:**
+   - Correction 2 is authorized.
+   - The same Fable builder continues under
+     `W1A11-WorkerExitImplementation-BuilderPrompt-3.md`.
+   - The P3 split above is confirmed.
 2. **Before any write, the manager:**
    - preserves MANIFEST-2's exact files under
      `W1A11-WorkerExitImplementation-Revision2/`, so MANIFEST-2 verifies from

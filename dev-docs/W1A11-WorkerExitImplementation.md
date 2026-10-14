@@ -1,18 +1,23 @@
 # W1/A11 worker-exit contract/reference implementation
 
-**Date:** 2026-10-05 (correction 1 of 2 applied; initial object 2026-10-04)  
-**Status:** candidate implementation after consolidated source correction 1;
-independent round-2 Code/State review and originating executable closure of
-every round-1 finding are pending  
+**Date:** 2026-10-05 (corrections 1 and 2 of 2 applied; initial object
+2026-10-04)  
+**Status:** candidate implementation after the last allowed consolidated source
+correction; round-3 Code/State review and the re-verdicts of every round-2
+reviewer who raised an open finding are pending  
 **Authority:** `W1A11-WorkerExitImplementation-ExecutionBrief.md`, the accepted
 worker-exit design/acceptance tuple named there, and the controlling
-remediation disposition `W1A11-WorkerExitImplementation-RemPlan.md`
+remediation dispositions `W1A11-WorkerExitImplementation-RemPlan.md` and
+`W1A11-WorkerExitImplementation-RemPlan-2.md`
 
 This document records the enacted deterministic contract/reference object as
 corrected. It does not accept A16, close a finding, authorize a production
-runtime, or alter the stopped source/design histories. Correction 1 resolves
+runtime, or alter the stopped source/design histories. Correction 1 resolved
 the thirteen blocking roots IR1–IR13 and the non-blocking roots IR14–IR19 of
-the RemPlan with one consolidated patch; IR20 is outside its write boundary.
+the RemPlan; every round-1 finding was then closed by its raiser on
+MANIFEST-2. Correction 2 resolves the round-2 roots IR21–IR26, IR29 and IR30 of
+RemPlan-2. IR27 and IR28 are deferred to W3 by operator decision; IR20 stays
+outside the write boundary.
 
 ## Enacted ownership and type inventory
 
@@ -25,9 +30,14 @@ release. `ReferenceBufferRegistry` is its transactional FIFO/lineage subledger;
 it never releases a generation permit. `ReferenceGenerationCoordinator`
 continues to own deployment permits, activation-bracketed membership, the
 registry-witnessed leave and the migration attempt phase/request product.
-`WorkerAuthorizationIssuer` contains only three delegation callables and owns no
-record table. The registry is typed against, and checks conformance with, the
-formal `SharedGenerationCoordinator` seam in `lifetime.py`.
+`WorkerAuthorizationIssuer` contains only two delegation callables, `run_effect`
+and `context_owner`, and owns no record table; it offers no cancellation
+route, so the design's three trusted cancellation sources (live receiver,
+issuer-internal fence/expiry/close event, exact receiving-task lifecycle
+observation) are the only ways into containment. The registry is typed
+against, and checks conformance with, the formal `SharedGenerationCoordinator`
+seam in `lifetime.py`, which now also declares `recover_migration`, the exit of
+`MIGRATION_INDETERMINATE`.
 
 The enacted sealed empty identities are unchanged by the correction:
 
@@ -66,8 +76,9 @@ the explicit refusal `retire_binding`.
 Closed observers added for refusal testimony: `lease_facts(lease)` reports
 (state, completion, owner label, active serial, ledger length) with the owner
 as a label and never an identity; `worker_cleanup_step(authorization)` reports
-the next cleanup step. `worker_exit_facts` counts a late-return diagnostic in
-its diagnostic count.
+the next cleanup step; `admission_state(handle)` reports an admission record's
+state label. `worker_exit_facts` counts a late-return diagnostic in its
+diagnostic count.
 
 Fixed `command_schedule_provider`, `assigned_worker_provider`,
 `effect_provider`, and `cleanup_provider` values are installed only at trusted
@@ -81,11 +92,11 @@ worker/task identity, stop boolean, containment owner or caller-composed proof.
 | One publication precondition: ledger length equals `M`, last record `RESULT_ACCEPTED`, no active command, exact continuation owner, live and current receiver | `_publication_ready` / `_require_publication_ready`, required by `run_plan_step` (PUBLICATION), `register_subscription`, `_commit_refresh_record`, `prepare_delivery_publication`; `complete(SUCCEEDED)` is only an exact replay after publication | IR1, IR2 |
 | One containment routine that leaves terminal and retiring leases alone, moves lease, command and result together, routes deliveries into §8 phase one with a registry-owned cause and transfers to the containment owner | `_contain_lease` (with `_contain_command` for the command record and `_begin_retirement` for phase one); every writer of `CONTAINED`, `RETIRING_HANDOFF` or the containment owner is one of these, enforced by a source rule | IR3–IR6, IR12 |
 | Presentation refusals never contain | `_presentation_current` checked before barrier validation in `_validate_barriers` and `_commit_refresh_record`; `CONTEXT_OWNER_MISMATCH` never reaches containment | IR3 |
-| Validate-before-mutate worker entries | `run_worker_cleanup` validates active serial, current worker, step and legal state before its containment scope; `dispatch_worker` validates every serial's outer lease and keeps later slots' outer state `RUNNING`; `accept_worker_result` requires the exact escrow-owned outer state | IR7, IR8 |
+| Validate-before-mutate worker entries | `run_worker_cleanup` validates active serial, current worker, step and legal state before its containment scope, refuses while its own cleanup action is on the stack, and claims the step atomically with that validation before the action runs (a claimed step is consumed whether the action returns or raises); `run_worker_effect` refuses once cleanup has begun; `dispatch_worker` validates every serial's outer lease and keeps later slots' outer state `RUNNING`; `accept_worker_result` requires the exact escrow-owned outer state; a non-worker late success refuses before any diagnostic is recorded | IR7, IR8, IR23, IR25 |
 | Refresh disposition routing | `_commit_refresh_record` checks lineage, registration state and coordinator `CURRENT` inside the guarded validation and routes every unusable outcome through `_dispose_refresh`, discarding a failed `CANDIDATE` record in the same mutation | IR11 |
-| Registry-witnessed leave and membership binding | `witness_local_drain`/`request_leave` behind `start_close(runtime)`; `witness_local_close` on a CLOSED outcome finishes the leave now or at attempt close; admissions, leases, buffer permits and exchanges bind the exact JOINED membership and refuse after `LEFT` | IR9, IR14 |
-| Complete coordinator protocol | `SharedGenerationCoordinator` declares every member the registry calls with exact identity types; the registry is typed against it and checks `isinstance` at construction | IR10 |
-| Bounded retention with indexed lookups | `_terminalize` → `_discard_operation_history` discards the ledger and per-command maps; indexes `_authorizations`, `_exit_receipts`, `_refresh_candidates`, `_retirements`, `_handoff_leases` and the buffer registry's replay index give constant-work lookups; completed, invalid and failed-candidate buffer records are pruned | IR13 |
+| Registry-witnessed leave and membership binding | `witness_local_drain`/`request_leave` behind `start_close(runtime)`; `witness_local_close` on a CLOSED outcome finishes the leave now or at attempt close; admissions, leases, buffer permits and exchanges bind the exact JOINED membership and refuse after `LEFT`; `open_lifetime` and `_admit` refuse once the runtime resource has left `LOCAL_OPEN` or a runtime close has begun, so a never-joined closing registry proceeds only `UNJOINED -> LEFT` through `close_unjoined`; `close_outcome` performs the coordinator witness before its first local mutation, and a repeated `start_close` never relabels RETIRED or REVOKED admissions | IR9, IR14, IR21 |
+| Complete coordinator protocol | `SharedGenerationCoordinator` declares every member the registry calls with exact identity types, plus `recover_migration`; the registry is typed against it and checks `isinstance` at construction; a source rule enumerates every public registry entry that can reach the containment routine and requires each to validate a receiver, an assigned worker, or a trusted observation or barrier first | IR10, IR22, IR29 |
+| Bounded retention with indexed lookups | `_terminalize` → `_discard_operation_history` discards the ledger and per-command maps, clears the active command serial and discards an unconsumed initial-snapshot candidate; indexes `_authorizations`, `_exit_receipts`, `_refresh_candidates`, `_retirements`, `_handoff_leases` and the buffer registry's replay index give constant-work lookups; completed, invalid and failed-candidate buffer records are pruned; a late delivery-stop setup on a settled retirement replays or refuses | IR13, IR24, IR26 |
 
 ## Exact accepted supersession map
 
@@ -136,6 +147,15 @@ never deleted; the adaptations are listed in the correction-1 testimony.
 | IR17 phase guard | `MigrationProductTests.test_second_migration_effect_and_current_retirement_refuse_without_change` |
 | IR18 dequeue validation | `DequeueAndRemovalLabelTests.test_invalid_handoff_schedule_leaves_count_permits_head_and_registration_unchanged` |
 | IR19 serial-1 label | `DequeueAndRemovalLabelTests.test_serial_one_removal_label_depends_on_prior_plan_work` |
+| IR21 join after close begun (round 2: ReviewCode-2 P2-1, ReviewState-2 P2-1, OriginCodeClosure-1-Reverdict P2-8, OriginStateClosure-1-Reverdict P2-8, ReviewCode-1-Reverdict P3-8) | `JoinAfterCloseTests`: join refuses after graceful and hard close on an unjoined registry, close proceeds `UNJOINED -> LEFT`, later attempts require only live members and migrate/reopen; close refusals (barrier missing, injected coordinator-witness refusal) leave resources, admissions and membership unchanged; repeated close never relabels RETIRED/REVOKED admissions |
+| IR22 façade route (ReviewCode-2 P2-2) | `FacadeRouteTests`: third-task interlude at QUEUED, RUNNING_IDLE, EFFECT_IN_FLIGHT, SUCCESS_PENDING and QUIESCENT_SUCCESS on EXECUTE and a two-range delivery leaves the vector unchanged; the façade exposes only `run_effect` and `context_owner`; source rule `test_public_containment_entries_validate_authority_first` |
+| IR23 cleanup claim (ReviewState-2 P2-2) | `CleanupClaimTests`: same-step and next-step re-entry refuse unchanged, actions run exactly `[1, 2]`, success exit and publication wait for both steps, a raising action still consumes its claimed step, effect reservation refuses during and after cleanup |
+| IR24 active serial (ReviewCode-2 P3-2, ReviewState-2 P3-1, OriginStateClosure-1-Reverdict P3-4) | `TerminalTombstoneTests.test_every_terminal_route_clears_the_active_serial`, `test_late_delivery_stop_setup_after_settlement_replays_without_indexerror` |
+| IR25 late-return authority (ReviewCode-2 P3-1, ReviewState-2 P3-2) | `LateReturnAuthorityTests` |
+| IR26 initial candidates (ReviewCode-2 P3-3, OriginStateClosure-1-Reverdict P3-6) | `TerminalTombstoneTests.test_unconsumed_initial_candidates_die_with_their_operation` |
+| IR29 seam exit (ReviewCode-2 P3-4) | `CoordinatorProtocolTests` (a stub lacking `recover_migration` does not conform); source rule member set |
+| IR30 issuing-task effect (ReviewCode-1-Reverdict P3-7 residual) | `WorkerEntryValidationTests.test_issuing_task_cannot_run_an_effect_after_a_distinct_worker_dequeued` |
+| IR31 in-frame success exit (correction 3, RemPlan-3: ReviewCode-3 P2-1, ReviewState-3 P2-1, ReviewCode-2-Reverdict P2-3, ReviewState-2-Reverdict P2-3, OriginCodeClosure-1-Reverdict-2 P2-9, OriginStateClosure-1-Reverdict-2 P2-9) | `CleanupInFlightSuccessExitTests`: `worker_exit_success` also refuses while `cleanup_in_progress` (the one changed source line, `lifetime_reference.py` line 664), so a success request made from inside the final cleanup action refuses with the full vector unchanged. EXECUTE, raising final action, K = 1 and 2: the cleanup failure is the primary FAILURE, the command is CONTAINED under the containment owner, publications stay 0 and `complete_contained` gives REFUSED with count 0. EXECUTE, returning final action, K = 1 and 2: success exit is accepted once after the action returns and publishes once. Two-range `ITERATOR_HANDOFF`, K = 1, raising final action: `RETIRING_HANDOFF`, successor released once, cursors stay (2, 0), successor dequeue refuses, and settlement returns `RefetchRequired` with count 0. `CleanupClaimTests` (IR23) checks success exit only between steps, so this class supplies the in-frame interleaving it did not exercise |
 
 The five stopped roots and later residuals keep their mapping:
 
@@ -155,17 +175,22 @@ Initial-18 and correction-1 13/F1--F10 coverage remains distributed through
 `test_contract_source_rules.py` parses every owned Python contract source and
 checks the no-raw-`Plan` protocol boundary, the exact worker-entry signature
 set (now including `run_worker_cleanup` and `observe_receiving_task_done`),
-the stateless worker façade, the single shared-permit release site
-(`_terminalize` only), single cursor/membership/proof-construction owners, the
-exact terminalizer set with its publication-precondition and handoff-refusal
-requirements, the single containment routine, the protocol-equals-call-shapes
-rule for the coordinator seam, and the absence of conditional branch
-directives in this Python-only edit boundary.
+the stateless worker façade with no cancellation route, the single
+shared-permit release site (`_terminalize` only), single
+cursor/membership/proof-construction owners, the exact terminalizer set with
+its publication-precondition and handoff-refusal requirements, the single
+containment routine, the exact set of public entries that can reach that
+routine and the authority each validates first, the protocol-equals-call-shapes
+rule for the coordinator seam (including `recover_migration`), and the absence
+of conditional branch directives in this Python-only edit boundary.
 
 ## Atomic-owner size decision
 
 The split-files guidance was applied again. `lifetime_reference.py` grew from
-1,780 to 2,009 lines in correction 1. The growth is the publication
+1,780 to 2,009 lines in correction 1 and to 2,074 lines in correction 2 (the
+runtime-open guard, the cleanup claim, the validate-before-commit close
+ordering, the late-stop replay and the `admission_state` observer, less the
+removed `_revoke_worker_authorization`). The growth is the publication
 precondition, the one containment routine that replaced four scattered writers
 (`_cancel_or_remove`, the barrier handler, the queue-target handler and the
 hard-fence branch), the §8 phase-one entry, the retention indexes and their
@@ -201,6 +226,19 @@ alone is not authority to fragment this state machine.
   available until a runtime has joined.
 - Outer terminal-lease records, lifecycle observations and retirement records
   are retained for exact replay; the accepted design sets no bound on them.
+- `close_outcome` establishes the coordinator precondition by performing the
+  witness (or `close_unjoined`) before its first local mutation; in this
+  single-threaded reference that is the validate-then-commit ordering, and an
+  injected witness refusal leaves resources, admissions and membership
+  unchanged. A cleanup step is claimed when its validation passes, so a
+  raising action has still consumed its step and a same-step re-entry is a
+  step-unavailable refusal while a next-step re-entry is an in-progress
+  refusal.
+- IR27 (the post-acceptance cancel/task-loss return value is the accepted
+  command's SUCCESS receipt) and IR28 (close, barrier and revocation scans over
+  retained outer records) are deferred to W3 by operator decision and are not
+  changed here. Design §11's `CURRENT x NONE -> RETIRED x NONE` remains an
+  explicit refusal pending decommissioning authority.
 
 ## Reference limits and pending gates
 
@@ -214,9 +252,12 @@ durable request release, provenance or cross-process exclusion. SQLite
 counter used for the retention bound measures Python-level work in this
 reference, not production cost.
 
-Independent round-2 full Code and State review, originating closure of every
-round-1 finding, manager guard/inventory verification and a new exact source
-tuple (MANIFEST-2) remain mandatory. W3 Surface, real executor/backend
-behavior, PostgreSQL evidence, SQLite supported-version behavior, crash
-recovery and final P12 remain separate future gates. IR20 (`tools/check.py` G10
-on `semantic.py`) is outside this correction's write boundary and remains open.
+Round-3 full Code and State review, the re-verdicts of ReviewCode-2,
+ReviewState-2, OriginCodeClosure-1-Reverdict, OriginStateClosure-1-Reverdict and
+ReviewCode-1-Reverdict on their open findings, manager guard/inventory
+verification and a new exact source tuple (MANIFEST-3) remain mandatory; no
+further correction is allowed after correction 2. W3 Surface, real
+executor/backend behavior, PostgreSQL evidence, SQLite supported-version
+behavior, crash recovery and final P12 remain separate future gates. IR20
+(`tools/check.py` G10 on `semantic.py`) is outside the write boundary and
+remains open.

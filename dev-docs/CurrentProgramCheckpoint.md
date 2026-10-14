@@ -1,6 +1,6 @@
 # Garns v9-6 current program checkpoint
 
-**Status:** relocated byte-exact to garns-wz on 2026-10-04; correction 1 of 2 closed every round-1 blocker; review round 2 merged NO-GO on three new bounded roots (IR21–IR23, no STOP); correction 2 of 2 (the last) proposed in RemPlan-2, awaiting operator authorization; source acceptance pending  
+**Status:** relocated byte-exact to garns-wz on 2026-10-04; correction 1 of 2 closed every round-1 blocker; review round 2 merged NO-GO on three new bounded roots (IR21–IR23, no STOP); **W1A11 worker-exit implementation ACCEPTED at MANIFEST-4 `596c8ab8…` (GO/GO, 2026-10-05) — internal contracts and reference tests only**; W3 items and one operator question carried (see ACCEPTANCE)  
 **Date:** 2026-10-04  
 **Owner:** manager
 
@@ -76,14 +76,104 @@ reviewers also re-run the historical roots.
 - **Historical roots.** Failed FIFO, neutral refresh and phase proof are
   closed. Worker exit and participant lifecycle remain open through IR21–IR23.
 
-**Next action:** operator decision on correction 2, the last the gate allows.
-RemPlan-2 recommends:
+**Correction 2 of 2, the last, was authorized on 2026-10-05.** Correction 1 and the
+round-2 records were committed first: garns `f5634ca`, root `efdf54f`.
 
-- continuing the same Fable builder;
-- fixing the five small P3s that lie on paths the correction already touches;
-- deferring IR27 and IR28 to W3.
+The operator's choices:
 
-If round 3 then reports any new blocking finding, the lane stops for the operator.
+- The same Fable builder continues, with its context intact, under
+  `W1A11-WorkerExitImplementation-BuilderPrompt-3.md`.
+- Fix IR21–IR26, IR29 and IR30.
+- Defer IR27 and IR28 to W3.
+
+Before the builder resumed, the manager:
+
+- archived MANIFEST-2's exact files under
+  `W1A11-WorkerExitImplementation-Revision2/`; the manifest verifies 128/128 from
+  inside `Revision2/garns`;
+- pinned the inputs in `W1A11-WorkerExitImplementation-RemInputs-2.sha256`
+  (22 entries).
+
+**Correction 2 result.** The builder stopped writing, and its testimony is filed
+verbatim as [DRAFT-3](W1A11-WorkerExitImplementation-DRAFT-3.md) (`62e2ec64…`). It
+changed 8 allowlisted paths and nothing else.
+
+[Verification-3](W1A11-WorkerExitImplementation-Verification-3.md) records the
+manager's own reproduction:
+
+- 187 focused tests, 290 full tests and 5 product checks pass on Python 3.11–3.14.
+- Every guard passes, and no bytecode was found.
+- All 268 retained test methods are still present.
+- The failing-before run reproduces: 13 tests fail on the archived round-2 sources
+  and all 172 pass on the corrected ones. Each of IR21–IR23 has a behaviorally
+  failing test.
+
+**MANIFEST-3.** `W1A11-WorkerExitImplementation-MANIFEST-3.sha256`, SHA-256
+`9a9f8b2a8e56b0411ebb7948d91aabf58a1459adbcfdbdac02efec75f6b36af9`, 141 entries.
+The implementation correction count is 2 of 2.
+
+**Final review round 3.** Prompts were generated from the round-2 prompts:
+
+| Report | Reviewer | Prompt and SHA-256 |
+|---|---|---|
+| `…-ReviewCode-3.md` | fresh full Code reviewer, Opus 5.5 | `…-ReviewCode-3-Prompt.md`, `aae566f5…` |
+| `…-ReviewState-3.md` | fresh full State reviewer, Opus 5.5 | `…-ReviewState-3-Prompt.md`, `270ec309…` |
+| `…-ReviewCode-1-Reverdict-2.md` | round-1 Code reviewer | `…-Reverdict-2-Prompt.md`, `0a85d320…` |
+| `…-ReviewState-1-Reverdict-2.md` | round-1 State reviewer | same |
+| `…-OriginCodeClosure-1-Reverdict-2.md` | round-1 originating Code reviewer | same |
+| `…-OriginStateClosure-1-Reverdict-2.md` | round-1 originating State reviewer | same |
+| `…-ReviewCode-2-Reverdict.md` | round-2 fresh Code reviewer | same |
+| `…-ReviewState-2-Reverdict.md` | round-2 fresh State reviewer | same |
+
+Every reviewer that has raised a finding re-confirms all of its findings, from both
+rounds, on MANIFEST-3.
+
+**Round 3 result.** All eight reports are filed verbatim and merged in
+[RemPlan-3](W1A11-WorkerExitImplementation-RemPlan-3.md). The verdict is NO-GO on one
+new bounded root, IR31, which six reviewers found independently:
+
+- Correction 2's cleanup claim lets a success exit commit while the final cleanup
+  action is still running.
+- Every earlier P0–P2 is closed on MANIFEST-3 by its raiser.
+
+The operator authorized a **one-line correction 3** as an exception to the gate, and
+set three economy rules:
+
+- **Builder:** a fresh Sonnet builder under
+  `W1A11-WorkerExitImplementation-BuilderPrompt-4.md`.
+- **Inputs:** the Revision3 archive of MANIFEST-3 and RemInputs-3 (13 entries).
+- **Re-check:** only the round-3 Code and State full reviewers re-check. The
+  operator's cap of **at most two reviewers per round** applies from here on and is
+  recorded in the review-loop skill.
+
+**Correction 3 result.** The builder's account is filed as
+[DRAFT-4](W1A11-WorkerExitImplementation-DRAFT-4.md) (Sonnet). It changed exactly 3
+paths: the one source line (line 664), a new test class and one record row.
+
+[Verification-4](W1A11-WorkerExitImplementation-Verification-4.md) records the
+manager's own reproduction:
+
+- 190 focused tests, 293 full tests and 5 product checks pass on Python 3.11–3.14.
+- The new tests fail on Revision3 and pass on the corrected code.
+
+**MANIFEST-4.** SHA-256
+`596c8ab80821646749a24fc63477d278a8b2f0ae1c145746c2a77255fb6e6339`, 156 entries.
+
+**Re-check.** Two reviewers only: the round-3 Code and State full reviewers, under
+`W1A11-WorkerExitImplementation-Reverdict-3-Prompt.md` (`139563ca…`).
+
+**Accepted.** Both re-verdicts are GO on MANIFEST-4:
+`…-ReviewCode-3-Reverdict.md` (`aaca6bf9…`) and `…-ReviewState-3-Reverdict.md`
+(`b97bf9ba…`). [ACCEPTANCE](W1A11-WorkerExitImplementation-ACCEPTANCE.md) records the
+result, pinned by `W1A11-WorkerExitImplementation-AcceptanceEvidence.sha256`
+(9 entries).
+
+**Next:** operator direction.
+
+- **W3 receives:** IR20, IR27, IR28, IR32–IR34, the stale record wording and the
+  below-bar items.
+- **The operator decides:** whether to allow the `CURRENT × NONE → RETIRED` binding
+  edge, which the code currently refuses.
 
 ## Worker-exit implementation review round 1 — 2026-10-04
 
@@ -332,6 +422,13 @@ See [the restart checkpoint](W1A11-ContractAmendment-RestartCheckpoint.md).
 
 ## Accepted through
 
+- [Worker-exit implementation](W1A11-WorkerExitImplementation-ACCEPTANCE.md):
+  accepted at MANIFEST-4 `596c8ab80821646749a24fc63477d278a8b2f0ae1c145746c2a77255fb6e6339`
+  after GO/GO on 2026-10-05. It covers internal contracts and reference tests only;
+  W3 Surface and P12 remain.
+  - Four review rounds, three corrections. The third was a one-line operator
+    exception.
+  - All five historical stopped roots are closed.
 - [Worker-exit replacement design](W1A11-WorkerExitRedesign-ACCEPTANCE.md):
   final115 tuple, Consistency/Safety GO/GO and all four originating retraces GO;
   design only. Exact additive supersessions compose with accepted W2; source
@@ -361,10 +458,10 @@ launched and does not block v9-6.
 
 ## Package ownership and next action
 
-Current (2026-10-05): no writer is active. Round 2 is merged NO-GO. Correction 2
-of 2 is proposed in [RemPlan-2](W1A11-WorkerExitImplementation-RemPlan-2.md) and
-is not authorized. The MANIFEST-2 tuple stays frozen. The rest of this section
-records the first-handoff state.
+Current (2026-10-05): the worker-exit implementation is accepted at MANIFEST-4
+(see [ACCEPTANCE](W1A11-WorkerExitImplementation-ACCEPTANCE.md)). No writer or
+reviewer is active, and no package is launched; the next package awaits operator
+direction. The rest of this section records the first-handoff state.
 
 The sole 5.6 Sol builder has stopped writes. The current117 source tuple is
 frozen at the operator-requested handoff. Existing20/new3 ownership, archived

@@ -1,0 +1,83 @@
+// GARNS v2 exploration: Geymsla projects and document inventory
+//
+// Design specimen, not accepted by the current GARNS grammar.
+// "v2" labels this language exploration, not a released language version.
+// Scope: project hierarchy, document identity, file occurrences, document state,
+// structured values, template composition, shared inheritance and visibility.
+// GYLD integration, search infrastructure and migrations are outside this example.
+// Context: /Volumes/projects/limbo/geymsla-wz/dev-docs/GeymslaInvestigation-Rev1.md
+// The detailed model and template design come from the subsequent discussion.
+
+// Entry point for reading this three-file specimen:
+//   projects.garns-v2.txt  -- project concepts and hierarchy
+//   documents.garns-v2.txt -- document concepts, inventory and state
+//   assembly.garns-v2.txt  -- their composition and review cases
+//
+// This is a file organization change only. Read the files as one design specimen;
+// file loading/import syntax is not selected or implemented by this split.
+
+// Multiple inheritance assembles the subsystems. Both branches request the
+// same named DocumentCatalog<DocumentConcepts.DocumentId> instance: there is one
+// documents catalog, not one per branch. Its project dependency matches inventory.
+
+module Geymsla {
+    public shared inherit GeymslaInventory as inventory
+    public inherit FileInventory<DocumentConcepts.DocumentId> as files
+    public inherit DocumentState<DocumentConcepts.DocumentId> as document_state
+}
+
+// Separate design exercise, NOT inherited into Geymsla. Different names select
+// different catalog instances even though their definitions and arguments match.
+// Private limits exposure through this module; it does not mean unshared.
+// Both catalogs still request the same shared project inventory in this exercise.
+
+module NamedCatalogExample {
+    private shared inherit DocumentCatalog<DocumentConcepts.DocumentId> as working
+    private shared inherit DocumentCatalog<DocumentConcepts.DocumentId> as comparison
+}
+
+// These vocabulary modules own and export intent declarations. Qualified access
+// selects an exported concept; it does not instantiate a resource or create data.
+// Other modules may also own intents alongside their resources and rules.
+
+// Intent ownership
+//
+// - All concrete intent declarations belong to modules; none are freestanding.
+// - Public intent declarations are referenced by their qualified module names.
+//   Template intent parameters are local bindings to supplied declarations.
+// - Both composition branches receive the same DocumentConcepts.DocumentId.
+//   Reuse or a local alias preserves that declaration's identity and rules.
+// - Vocabulary modules create no tables. Separate catalog instances can use
+//   the same identity intent while retaining independent resources and rows.
+// - A qualified use without "as", such as use FileConcepts.ContentHash, keeps
+//   the intent's final name as the local role name: ContentHash.
+//
+
+// Review cases (expected semantics, not executed tests)
+//
+// 1. Expand Geymsla: one Project, one Document, one FileOccurrence and one
+//    Classification resource, despite the repeated shared dependency paths.
+// 2. Record the same relative path in two checkouts: two distinct locations.
+// 3. Record equal hashes for two documents: do not merge their identities.
+// 4. Associate a file and a classification with one Document: both branches
+//    resolve the same catalog resource and document identity.
+// 5. Expand NamedCatalogExample: working and comparison stay distinct. Creating
+//    a document in one does not create it in the other.
+// 6. An inheritor may use the protected documents dependency; an unrelated
+//    caller cannot access it through files or document_state. An inheritor of
+//    NamedCatalogExample cannot access its private working/comparison paths.
+// 7. Reject attempts to replace or remove any final rule, including through
+//    a scope-wide "override rules". No positive override example is invented.
+//
+// Still exploratory
+//
+// Exact grammar for typed template arguments, sets, intent-qualified values,
+// structured keys, acyclic(), descendants(), present(), quantification and
+// implication remains to be designed. The shared cases above state intended
+// outcomes, not a full resolution algorithm: incompatible shared declarations,
+// template argument equivalence and broader sharing boundaries remain open.
+// Mutation/query API syntax, lifecycle transitions beyond the stated rules,
+// publication/versioning of observations and classification provenance remain
+// open. No history or search correctness is claimed by this small specimen.
+// Module-valued parameters, selective inclusion and positive rule overrides
+// remain unexercised until a concrete requirement makes them useful.

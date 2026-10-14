@@ -1,0 +1,124 @@
+// GARNS v2 exploration: documents
+// Part of the three-file Geymsla design specimen; not executable grammar.
+// Owns document/file intents, structured locations, the catalog and document state.
+// Depends on GeymslaInventory declared in projects.garns-v2.txt.
+// The complete composition is in assembly.garns-v2.txt.
+
+// Proposed named file import; see assembly.garns-v2.txt for import semantics.
+import "./projects.garns-v2.txt" (GeymslaInventory)
+
+module DocumentConcepts {
+    public intent DocumentId : Id
+        "Identity of a document classified independently of its file copies"
+
+    public intent DocumentCurrency : Text
+        "Whether a document is current, superseded or not yet classified" {
+        values Unknown, Current, Superseded
+    }
+
+    public intent DocumentCompletion : Text
+        "Whether work on a document has been completed" {
+        values Open, Finished
+    }
+
+    public intent FinishedAt : Timestamp
+        "When work on the document was completed"
+}
+
+module FileConcepts {
+    public intent CheckoutId : Id
+        "Stable identity of a checkout containing files"
+
+    public intent RelativePath : Text
+        "File path relative to its checkout"
+
+    public intent ContentHash : Text
+        "Fingerprint of the exact bytes observed at a file location"
+}
+
+// A small value component: named uses preserve the supplied intents.
+// SourceLocation introduces a structured value, not a table or shared instance.
+
+module SourceLocation<intent Checkout, intent Path> {
+    use Checkout as checkout
+    use Path as path
+}
+
+// A reusable subsystem: its parameter supplies document identity semantics.
+// Its project dependency is shared with the enclosing Geymsla assembly.
+
+module DocumentCatalog<intent Identity> {
+    protected shared inherit GeymslaInventory as inventory
+
+    public resource Document "An independently classified document" {
+        use Identity { key }
+        link project -> inventory.projects.Project { deletion restrict }
+    }
+}
+
+// The template argument is forwarded through another inheritance layer.
+// Protected catalog access is available to inheritors, without exporting it
+// as part of FileInventory's public interface.
+
+module FileInventory<intent Identity> {
+    protected shared inherit DocumentCatalog<Identity> as documents
+
+    public resource FileOccurrence "An observed file at a checkout location" {
+        use SourceLocation<
+            FileConcepts.CheckoutId,
+            FileConcepts.RelativePath
+        > as location { key }
+        use FileConcepts.ContentHash
+
+        link document -> documents.Document { deletion restrict }
+    }
+}
+
+module DocumentState<intent Identity> {
+    protected shared inherit DocumentCatalog<Identity> as documents
+
+    public resource Classification "Recorded state of one document" {
+        link document -> documents.Document { key deletion restrict }
+
+        use DocumentConcepts.DocumentCurrency as currency
+        use DocumentConcepts.DocumentCompletion as completion
+        use DocumentConcepts.FinishedAt as finished_at { optional }
+
+        final rule:
+            (completion == DocumentConcepts.DocumentCompletion.Finished)
+            == present(finished_at)
+    }
+}
+
+// Document and composition semantics
+//
+// - FileInventory and DocumentState forward DocumentConcepts.DocumentId,
+//   including its identity and constraints, rather than just its scalar type.
+// - Their two shared documents declarations resolve to one catalog in Geymsla.
+//   Both therefore reference the same Document resource. Shared inheritance
+//   merges the module instance, not merely two tables with similar columns.
+// - Ordinary inheritance instantiates files and document_state separately.
+// - SourceLocation is a structured value with location.checkout and location.path.
+//   It can be passed as a whole. Marking this value as key means the pair forms
+//   a composite key; neither member is individually unique. This key behavior
+//   is a proposal, not a claim about the existing compiler.
+// - ContentHash is not unique. Equal bytes do not automatically merge document
+//   identities: a live document and an independently classified pinned snapshot
+//   may have equal hashes. Multiple file occurrences may also refer to the same
+//   document. Assigning those identities is an explicit input to the inventory.
+// - Each file occurrence references a document, which belongs to a project.
+// - Classification has at most one record per document. A missing classification
+//   is unclassified, never implicitly Current or Finished. A populated record
+//   can explicitly record Unknown currency.
+// - Currency and completion are independent. A finished document may later be
+//   superseded. Finishing it requires a timestamp; reopening clears that value
+//   in the resulting state. Historical completion events are not modeled here.
+// - These are recorded facts. Neither a filename nor a file modification time
+//   silently establishes currency, document completion or project completion.
+// - Project completion is not computed from document completion in this example.
+// - Public exposes declarations; protected permits use by inheritors; private
+//   permits internal use. These are language visibility rules, not authorization
+//   for database users. A private path does not veto another allowed shared path.
+// - NamedCatalogExample has two Document resources and one shared project
+//   inventory. It is a composition exercise, not another product subsystem.
+//

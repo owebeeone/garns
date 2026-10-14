@@ -6,7 +6,10 @@ not an implementation approval or a replacement for the v9-6 scope decisions.
 
 The proposed comparison process is in
 [LanguageDesignExplorationProposal.md](LanguageDesignExplorationProposal.md).
-It awaits operator approval before exploration begins.
+The operator authorized that exploration. Its completed design comparison is in
+[LanguageDesignExploration.md](LanguageDesignExploration.md), with seven area
+documents and four combined example sets. The alternatives remain proposals;
+no language choice, grammar change or implementation has been accepted.
 
 ## Purpose
 

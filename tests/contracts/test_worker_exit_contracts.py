@@ -6,12 +6,12 @@ import sys
 import unittest
 import weakref
 
-from garns.backends.contracts.admission import LeaseState, OperationKind, PlanStep
+from garns.backends.contracts.admission import AdmissionState, LeaseState, OperationKind, PlanStep
 from garns.backends.contracts.authority import RuntimeAuthority, TrustedClaims
 from garns.backends.contracts.generation_reference import ReferenceGenerationCoordinator
 from garns.backends.contracts.lifetime import (
     ActivationEvidence, ActivationState, DeploymentGenerationState,
-    ResourceIdentity, ResourceKind,
+    LocalResourceState, ResourceIdentity, ResourceKind,
 )
 from garns.backends.contracts.lifetime_reference import ReferenceLifetimeRegistry
 from garns.backends.contracts.migration_reference import (
@@ -1617,7 +1617,10 @@ class TerminalAbsorptionTests(unittest.TestCase):
                         lambda: registry.worker_exit_success(authorization, artifacts["result"]),
                         lambda: registry.worker_exit_failure(authorization, artifacts["failure"]),
                         lambda: registry.run_worker_cleanup(authorization, 1),
-                        lambda: registry.worker_issuer.revoke(authorization),
+                        # IR22: the facade's revoke route no longer exists; the
+                        # attack is kept as the structural check that no holder
+                        # of an authorization has a containment entry.
+                        lambda: self.assertFalse(hasattr(registry.worker_issuer, "revoke")),
                         lambda: registry.request_worker_cancel(lease),
                         lambda: registry.observe_receiving_task_done(observation),
                         lambda: registry.observe_worker_stopped(artifacts["stop"]),
@@ -1841,6 +1844,36 @@ class WorkerEntryValidationTests(unittest.TestCase):
                         registry.worker_effect_knowledge(authorization),
                     )
                 self.assertEqual(2, registry.worker_cleanup_step(authorization))
+
+    def test_issuing_task_cannot_run_an_effect_after_a_distinct_worker_dequeued(self) -> None:
+        """IR30: the issuing task and a third task get zero effects; the worker runs it once."""
+
+        effects = []
+        worker = object()
+        fixture = build_fixture(
+            assigned_worker_provider=lambda serial: worker,
+            effect_provider=lambda label, ordinal: lambda: effects.append(ordinal) or ordinal,
+        )
+        registry = fixture["registry"]
+        receiver = fixture["task"][0]
+        lease = registry.acquire(
+            fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"],
+            resource=fixture["connection"], owner=receiver,
+        )
+        authorization = registry.dispatch_worker(lease)
+        fixture["task"][0] = worker
+        registry.dequeue_worker(lease, authorization)
+        for caller in (receiver, object()):
+            fixture["task"][0] = caller
+            before = vector(registry, lease, authorization, coordinator=fixture["coordinator"])
+            with self.assertRaises(ContractRefusal):
+                registry.worker_issuer.run_effect(authorization, 1)
+            self.assertEqual(before, vector(registry, lease, authorization, coordinator=fixture["coordinator"]))
+            self.assertEqual([], effects)
+        fixture["task"][0] = worker
+        self.assertEqual(1, registry.worker_issuer.run_effect(authorization, 1))
+        self.assertEqual([1], effects)
+        self.assertEqual((frozenset(), frozenset({1})), registry.worker_ordinals(authorization))
 
     def test_later_slot_dispatch_validates_the_outer_lease(self) -> None:
         fixture = build_fixture(command_schedule_provider=two_slot_schedule)
@@ -2676,6 +2709,684 @@ class CommandGrammarEnumerationTests(unittest.TestCase):
                     self.assertEqual(1, coordinator.count())
                     if state is WorkerCommandState.RESULT_ACCEPTED and operation in {"cancel", "task_done"}:
                         self.assertEqual(LeaseState.CONTAINED, registry.lease_state(lease))
+
+
+# ---------------------------------------------------------------------------
+# Correction 2 closure tests (RemPlan-2 IR21-IR26).
+# ---------------------------------------------------------------------------
+
+
+def unjoined_registry(fixture, name="ghost"):
+    """A never-joined registry on the fixture's active coordinator with its runtime resource."""
+
+    registry = ReferenceLifetimeRegistry(fixture["authority"], object(), fixture["coordinator"])
+    runtime = ResourceIdentity(f"{name}-runtime", ResourceKind.RUNTIME)
+    registry.add_resource(runtime)
+    return registry, runtime
+
+
+class JoinAfterCloseTests(unittest.TestCase):
+    """IR21: a runtime cannot join once its local close has begun; close
+    validates every coordinator precondition before its first local mutation."""
+
+    def test_join_refuses_once_local_close_has_begun_and_close_proceeds_unjoined_to_left(self) -> None:
+        for hard in (False, True):
+            with self.subTest(hard=hard):
+                fixture = make_lifetime_fixture()
+                coordinator = fixture["coordinator"]
+                live = fixture["registry"]
+                live_membership = live.membership
+                ghost, runtime = unjoined_registry(fixture)
+                ghost.start_close(runtime, hard=hard)
+                self.assertIsNone(ghost.membership)
+                with self.assertRaises(ContractRefusal):
+                    ghost.open_lifetime()
+                self.assertIsNone(ghost.membership)
+                self.assertIs(ParticipantState.JOINED, coordinator.membership_state(live_membership))
+                self.assertIs(ActivationState.ACTIVE, coordinator.activation)
+                with self.assertRaises(ContractRefusal):
+                    ghost.setup_reference_admission(fixture["live_plan"], fixture["binding"])
+                self.assertEqual("closed", ghost.close_outcome(runtime).knowledge.value)
+                with self.assertRaises(ContractRefusal):
+                    ghost.open_lifetime()
+                self.assertIsNone(ghost.membership)
+                attempt = coordinator.begin_drain(fixture["binding"])
+                with self.assertRaises(ContractRefusal):
+                    ghost.migration_queue_barrier(attempt)
+                live.migration_queue_barrier(attempt)
+                coordinator.reopen_no_effect(coordinator.observe_request_released(attempt, coordinator.attempt_product(attempt)[3]))
+                live.reopen_queues_no_effect(attempt)
+                self.assertIs(DeploymentGenerationState.CURRENT, coordinator.state)
+                later = coordinator.begin_drain(fixture["binding"])
+                live.migration_queue_barrier(later)
+                coordinator.begin_migration(later, BindingIdentity(fixture["scope"], "ir-next", "storage-next", 2))
+                self.assertIs(DeploymentGenerationState.MIGRATING, coordinator.state)
+                self.assertEqual(0, coordinator.count())
+
+    def test_close_outcome_refusals_leave_resources_admissions_and_membership_unchanged(self) -> None:
+        fixture = make_lifetime_fixture()
+        registry = fixture["registry"]
+        coordinator = fixture["coordinator"]
+        handle = fixture["handle"]
+        membership = registry.membership
+
+        def observed():
+            return (
+                registry.resource_state(fixture["runtime"]), registry.resource_state(fixture["pool_a"]),
+                registry.resource_state(fixture["subscription"]), registry.admission_state(handle),
+                coordinator.membership_state(membership),
+            )
+
+        before = observed()
+        with self.assertRaises(ContractRefusal):
+            registry.close_outcome(fixture["runtime"])
+        self.assertEqual(before, observed())
+
+        class RefusingWitness(ReferenceGenerationCoordinator):
+            """Trusted-setup hostile coordinator: the close witness refuses once."""
+
+            refusals = 0
+
+            def witness_local_close(self, open_record):
+                if self.refusals == 0:
+                    self.refusals += 1
+                    raise ContractRefusal(RefusalCode.LEASE_INVALID, "injected witness refusal")
+                return super().witness_local_close(open_record)
+
+        scope = QualifiedDeployment("SALES", "WITNESS")
+        binding = BindingIdentity(scope, "ir", "storage", 1)
+        hostile = RefusingWitness(scope, binding)
+        hostile.begin_activation(5)
+        hostile.finish_activation(ActivationEvidence(scope, binding, 5, "inventory", "physical", "record", "plan_admission_lifetime_v1"))
+        hostile.first_lifetime_open("plan_admission_lifetime_v1", 5)
+        task = object()
+        authority = RuntimeAuthority(lambda: 1.0, lambda: 1, lambda: task)
+        registry = ReferenceLifetimeRegistry(authority, object(), hostile)
+        membership = registry.open_lifetime()
+        runtime = ResourceIdentity("runtime", ResourceKind.RUNTIME)
+        pool = ResourceIdentity("pool", ResourceKind.POOL, ("runtime",))
+        registry.add_resource(runtime)
+        registry.add_resource(pool)
+        from tests.contracts.test_lifetime_contracts import make_plan
+        handle = registry.setup_reference_admission(make_plan(scope, binding, "query", "witness"), binding)
+        registry.start_close(runtime)
+        before = (
+            registry.resource_state(runtime), registry.resource_state(pool),
+            registry.admission_state(handle), hostile.membership_state(membership),
+        )
+        self.assertEqual((LocalResourceState.LOCAL_DRAINING, LocalResourceState.LOCAL_DRAINING, AdmissionState.DRAINING, ParticipantState.LEAVE_PENDING), before)
+        with self.assertRaises(ContractRefusal):
+            registry.close_outcome(runtime)
+        self.assertEqual(before, (
+            registry.resource_state(runtime), registry.resource_state(pool),
+            registry.admission_state(handle), hostile.membership_state(membership),
+        ))
+        self.assertEqual("closed", registry.close_outcome(runtime).knowledge.value)
+        self.assertIs(ParticipantState.LEFT, hostile.membership_state(membership))
+        self.assertIs(AdmissionState.RETIRED, registry.admission_state(handle))
+
+    def test_repeated_close_never_relabels_retired_or_revoked_admissions(self) -> None:
+        fixture = make_lifetime_fixture()
+        registry = fixture["registry"]
+        handle = fixture["handle"]
+        registry.start_close(fixture["runtime"])
+        self.assertIs(AdmissionState.DRAINING, registry.admission_state(handle))
+        self.assertEqual("closed", registry.close_outcome(fixture["runtime"]).knowledge.value)
+        self.assertIs(AdmissionState.RETIRED, registry.admission_state(handle))
+        for hard in (False, True):
+            registry.start_close(fixture["runtime"], hard=hard)
+            self.assertIs(AdmissionState.RETIRED, registry.admission_state(handle))
+            self.assertEqual("closed", registry.close_outcome(fixture["runtime"]).knowledge.value)
+        fixture = make_lifetime_fixture()
+        registry = fixture["registry"]
+        handle = fixture["handle"]
+        registry.start_close(fixture["runtime"], hard=True)
+        self.assertIs(AdmissionState.REVOKED, registry.admission_state(handle))
+        registry.start_close(fixture["runtime"])
+        self.assertIs(AdmissionState.REVOKED, registry.admission_state(handle))
+
+
+class FacadeRouteTests(unittest.TestCase):
+    """IR22: no holder of a command authorization has a route into containment."""
+
+    def test_third_task_has_no_containment_route_at_any_stage(self) -> None:
+        for kind in ("execute", "delivery"):
+            for stage in ("queued", "running_idle", "effect", "success_pending", "quiescent_success"):
+                with self.subTest(kind=kind, stage=stage):
+                    worker = object()
+                    switch = {"distinct": False}
+                    holder = {}
+
+                    def effects(label, ordinal):
+                        def fixed():
+                            if stage == "effect" and "attack" in holder:
+                                holder["attack"]()
+                            return ordinal
+                        return fixed
+
+                    options = {
+                        "assigned_worker_provider": lambda serial: worker if switch["distinct"] else holder["fixture"]["task"][0],
+                        "effect_provider": effects,
+                    }
+                    if kind == "execute":
+                        fixture = build_fixture(**options)
+                        holder["fixture"] = fixture
+                        registry = fixture["registry"]
+                        lease = registry.acquire(
+                            fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"],
+                            resource=fixture["connection"], owner=fixture["task"][0],
+                        )
+                        registration = None
+                    else:
+                        fixture = make_lifetime_fixture(**options)
+                        holder["fixture"] = fixture
+                        registry = fixture["registry"]
+                        lease, registration, _ = two_range_handoff(fixture)
+                    switch["distinct"] = True
+                    receiver = fixture["task"][0]
+                    coordinator = fixture["coordinator"]
+                    authorization = registry.dispatch_worker(lease)
+
+                    def attack():
+                        current = fixture["task"][0]
+                        fixture["task"][0] = object()
+                        before = vector(registry, lease, authorization, coordinator=coordinator, registration=registration)
+                        revoke = getattr(registry.worker_issuer, "revoke", None)
+                        if revoke is not None:
+                            try:
+                                revoke(authorization)
+                            except ContractRefusal:
+                                pass
+                        with self.assertRaises(ContractRefusal):
+                            registry.request_worker_cancel(lease)
+                        with self.assertRaises(ContractRefusal):
+                            registry.observe_receiving_task_done(object.__new__(ReceivingTaskLifecycleObservation))
+                        self.assertEqual(before, vector(registry, lease, authorization, coordinator=coordinator, registration=registration))
+                        fixture["task"][0] = current
+
+                    if stage == "queued":
+                        attack()
+                        return_to = receiver
+                    else:
+                        fixture["task"][0] = worker
+                        registry.dequeue_worker(lease, authorization)
+                        if stage == "running_idle":
+                            attack()
+                        holder["attack"] = attack
+                        registry.worker_issuer.run_effect(authorization, 1)
+                        del holder["attack"]
+                        if stage in {"success_pending", "quiescent_success"}:
+                            result = registry.setup_reference_worker_result(authorization, "value")
+                            registry.worker_exit_success(authorization, result)
+                            if stage == "quiescent_success":
+                                registry.observe_worker_stopped(registry.setup_reference_worker_stop(authorization))
+                            attack()
+                        return_to = receiver
+                    fixture["task"][0] = return_to
+                    self.assertFalse(registry.lease_state(lease).terminal)
+                    self.assertIn(registry.worker_command_state(authorization), {
+                        WorkerCommandState.QUEUED, WorkerCommandState.RUNNING_IDLE,
+                        WorkerCommandState.SUCCESS_PENDING, WorkerCommandState.QUIESCENT_SUCCESS,
+                    })
+
+    def test_facade_exposes_only_effect_and_context_owner(self) -> None:
+        fixture = build_fixture()
+        facade = fixture["registry"].worker_issuer
+        self.assertFalse(hasattr(facade, "revoke"))
+        self.assertEqual(
+            ["context_owner", "run_effect"],
+            sorted(name for name in dir(type(facade)) if not name.startswith("_")),
+        )
+
+
+class CleanupClaimTests(unittest.TestCase):
+    """IR23: the cleanup step is claimed before its action runs; re-entry and
+    post-cleanup effect reservation refuse."""
+
+    def test_reentrant_cleanup_refuses_and_actions_run_exactly_once_in_order(self) -> None:
+        for reentry in ("same", "next"):
+            with self.subTest(reentry=reentry):
+                runs = []
+                holder = {}
+                worker = object()
+
+                def cleanup(label, step_number):
+                    def fixed():
+                        runs.append(step_number)
+                        if step_number == 1:
+                            registry = holder["registry"]
+                            authorization = holder["authorization"]
+                            before = vector(registry, holder["lease"], authorization, coordinator=holder["coordinator"])
+                            with self.assertRaises(ContractRefusal):
+                                registry.run_worker_cleanup(authorization, 1 if reentry == "same" else 2)
+                            self.assertEqual(before, vector(registry, holder["lease"], authorization, coordinator=holder["coordinator"]))
+                    return fixed
+
+                fixture = build_fixture(
+                    command_schedule_provider=lambda kind: (WorkerCommandSpec("claim", (1,), cleanup_steps=2),),
+                    assigned_worker_provider=lambda serial: worker,
+                    cleanup_provider=cleanup,
+                )
+                registry = fixture["registry"]
+                receiver = fixture["task"][0]
+                lease = registry.acquire(
+                    fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"],
+                    resource=fixture["connection"], owner=receiver,
+                )
+                step(fixture, lease, PlanStep.LOWER)
+                authorization = registry.dispatch_worker(lease)
+                holder.update(registry=registry, authorization=authorization, lease=lease, coordinator=fixture["coordinator"])
+                fixture["task"][0] = worker
+                registry.dequeue_worker(lease, authorization)
+                registry.worker_issuer.run_effect(authorization, 1)
+                result = registry.setup_reference_worker_result(authorization, "value")
+                with self.assertRaises(ContractRefusal):
+                    registry.worker_exit_success(authorization, result)
+                registry.run_worker_cleanup(authorization, 1)
+                self.assertEqual([1], runs)
+                self.assertEqual(2, registry.worker_cleanup_step(authorization))
+                with self.assertRaises(ContractRefusal):
+                    registry.worker_exit_success(authorization, result)
+                self.assertEqual(0, registry.publications)
+                registry.run_worker_cleanup(authorization, 2)
+                self.assertEqual([1, 2], runs)
+                receipt = registry.worker_exit_success(authorization, result)
+                registry.observe_worker_stopped(registry.setup_reference_worker_stop(authorization))
+                fixture["task"][0] = receiver
+                self.assertEqual("value", registry.accept_worker_result(receipt))
+                registry.run_plan_step(lease, PlanStep.PUBLICATION, receiver, registry.issue_consumer("publish"))
+                self.assertEqual((1, LeaseState.SUCCEEDED), (registry.publications, registry.lease_state(lease)))
+
+    def test_claimed_step_is_consumed_when_the_action_raises(self) -> None:
+        worker = object()
+
+        def cleanup(label, step_number):
+            def fixed():
+                raise EffectFault()
+            return fixed
+
+        fixture = build_fixture(
+            command_schedule_provider=lambda kind: (WorkerCommandSpec("claim", (1,), cleanup_steps=1),),
+            assigned_worker_provider=lambda serial: worker,
+            cleanup_provider=cleanup,
+        )
+        registry = fixture["registry"]
+        lease = registry.acquire(
+            fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"],
+            resource=fixture["connection"], owner=fixture["task"][0],
+        )
+        authorization = registry.dispatch_worker(lease)
+        fixture["task"][0] = worker
+        registry.dequeue_worker(lease, authorization)
+        registry.worker_issuer.run_effect(authorization, 1)
+        with self.assertRaises(EffectFault):
+            registry.run_worker_cleanup(authorization, 1)
+        self.assertEqual(2, registry.worker_cleanup_step(authorization))
+        self.assertIs(WorkerExitKind.FAILURE, registry.worker_exit_facts(authorization)[0])
+        with self.assertRaises(ContractRefusal):
+            registry.run_worker_cleanup(authorization, 1)
+        self.assertEqual(2, registry.worker_cleanup_step(authorization))
+
+    def test_effect_reservation_refuses_during_and_after_cleanup(self) -> None:
+        holder = {}
+        worker = object()
+
+        def cleanup(label, step_number):
+            def fixed():
+                before = vector(holder["registry"], holder["lease"], holder["authorization"], coordinator=holder["coordinator"])
+                with self.assertRaises(ContractRefusal):
+                    holder["registry"].worker_issuer.run_effect(holder["authorization"], 2)
+                self.assertEqual(before, vector(holder["registry"], holder["lease"], holder["authorization"], coordinator=holder["coordinator"]))
+            return fixed
+
+        fixture = build_fixture(
+            command_schedule_provider=lambda kind: (WorkerCommandSpec("claim", (1,), (2,), cleanup_steps=1),),
+            assigned_worker_provider=lambda serial: worker,
+            cleanup_provider=cleanup,
+        )
+        registry = fixture["registry"]
+        lease = registry.acquire(
+            fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"],
+            resource=fixture["connection"], owner=fixture["task"][0],
+        )
+        authorization = registry.dispatch_worker(lease)
+        holder.update(registry=registry, authorization=authorization, lease=lease, coordinator=fixture["coordinator"])
+        fixture["task"][0] = worker
+        registry.dequeue_worker(lease, authorization)
+        registry.worker_issuer.run_effect(authorization, 1)
+        registry.run_worker_cleanup(authorization, 1)
+        before = vector(registry, lease, authorization, coordinator=fixture["coordinator"])
+        with self.assertRaises(ContractRefusal):
+            registry.worker_issuer.run_effect(authorization, 2)
+        self.assertEqual(before, vector(registry, lease, authorization, coordinator=fixture["coordinator"]))
+        self.assertEqual((frozenset({2}), frozenset({1})), registry.worker_ordinals(authorization))
+        result = registry.setup_reference_worker_result(authorization, "value")
+        registry.worker_exit_success(authorization, result)
+        self.assertEqual((frozenset(), frozenset({1})), registry.worker_ordinals(authorization))
+
+
+class CleanupInFlightSuccessExitTests(unittest.TestCase):
+    """IR31: a success exit requested from inside a cleanup action refuses with
+    the full vector unchanged, so a failing final cleanup with no earlier
+    primary stays the primary FAILURE, and a returning one still allows exactly
+    one success exit afterwards."""
+
+    @staticmethod
+    def hostile_cleanup(holder, final_step, *, raising):
+        """Trusted cleanup provider.  Earlier steps are inert.  The final
+        step's fixed action requests success exit from inside its own frame and
+        records the outcome with the vector before and after; the assertions
+        run outside the action, so a failure is never swallowed as a cleanup
+        failure.  It then optionally raises."""
+
+        def cleanup(label, step_number):
+            def fixed():
+                holder.setdefault("runs", []).append(step_number)
+                if step_number != final_step:
+                    return
+                registry = holder["registry"]
+                authorization = holder["authorization"]
+
+                def observe():
+                    return vector(
+                        registry, holder["lease"], authorization,
+                        coordinator=holder["coordinator"],
+                        registration=holder.get("registration"),
+                    )
+
+                holder["before"] = observe()
+                try:
+                    holder["accepted"] = registry.worker_exit_success(authorization, holder["result"])
+                except ContractRefusal as refusal:
+                    holder["refusal"] = refusal
+                holder["after"] = observe()
+                if raising:
+                    raise EffectFault()
+            return fixed
+        return cleanup
+
+    def execute_scenario(self, final_step, *, raising):
+        """EXECUTE with `final_step` trusted cleanup steps, a distinct assigned
+        worker, effect 1 returned and the worker's private result computed."""
+
+        holder = {}
+        worker = object()
+        fixture = build_fixture(
+            command_schedule_provider=lambda kind: (WorkerCommandSpec("inflight", (1,), cleanup_steps=final_step),),
+            assigned_worker_provider=lambda serial: worker,
+            cleanup_provider=self.hostile_cleanup(holder, final_step, raising=raising),
+        )
+        registry = fixture["registry"]
+        receiver = fixture["task"][0]
+        lease = registry.acquire(
+            fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"],
+            resource=fixture["connection"], owner=receiver,
+        )
+        step(fixture, lease, PlanStep.LOWER)
+        authorization = registry.dispatch_worker(lease)
+        fixture["task"][0] = worker
+        registry.dequeue_worker(lease, authorization)
+        registry.worker_issuer.run_effect(authorization, 1)
+        result = registry.setup_reference_worker_result(authorization, "private-value")
+        holder.update(
+            registry=registry, authorization=authorization, lease=lease,
+            coordinator=fixture["coordinator"], result=result,
+        )
+        return fixture, lease, authorization, result, holder, receiver
+
+    def assert_in_frame_refusal(self, holder, final_step):
+        self.assertEqual(list(range(1, final_step + 1)), holder["runs"])
+        self.assertIsNone(
+            holder.get("accepted"),
+            "success exit was accepted from inside the final cleanup action",
+        )
+        self.assertIs(RefusalCode.WORKER_AUTHORITY_INVALID, holder["refusal"].code)
+        self.assertEqual(holder["before"], holder["after"])
+
+    def test_raising_final_cleanup_after_an_in_frame_success_request_is_the_primary_failure(self) -> None:
+        for final_step in (1, 2):
+            with self.subTest(cleanup_steps=final_step):
+                fixture, lease, authorization, result, holder, receiver = self.execute_scenario(
+                    final_step, raising=True,
+                )
+                registry = fixture["registry"]
+                coordinator = fixture["coordinator"]
+                for number in range(1, final_step):
+                    registry.run_worker_cleanup(authorization, number)
+                with self.assertRaises(EffectFault):
+                    registry.run_worker_cleanup(authorization, final_step)
+                self.assert_in_frame_refusal(holder, final_step)
+                kind, receipt, diagnostics, _ = registry.worker_exit_facts(authorization)
+                self.assertIs(WorkerExitKind.FAILURE, kind)
+                self.assertIsInstance(receipt, WorkerExitReceipt)
+                self.assertEqual(0, diagnostics)
+                self.assertIs(WorkerCommandState.CONTAINED, registry.worker_command_state(authorization))
+                self.assertEqual(
+                    (LeaseState.CONTAINED, "containment"),
+                    (registry.lease_state(lease), registry.lease_facts(lease)[2]),
+                )
+                self.assertEqual(final_step + 1, registry.worker_cleanup_step(authorization))
+                self.assertEqual(0, registry.publications)
+                self.assertEqual(1, coordinator.count())
+                registry.observe_worker_stopped(registry.setup_reference_worker_stop(authorization))
+                fixture["task"][0] = receiver
+                registry.complete_contained(lease)
+                self.assertEqual(LeaseState.REFUSED, registry.lease_state(lease))
+                self.assertEqual((0, 0), (coordinator.count(), registry.publications))
+
+    def test_returning_final_cleanup_refuses_in_frame_then_allows_exactly_one_success_exit(self) -> None:
+        for final_step in (1, 2):
+            with self.subTest(cleanup_steps=final_step):
+                fixture, lease, authorization, result, holder, receiver = self.execute_scenario(
+                    final_step, raising=False,
+                )
+                registry = fixture["registry"]
+                coordinator = fixture["coordinator"]
+                for number in range(1, final_step + 1):
+                    registry.run_worker_cleanup(authorization, number)
+                self.assert_in_frame_refusal(holder, final_step)
+                self.assertEqual(final_step + 1, registry.worker_cleanup_step(authorization))
+                self.assertEqual((None, None, 0, False), registry.worker_exit_facts(authorization))
+                self.assertIs(WorkerCommandState.RUNNING_IDLE, registry.worker_command_state(authorization))
+                self.assertEqual(0, registry.publications)
+                receipt = registry.worker_exit_success(authorization, result)
+                self.assertIsInstance(receipt, WorkerExitReceipt)
+                self.assertIs(receipt, registry.worker_exit_success(authorization, result))
+                self.assertEqual(
+                    (WorkerExitKind.SUCCESS, receipt, 0, False),
+                    registry.worker_exit_facts(authorization),
+                )
+                self.assertEqual(0, registry.publications)
+                registry.observe_worker_stopped(registry.setup_reference_worker_stop(authorization))
+                fixture["task"][0] = receiver
+                self.assertEqual("private-value", registry.accept_worker_result(receipt))
+                registry.run_plan_step(lease, PlanStep.PUBLICATION, receiver, registry.issue_consumer("publish"))
+                self.assertEqual((1, LeaseState.SUCCEEDED), (registry.publications, registry.lease_state(lease)))
+                self.assertEqual(0, coordinator.count())
+
+    def test_iterator_handoff_head_with_a_failing_final_cleanup_retires_instead_of_settling_delivered(self) -> None:
+        holder = {}
+
+        def schedule(kind):
+            # The hostile cleanup step belongs to the delivery command only;
+            # registration and refresh drive the default slot.
+            if kind is OperationKind.ITERATOR_HANDOFF:
+                return (WorkerCommandSpec("delivery-inflight", (1,), cleanup_steps=1),)
+            return (WorkerCommandSpec(f"{kind.value}-command", (1,)),)
+
+        fixture = make_lifetime_fixture(
+            command_schedule_provider=schedule,
+            cleanup_provider=self.hostile_cleanup(holder, 1, raising=True),
+        )
+        registry = fixture["registry"]
+        coordinator = fixture["coordinator"]
+        scope = fixture["scope"]
+        lease, registration, successor = two_range_handoff(fixture)
+        authorization = registry.dispatch_worker(lease)
+        registry.dequeue_worker(lease, authorization)
+        registry.worker_issuer.run_effect(authorization, 1)
+        result = registry.setup_reference_worker_result(authorization, {"delivered": True})
+        holder.update(
+            registry=registry, authorization=authorization, lease=lease,
+            coordinator=coordinator, result=result, registration=registration,
+        )
+        baseline_publications = registry.publications
+        cursors = (RevisionCursor(scope, 1, 2), RevisionCursor(scope, 1, 0))
+        self.assertEqual(cursors, registry.delivery_cursors(registration))
+        self.assertEqual(2, coordinator.count())
+        with self.assertRaises(EffectFault):
+            registry.run_worker_cleanup(authorization, 1)
+        self.assert_in_frame_refusal(holder, 1)
+        kind, receipt, diagnostics, _ = registry.worker_exit_facts(authorization)
+        self.assertIs(WorkerExitKind.FAILURE, kind)
+        self.assertIsInstance(receipt, WorkerExitReceipt)
+        self.assertEqual(0, diagnostics)
+        self.assertIs(WorkerCommandState.CONTAINED, registry.worker_command_state(authorization))
+        self.assertEqual(LeaseState.RETIRING_HANDOFF, registry.lease_state(lease))
+        self.assertEqual(1, coordinator.count(), "the successor permit was released exactly once")
+        self.assertEqual(cursors, registry.delivery_cursors(registration))
+        self.assertEqual(baseline_publications, registry.publications)
+        with self.assertRaises(ContractRefusal):
+            registry.dequeue_buffer(
+                fixture["queue"], successor, fixture["handle"], registration,
+                fixture["context"], fixture["task"][0],
+            )
+        self.assertIsInstance(settle_retirement(fixture, lease, authorization), RefetchRequired)
+        self.assertEqual(0, coordinator.count())
+        self.assertEqual(RevisionCursor(scope, 1, 0), registry.delivery_cursors(registration)[1])
+        self.assertEqual(LeaseState.REFUSED, registry.lease_state(lease))
+        self.assertEqual(baseline_publications, registry.publications)
+
+
+class TerminalTombstoneTests(unittest.TestCase):
+    """IR24 and IR26: terminal history leaves no active serial and no
+    unconsumed initial candidate; a late delivery stop replays."""
+
+    def test_every_terminal_route_clears_the_active_serial(self) -> None:
+        def facts_terminal(registry, lease):
+            state, completion, _, serial, ledger = registry.lease_facts(lease)
+            self.assertTrue(state.terminal)
+            self.assertIs(state, completion)
+            self.assertEqual((None, 0), (serial, ledger))
+
+        fixture = build_fixture()
+        registry = fixture["registry"]
+        lease = registry.acquire(fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"], resource=fixture["connection"], owner=fixture["task"][0])
+        step(fixture, lease, PlanStep.LOWER)
+        run_command(fixture, lease)
+        registry.run_plan_step(lease, PlanStep.PUBLICATION, fixture["task"][0], registry.issue_consumer("publish"))
+        facts_terminal(registry, lease)
+        lease = registry.acquire(fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"], resource=fixture["connection"], owner=fixture["task"][0])
+        authorization = registry.dispatch_worker(lease)
+        registry.dequeue_worker(lease, authorization)
+        registry.request_worker_cancel(lease)
+        registry.observe_worker_stopped(registry.setup_reference_worker_stop(authorization))
+        registry.complete_contained(lease)
+        facts_terminal(registry, lease)
+        lease = registry.acquire(fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"], resource=fixture["connection"], owner=fixture["task"][0])
+        registry.dispatch_worker(lease)
+        registry.request_worker_cancel(lease)
+        facts_terminal(registry, lease)
+
+        fixture = make_lifetime_fixture()
+        registry = fixture["registry"]
+        registration = register(fixture)
+        first = publish(fixture, registration, revision=1)
+        handoff = registry.dequeue_buffer(fixture["queue"], first, fixture["handle"], registration, fixture["context"], fixture["task"][0])
+        settle_handoff(fixture, handoff)
+        facts_terminal(registry, handoff)
+        _, neutral = prepare_refresh(fixture, registration, 2, ())
+        neutral_lease = None
+        receipt = registry.commit_refresh(neutral)
+        self.assertIsInstance(receipt, NeutralRefreshReceipt)
+        stale_a, candidate_a = prepare_refresh(fixture, registration, 3, ())
+        stale_b, candidate_b = prepare_refresh(fixture, registration, 3, ({"changed": True},))
+        self.assertIsInstance(registry.commit_refresh(candidate_a), NeutralRefreshReceipt)
+        facts_terminal(registry, stale_a)
+        self.assertIsInstance(registry.commit_refresh(candidate_b), RefetchRequired)
+        facts_terminal(registry, stale_b)
+
+    def test_late_delivery_stop_setup_after_settlement_replays_without_indexerror(self) -> None:
+        fixture = make_lifetime_fixture()
+        registry = fixture["registry"]
+        lease, registration, _ = two_range_handoff(fixture)
+        authorization = registry.dispatch_worker(lease)
+        registry.dequeue_worker(lease, authorization)
+        registry.request_worker_cancel(lease)
+        retirement = registry.delivery_retirement(lease)
+        registry.observe_worker_stopped(registry.setup_reference_worker_stop(authorization))
+        observation = registry.setup_reference_delivery_stop(retirement)
+        registry.observe_delivery_stopped(retirement, observation)
+        self.assertIsInstance(registry.settle_delivery_non_success(lease, retirement), RefetchRequired)
+        state, completion, _, serial, ledger = registry.lease_facts(lease)
+        self.assertEqual((LeaseState.REFUSED, LeaseState.REFUSED, None, 0), (state, completion, serial, ledger))
+        self.assertIs(observation, registry.setup_reference_delivery_stop(retirement))
+        registry.observe_delivery_stopped(retirement, observation)
+        self.assertIsInstance(registry.settle_delivery_non_success(lease, retirement), RefetchRequired)
+        self.assertEqual(0, fixture["coordinator"].count())
+
+    def test_unconsumed_initial_candidates_die_with_their_operation(self) -> None:
+        fixture = make_lifetime_fixture()
+        registry = fixture["registry"]
+        owner = fixture["task"][0]
+        refs = []
+        for round_number in range(5):
+            lease = registry.acquire(
+                fixture["handle"], OperationKind.SNAPSHOT_REGISTRATION, ParameterValues({"tenant": "a"}),
+                fixture["context"], resource=fixture["subscription"], owner=owner,
+            )
+            step(fixture, lease, PlanStep.FETCH)
+            step(fixture, lease, PlanStep.SNAPSHOT_WATERMARK)
+            candidate = registry.setup_reference_initial_snapshot(
+                lease, owner, fixture["subscription"], fixture["queue"], ({"secret_row": round_number},),
+                RevisionCursor(fixture["scope"], 1, 0),
+            )
+            refs.append(weakref.ref(candidate))
+            step(fixture, lease, PlanStep.REGISTRATION)
+            step(fixture, lease, PlanStep.ASSEMBLY)
+            run_command(fixture, lease, ())
+            registry.request_worker_cancel(lease)
+            registry.complete_contained(lease)
+            self.assertEqual(LeaseState.REFUSED, registry.lease_state(lease))
+            del candidate
+        gc.collect()
+        self.assertEqual(0, sum(1 for ref in refs if ref() is not None), "initial candidates outlived their operations")
+        self.assertEqual(0, fixture["coordinator"].count())
+        registration = register(fixture)
+        self.assertEqual((RevisionCursor(fixture["scope"], 1, 0),) * 2, registry.delivery_cursors(registration))
+
+
+class LateReturnAuthorityTests(unittest.TestCase):
+    """IR25: only the exact assigned worker's late return fills the diagnostic slot."""
+
+    def test_non_worker_late_success_leaves_the_diagnostic_slot_unchanged(self) -> None:
+        worker = object()
+        fixture = build_fixture(assigned_worker_provider=lambda serial: worker)
+        registry = fixture["registry"]
+        receiver = fixture["task"][0]
+        lease = registry.acquire(
+            fixture["handle"], OperationKind.EXECUTE, ParameterValues({}), fixture["context"],
+            resource=fixture["connection"], owner=receiver,
+        )
+        authorization = registry.dispatch_worker(lease)
+        fixture["task"][0] = worker
+        registry.dequeue_worker(lease, authorization)
+        registry.worker_issuer.run_effect(authorization, 1)
+        registry.worker_exit_failure(authorization, registry.setup_reference_worker_failure(authorization))
+        result = registry.setup_reference_worker_result(authorization, "late")
+        for task in (receiver, object()):
+            fixture["task"][0] = task
+            before = vector(registry, lease, authorization, coordinator=fixture["coordinator"])
+            with self.assertRaises(ContractRefusal):
+                registry.worker_exit_success(authorization, result)
+            self.assertEqual(before, vector(registry, lease, authorization, coordinator=fixture["coordinator"]))
+        self.assertEqual(0, registry.worker_exit_facts(authorization)[2])
+        fixture["task"][0] = worker
+        for _ in range(2):
+            with self.assertRaises(ContractRefusal) as conflict:
+                registry.worker_exit_success(authorization, result)
+            self.assertEqual(RefusalCode.OPERATION_OUTCOME_CONFLICT, conflict.exception.code)
+        self.assertEqual(1, registry.worker_exit_facts(authorization)[2])
 
 
 if __name__ == "__main__":

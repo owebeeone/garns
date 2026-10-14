@@ -119,25 +119,26 @@ class WorkerCommandSpec:
 
 
 class WorkerAuthorizationIssuer:
-    """Stateless executor facade; every call delegates to the lifetime owner."""
+    """Stateless executor facade; every call delegates to the lifetime owner.
 
-    __slots__ = ("_run_effect", "_context_owner", "_revoke")
+    The facade offers no cancellation route: design §5.2 allows exactly three
+    trusted cancellation sources (the live receiver, an issuer-internal fence,
+    expiry or close event, and the exact receiving-task lifecycle observation),
+    and a holder of a command authorization is none of them.
+    """
+
+    __slots__ = ("_run_effect", "_context_owner")
 
     def __init__(
         self,
         run_effect: Callable[[WorkerCommandAuthorization, int], object],
         context_owner: Callable[[WorkerCommandAuthorization], object],
-        revoke: Callable[[WorkerCommandAuthorization], None],
     ) -> None:
         self._run_effect = run_effect
         self._context_owner = context_owner
-        self._revoke = revoke
 
     def run_effect(self, authorization: WorkerCommandAuthorization, ordinal: int) -> object:
         return self._run_effect(authorization, ordinal)
 
     def context_owner(self, authorization: WorkerCommandAuthorization) -> object:
         return self._context_owner(authorization)
-
-    def revoke(self, authorization: WorkerCommandAuthorization) -> None:
-        self._revoke(authorization)

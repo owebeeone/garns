@@ -16,6 +16,7 @@ if TYPE_CHECKING:
         MigrationBarrierAcknowledgement, MigrationNoEffectProof,
         MigrationRequestIdentity, ParticipantMembership, ParticipantState,
     )
+    from .recovery import MigrationRecoveryProof
 
 
 class ResourceKind(str, Enum):
@@ -324,6 +325,7 @@ class SharedGenerationCoordinator(Protocol):
     ) -> tuple[DeploymentGenerationState, "AttemptPhase", int, "MigrationRequestIdentity"]: ...
     def publish_generation(self, requested: BindingIdentity) -> None: ...
     def mark_indeterminate(self) -> None: ...
+    def recover_migration(self, proof: "MigrationRecoveryProof") -> None: ...
 
 
 def assert_no_plan_or_lease(buffer: BufferedDelivery) -> None:

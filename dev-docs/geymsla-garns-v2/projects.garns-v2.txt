@@ -1,0 +1,77 @@
+// GARNS v2 exploration: projects
+// Part of the three-file Geymsla design specimen; not executable grammar.
+// Owns project intents, the hierarchy template and its configured module.
+// Read with documents.garns-v2.txt and assembly.garns-v2.txt.
+
+module ProjectConcepts {
+    public intent ProjectId : Id
+        "Stable identity of a project"
+
+    public intent ProjectStatus : Text
+        "Lifecycle state of a project" {
+        values Draft, Approved, InProgress, Finished, Abandoned
+    }
+}
+
+module ProjectHierarchy<
+    intent Identity,
+    intent State,
+    State completed,
+    set<State> terminal
+> {
+    public resource Project "A project within a hierarchy" {
+        use Identity { key }
+        use State as status
+
+        link parent -> Project {
+            optional
+            inverse children
+            deletion restrict
+        }
+
+        final rule: acyclic(parent)
+
+        final rule:
+            status == completed
+            implies every child in descendants(children):
+                child.status in terminal
+    }
+}
+
+module GeymslaInventory {
+    public inherit ProjectHierarchy<
+        Identity  = ProjectConcepts.ProjectId,
+        State     = ProjectConcepts.ProjectStatus,
+        completed = ProjectConcepts.ProjectStatus.Finished,
+        terminal  = {
+            ProjectConcepts.ProjectStatus.Finished,
+            ProjectConcepts.ProjectStatus.Abandoned
+        }
+    > as projects
+}
+
+// Project semantics
+//
+// - Geymsla exposes inventory.projects.Project.
+// - Intent arguments retain their meaning, value types and constraints.
+// - State denotes the value type governed by the supplied intent. The completed
+//   argument and every terminal member must satisfy that intent.
+// - Each project has its own explicit status decision. Finishing or abandoning
+//   all descendants permits, but never automatically causes, parent completion.
+// - Draft, Approved and InProgress descendants block completion of an ancestor.
+// - Finished and Abandoned both satisfy the descendant prerequisite, but
+//   abandonment remains distinct from successful completion.
+// - descendants(children) includes all depths, excluding the project itself.
+//   An abandoned intermediate project cannot hide unfinished descendants.
+// - A project with no children can be explicitly completed.
+// - Parent relationships must remain acyclic.
+// - These validity rules apply to the resulting transaction state on every
+//   admitted write path, including status changes, insertion and reparenting.
+//   Reopening a child under a finished ancestor requires also changing the
+//   affected ancestor status,
+//   potentially in the same transaction. There is no automatic reopening cascade.
+// - "rule" declares a rule; "final" makes it non-overridable. Final rules cannot
+//   be replaced or removed by either a named override or a scope-wide override.
+//   Finality controls override permission, not when a validity rule is checked.
+// - Naming an instance with "as projects" does not request shared inheritance.
+//
