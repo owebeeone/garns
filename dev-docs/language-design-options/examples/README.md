@@ -5,6 +5,13 @@ parser. They illustrate semantic decisions and deliberately do not fix a grammar
 No code block has been executed. The one executed baseline probe is documented
 separately in [Baseline.md](../Baseline.md).
 
+[Contextual binding and companion effects](ContextualBindingAndCompanionEffects.md)
+adds a controlled A/B/C comparison: manual wiring, contextual module binding, then
+companion-effect derivation. It includes resolution procedures, expected expansions
+and refusal cases. A role-based binding variant additionally derives provider choice
+from purpose, domain and context, with explicit missing/ambiguous-provider behavior.
+It does not replace the four whole-language candidates below.
+
 | Set | Combination | Main question |
 | --- | --- | --- |
 | [A](A-Incremental.md) | R1 C1 B1 T1 V1 M1 O1 | How far can completed existing constructs take us? |

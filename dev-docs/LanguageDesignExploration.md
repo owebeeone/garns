@@ -6,6 +6,13 @@ compiler/runtime files or databases were changed during this exploration.
 
 ## Findings first
 
+**Vision reassessment, 15 October 2026:** the preference below records the original
+comparison. [The vision-based reassessment](LanguageDesignVisionReassessment.md)
+reopens it, distinguishing explicit connection rules from author-enumerated wiring.
+It reviews all 28 options and identifies contextual assembly and companion-effect
+derivation missing from the four combined specimens. No replacement candidate is
+selected; the original examples and judgments remain available for comparison.
+
 The strongest opportunity is not shorter keywords. It is to make reusable declarations
 carry their complete guarantees, and to derive a guarded atomic operation from declared
 effects instead of repeating application logic. Generic modules help when their

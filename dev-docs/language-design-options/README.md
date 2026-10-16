@@ -3,6 +3,10 @@
 Status: design exploration, not accepted language syntax or working compiler support.
 Every code block in this directory is illustrative unless labelled current GARNS.
 
+[Vision-based reassessment](../LanguageDesignVisionReassessment.md) reviews all 28
+options for unnecessary manual wiring and contextual derivation. Read it alongside
+the original comparison; the provisional whole-language preference is reopened.
+
 | Area | Four alternatives |
 | --- | --- |
 | [Relationships](Relationships.md) | R1 inline policies; R2 named relationships; R3 relationship contracts; R4 integrity rules |
